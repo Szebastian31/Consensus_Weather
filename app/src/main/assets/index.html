@@ -96,8 +96,8 @@
   .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:4px}
   .lg{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800}
   .dot{width:13px;height:13px;border-radius:5px}
-  .chart-box{width:100%}
-  .chart-box svg{width:100%;height:auto;display:block}
+  .chart-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .chart-box svg{display:block}
 
   .segs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
   .seg{background:var(--card);border-radius:20px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
@@ -338,12 +338,12 @@ function render(D){
       <div class="hday">${WD[x.date.getDay()]}</div><div class="ht">${x.h}:00</div>${pico(x.key,32)}<div class="htemp">${x.temp}°</div><div class="hfeels">${x.feels}°</div>
       <div class="hrain">${x.precip>=5?'💧'+x.precip+'%':''}</div></div>`;}).join('')}</div></div>
 
-  <h2>📈 Temperature curve</h2><p class="sub">Consensus air temperature vs. feels-like, next 36 hours.</p>
+  <h2>📈 Temperature curve</h2><p class="sub">Consensus air temperature vs. feels-like — showing ~18 h, scroll for all 36 →</p>
   <div class="card"><div class="legend">
     <div class="lg"><span class="dot" style="background:var(--temp)"></span>Temperature</div>
     <div class="lg"><span class="dot" style="background:var(--feels)"></span>Feels like</div>
     <div class="lg"><span class="dot" style="background:var(--rain);opacity:.5"></span>Rain chance</div></div>
-    <div class="chart-box">${svgChart(D.hourly)}</div></div>
+    <div class="chart-box" id="chartBox"></div></div>
 
   <h2>🌗 Part-by-part breakdown</h2><p class="sub">Day and night blocks across the next 36 hours.</p>
   <div class="segs">${segs.map(s=>`<div class="seg"><div class="bar" style="background:${heroGrad(s.key)}"></div>
@@ -368,6 +368,7 @@ function render(D){
     ?'Numbers are averaged across '+D.sources.length+' national weather models (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, refreshed each time you open a location.'
     :'Showing the saved Gliwice snapshot — connect to the internet and reopen to pull a live 7-model average for any city.'}</div>`;
   document.getElementById('foot').textContent=(D.live?'Live data · Open-Meteo multi-model average':'Offline fallback')+' · pull-to-nothing, just reopen to refresh';
+  drawChart(D.hourly);
 }
 
 /* ---- segments ---- */
@@ -395,23 +396,32 @@ function narr(key,hi,lo,precip,wind){
 }
 
 /* ---- SVG line chart ---- */
-function svgChart(items){
-  const W=760,H=300,pL=32,pR=12,pT=16,pB=40,n=items.length;
+function svgChart(items,viewW){
+  const n=items.length,H=280,pL=34,pR=14,pT=16,pB=42;
+  const per=(Math.max(viewW||360,280)-pL-pR)/17; // ~18 hours fit the visible width
+  const W=pL+pR+per*(n-1);
   const temp=items.map(x=>x.temp),feels=items.map(x=>x.feels),rain=items.map(x=>x.precip);
   const tmin=Math.min(...temp,...feels),tmax=Math.max(...temp,...feels);
   const lo=Math.floor((tmin-1)/2)*2,hi=Math.ceil((tmax+1)/2)*2;
-  const X=i=>pL+(W-pL-pR)*(i/(n-1)), Y=v=>pT+(H-pT-pB)*(1-(v-lo)/(hi-lo||1));
+  const X=i=>pL+per*i, Y=v=>pT+(H-pT-pB)*(1-(v-lo)/(hi-lo||1));
   const smooth=arr=>{let d='M'+X(0)+' '+Y(arr[0]);for(let i=0;i<n-1;i++){const x0=X(i),y0=Y(arr[i]),x1=X(i+1),y1=Y(arr[i+1]);const cx=(x0+x1)/2;d+=' C'+cx+' '+y0+' '+cx+' '+y1+' '+x1+' '+y1;}return d;};
   let grid='';for(let v=lo;v<=hi;v+=Math.max(2,Math.round((hi-lo)/6/2)*2)){grid+=`<line x1="${pL}" y1="${Y(v)}" x2="${W-pR}" y2="${Y(v)}" stroke="rgba(255,255,255,.09)" stroke-width="1"/><text x="${pL-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-weight="700" fill="#A9A2C9">${v}°</text>`;}
   const rmax=H-pB, rh=v=>(v/100)*((H-pT-pB)*0.55);
   let bars='';const bw=(W-pL-pR)/n*0.6;items.forEach((x,i)=>{if(x.precip>0){bars+=`<rect x="${X(i)-bw/2}" y="${rmax-rh(x.precip)}" width="${bw}" height="${rh(x.precip)}" rx="2" fill="#5AB0F0" opacity=".38"/>`;}});
   let xlab='';items.forEach((x,i)=>{const hh=x.date.getHours();if(hh%6===0){xlab+=`<text x="${X(i)}" y="${H-pB+20}" text-anchor="middle" font-size="11" font-weight="700" fill="#A9A2C9">${pad(hh)}</text>`;if(hh===0)xlab+=`<text x="${X(i)}" y="${H-pB+34}" text-anchor="middle" font-size="10" font-weight="800" fill="#A78BFF">${WD[x.date.getDay()]}</text>`;}});
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
     ${grid}${bars}
     <path d="${smooth(feels)}" fill="none" stroke="#A78BFF" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="${smooth(temp)}" fill="none" stroke="#FF9E5A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
     ${xlab}</svg>`;
 }
+let LAST_HOURLY=null;
+function drawChart(items){
+  LAST_HOURLY=items;
+  const box=document.getElementById('chartBox'); if(!box)return;
+  box.innerHTML=svgChart(items, box.clientWidth||360);
+}
+window.addEventListener('resize',()=>{if(LAST_HOURLY)drawChart(LAST_HOURLY);});
 
 /* ============ LOCATION SLOTS (2 sides + center) ============ */
 const LKEY='cw_slots_v2';
