@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.consensus.weather'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.consensus.weather"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+        debug {
+            // debug builds are signed with the auto-generated debug key,
+            // which is all that's needed to sideload onto a personal phone.
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    // native pull-to-refresh around the WebView
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+}
+
