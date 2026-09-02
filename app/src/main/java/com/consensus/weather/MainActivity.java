@@ -64,6 +64,20 @@ public class MainActivity extends Activity {
         });
 
         setContentView(swipe);
+        getWindow().getDecorView().setSystemUiVisibility(
+    android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+  | android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+
+web.setOnApplyWindowInsetsListener((v, insets) -> {
+    int top = insets.getSystemWindowInsetTop();
+    float d = getResources().getDisplayMetrics().density;
+    web.evaluateJavascript(
+        "document.documentElement.style.setProperty('--sat','" + (top / d) + "px')", null);
+    return v.onApplyWindowInsets(insets);
+});
+
     }
 
     /** Bridge exposed to the page as window.AndroidBridge */
