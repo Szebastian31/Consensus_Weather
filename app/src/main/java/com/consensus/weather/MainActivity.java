@@ -73,6 +73,11 @@ public class MainActivity extends Activity {
             runOnUiThread(() -> { if (swipe != null) swipe.setRefreshing(false); });
         }
         @JavascriptInterface
+public void setRefreshEnabled(final boolean en) {
+    runOnUiThread(() -> { if (swipe != null) swipe.setEnabled(en); });
+}
+
+        @JavascriptInterface
         public void requestLocation() {
             runOnUiThread(() -> ensureLocationPermission());
         }
