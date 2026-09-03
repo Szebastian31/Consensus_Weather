@@ -35,6 +35,9 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk "app/build/outputs/apk/debug/Consensus_Weather_v1.2.${{ github.run_number }}.apk"
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
@@ -46,6 +49,6 @@ jobs:
         with:
           tag_name: v1.2.${{ github.run_number }}
           name: Consensus Weather v1.2.${{ github.run_number }}
-          files: app/build/outputs/apk/debug/Consensus_Weather_v1.2.${{ github.run_number }}.apk
+          files: app/build/outputs/apk/debug/app-debug.apk
           body: |
-            Auto-built debug APK. Download **app-debug.apk** below and install it on your phone.
+            Auto-built debug APK. Download the .apk below and install it on your phone.
