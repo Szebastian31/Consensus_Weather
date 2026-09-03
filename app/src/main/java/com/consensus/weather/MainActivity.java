@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -20,23 +21,21 @@ import android.webkit.WebViewClient;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends Activity {
-
     private WebView web;
     private SwipeRefreshLayout swipe;
     private boolean firstResume = true;
     private static final int REQ_LOC = 42;
 
-    @SuppressLint({"SetJavaScriptEnabled", "JavascriptInterface"})
+    @SuppressLint({"SetJavaScriptEnabled","JavascriptInterface"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         web = new WebView(this);
         web.setBackgroundColor(Color.parseColor("#151327"));
-
         WebSettings s = web.getSettings();
-        s.setJavaScriptEnabled(true);      // app logic
-        s.setDomStorageEnabled(true);      // localStorage: saved locations + slots
+        s.setJavaScriptEnabled(true);
+        s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
         s.setGeolocationEnabled(true);
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
@@ -45,35 +44,42 @@ public class MainActivity extends Activity {
 
         web.addJavascriptInterface(new Bridge(), "AndroidBridge");
         web.setWebViewClient(new WebViewClient());
-        // load the bundled app; live data is fetched from Open-Meteo over HTTPS
         web.loadUrl("file:///android_asset/index.html");
 
-        // pull-to-refresh around the WebView
         swipe = new SwipeRefreshLayout(this);
         swipe.setColorSchemeColors(Color.parseColor("#A78BFF"), Color.parseColor("#FF9E5A"));
         swipe.setProgressBackgroundColorSchemeColor(Color.parseColor("#241F3D"));
         swipe.addView(web, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams. MATCH_PARENT));
         swipe.setOnChildScrollUpCallback((parent, child) -> web.getScrollY() > 0);
         swipe.setOnRefreshListener(() -> {
             web.evaluateJavascript("window.refreshWeather && window.refreshWeather();", null);
-            web.postDelayed(() -> {
-                if (swipe.isRefreshing()) swipe.setRefreshing(false);
-            }, 8000);
+            web.postDelayed(() -> { if (swipe.isRefreshing()) swipe.setRefreshing(false); }, 8000);
+        });
+
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        web.setOnApplyWindowInsetsListener((v, insets) -> {
+            int top = insets.getSystemWindowInsetTop();
+            float d = getResources().getDisplayMetrics().density;
+            web.evaluateJavascript(
+                "document.documentElement.style.setProperty('--sat','" + (top / d) + "px')", null);
+            return v.onApplyWindowInsets(insets);
         });
 
         setContentView(swipe);
     }
 
-    /** Bridge exposed to the page as window.AndroidBridge */
     private class Bridge {
-        @JavascriptInterface
-        public void onRefreshed() {
+        @JavascriptInterface public void onRefreshed() {
             runOnUiThread(() -> { if (swipe != null) swipe.setRefreshing(false); });
         }
-        @JavascriptInterface
-        public void requestLocation() {
+        @JavascriptInterface public void setRefreshEnabled(final boolean en) {
+            runOnUiThread(() -> { if (swipe != null) swipe.setEnabled(en); });
+        }
+        @JavascriptInterface public void requestLocation() {
             runOnUiThread(() -> ensureLocationPermission());
         }
     }
@@ -90,13 +96,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_LOC) {
+    public void onRequestPermissionsResult(int rc, String[] p, int[] r) {
+        super.onRequestPermissionsResult(rc, p, r);
+        if (rc == REQ_LOC) {
             boolean granted = false;
-            for (int r : grantResults) if (r == PackageManager.PERMISSION_GRANTED) granted = true;
-            if (granted) fetchLocation();
-            else jsError("Location permission denied");
+            for (int g : r) if (g == PackageManager.PERMISSION_GRANTED) granted = true;
+            if (granted) fetchLocation(); else jsError("Location permission denied");
         }
     }
 
@@ -104,8 +109,6 @@ public class MainActivity extends Activity {
     private void fetchLocation() {
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (lm == null) { jsError("Location unavailable"); return; }
-
-        // 1) use the best cached fix if we have one (instant)
         Location best = null;
         try {
             for (String p : lm.getProviders(true)) {
@@ -114,15 +117,13 @@ public class MainActivity extends Activity {
             }
         } catch (SecurityException e) { jsError("Permission needed"); return; }
         if (best != null) { sendLocation(best); return; }
-
-        // 2) otherwise request a single fresh update
         String provider = lm.isProviderEnabled(LocationManager.GPS_PROVIDER) ? LocationManager.GPS_PROVIDER
                 : (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ? LocationManager.NETWORK_PROVIDER : null);
         if (provider == null) { jsError("Turn on location services"); return; }
         try {
             LocationListener listener = new LocationListener() {
                 @Override public void onLocationChanged(Location loc) {
-                    try { lm.removeUpdates(this); } catch (Exception ignored) {}
+                    try { lm.removeUpdates(this); } catch (Exception ig) {}
                     sendLocation(loc);
                 }
                 @Override public void onStatusChanged(String p, int st, Bundle b) {}
@@ -130,12 +131,8 @@ public class MainActivity extends Activity {
                 @Override public void onProviderDisabled(String p) {}
             };
             lm.requestLocationUpdates(provider, 0L, 0f, listener, getMainLooper());
-            web.postDelayed(() -> {
-                try { lm.removeUpdates(listener); } catch (Exception ignored) {}
-            }, 15000);
-        } catch (SecurityException e) {
-            jsError("Permission needed");
-        }
+            web.postDelayed(() -> { try { lm.removeUpdates(listener); } catch (Exception ig) {} }, 15000);
+        } catch (SecurityException e) { jsError("Permission needed"); }
     }
 
     private void sendLocation(Location loc) {
@@ -143,7 +140,6 @@ public class MainActivity extends Activity {
                 + loc.getLatitude() + "," + loc.getLongitude() + ");";
         runOnUiThread(() -> web.evaluateJavascript(js, null));
     }
-
     private void jsError(String msg) {
         final String js = "window.onLocationError && window.onLocationError('" + msg.replace("'", " ") + "');";
         runOnUiThread(() -> web.evaluateJavascript(js, null));
@@ -152,23 +148,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        // skip the first resume (onCreate already loads + fetches),
-        // then refresh whenever the app returns to the foreground
-        if (firstResume) {
-            firstResume = false;
-            return;
-        }
-        if (web != null) {
-            web.evaluateJavascript("window.refreshWeather && window.refreshWeather();", null);
-        }
+        if (firstResume) { firstResume = false; return; }
+        if (web != null) web.evaluateJavascript("window.refreshWeather && window.refreshWeather();", null);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && web != null && web.canGoBack()) {
-            web.goBack();
-            return true;
-        }
+        if (keyCode == KeyEvent.KEYCODE_BACK && web != null && web.canGoBack()) { web.goBack(); return true; }
         return super.onKeyDown(keyCode, event);
     }
 }
