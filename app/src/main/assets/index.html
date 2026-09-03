@@ -15,9 +15,9 @@
   html,body{margin:0;padding:0}
   body{font-family:var(--rounded);color:var(--ink);
     background:linear-gradient(180deg,#0a0f26 0%,#161d47 55%,#282c5e 100%);background-attachment:fixed;background-size:cover;
-    min-height:100vh;padding:max(18px,var(--sat,env(safe-area-inset-top))) 14px 90px;-webkit-font-smoothing:antialiased;transition:background .8s ease}
+    min-height:100vh;padding:0 14px 90px;-webkit-font-smoothing:antialiased;transition:background .8s ease}
   .wrap{max-width:600px;margin:0 auto}
-  .applogo{display:flex;align-items:center;justify-content:center;gap:12px;padding:2px 0 12px}
+  .applogo{display:flex;align-items:center;justify-content:center;gap:12px;padding:0 0 10px}
   .logo-badge{width:46px;height:46px;border-radius:13px;object-fit:cover;box-shadow:0 8px 18px -8px rgba(0,0,0,.55)}
   .logo-word{display:flex;flex-direction:column;line-height:1.04}
   .lw1{font-size:21px;font-weight:800;letter-spacing:.2px;background:linear-gradient(90deg,#FFB020,#E4657F);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -40,7 +40,7 @@
   .tile-clear{left:6px;background:rgba(228,101,127,.16);color:#E4657F}
   .tile-gps{position:absolute;top:6px;left:6px;width:24px;height:24px;border:none;border-radius:50%;background:rgba(255,255,255,.22);color:#fff;font-size:12px;cursor:pointer;line-height:1;padding:0}
   /* revolving centered location bar */
-  .locbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:2px 0 14px}
+  .locbar{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 0 4px}
   .locnow{flex:0 1 auto;border:1px solid rgba(255,255,255,.18);background:var(--card);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);color:#fff;font-family:inherit;font-weight:800;font-size:15px;padding:10px 20px;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:var(--shadow);overflow:hidden;text-overflow:ellipsis;max-width:56%}
   .locnow .cev{opacity:.7;font-size:12px;margin-left:5px}
   .locside{flex:0 1 auto;max-width:24%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:none;background:transparent;color:var(--ink-mute);font-family:inherit;font-weight:800;font-size:12px;padding:6px 4px;cursor:pointer;opacity:.75}
@@ -69,11 +69,14 @@
   .res b{font-weight:800}.res small{display:block;color:var(--ink-mute);font-weight:700;font-size:12px}
   .closex{float:right;border:none;background:rgba(255,255,255,.10);color:var(--ink-soft);font-weight:900;border-radius:10px;padding:6px 11px;cursor:pointer;font-family:inherit}
 
-  /* hero — glass panel floating over the sky */
+  /* hero — glass panel that runs to the very top of the screen */
   .hero-wrap{position:relative;margin:0 -14px}
   .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:rgba(8,10,26,.42);filter:blur(1px);z-index:0}
-  .hero{position:relative;z-index:1;border-radius:50px;padding:24px 22px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow);cursor:pointer}
+  .hero{position:relative;z-index:1;border-radius:0 0 42px 42px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 22px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
   .hero .glow{position:absolute;inset:0;background:radial-gradient(520px 260px at 80% 10%,rgba(255,255,255,.22),rgba(255,255,255,0) 60%);pointer-events:none}
+  .hero-head{position:relative;z-index:2}
+  .hero-divider{height:1px;background:var(--line);margin:8px 0 2px;position:relative;z-index:2}
+  .hero-body{position:relative;z-index:2;cursor:pointer;padding-top:8px}
   .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;position:relative;z-index:2}
   .loc{font-size:18px;font-weight:800}.loc small{display:block;font-size:12px;font-weight:600;opacity:.8;margin-top:3px}
   .badge-live{font-size:10.5px;font-weight:800;background:rgba(255,255,255,.16);padding:6px 11px;border-radius:999px;white-space:nowrap}
@@ -160,7 +163,7 @@
 
   .note{font-size:12px;font-weight:600;color:var(--ink-soft);line-height:1.6;margin-top:14px;background:var(--card);border-radius:22px;padding:16px 18px;box-shadow:0 10px 24px -18px rgba(60,40,110,.4)}
   .foot{text-align:center;font-size:11px;font-weight:700;color:var(--ink-mute);margin-top:18px}
-  .loading{text-align:center;padding:40px;font-weight:800;color:var(--ink-soft)}
+  .loading{text-align:center;padding:calc(var(--sat,env(safe-area-inset-top)) + 60px) 40px 40px;font-weight:800;color:var(--ink-soft)}
   .spin{display:inline-block;width:20px;height:20px;border:3px solid var(--line);border-top-color:var(--feels);border-radius:50%;animation:sp .8s linear infinite;vertical-align:-4px;margin-right:8px}
   @keyframes sp{to{transform:rotate(360deg)}}
 
@@ -175,7 +178,6 @@
   .p-star{animation:tw 2.4s ease-in-out infinite}.p-star.s2{animation-delay:.8s}.p-star.s3{animation-delay:1.5s}
   .p-moon{animation:bob 6s ease-in-out infinite}
   @media (max-width:720px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.now-temp{font-size:72px}}
-  .hero{cursor:pointer}
   .hero-tr{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
   .unit-toggle{display:inline-flex;background:rgba(255,255,255,.18);border-radius:999px;padding:2px;backdrop-filter:blur(4px)}
   .unit-toggle button{border:none;background:transparent;color:#fff;font-family:inherit;font-weight:800;font-size:12px;padding:4px 11px;border-radius:999px;cursor:pointer;opacity:.72}
@@ -220,8 +222,6 @@
   <filter id="softsh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="3.2" flood-color="#0b1026" flood-opacity="0.30"/></filter>
 </defs></svg>
 <div class="wrap">
-  <div class="applogo"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
-  <div class="tiles" id="tiles"></div>
   <div id="app"><div class="loading"><span class="spin"></span>Loading forecast…</div></div>
   <div class="foot" id="foot"></div>
 </div>
@@ -562,8 +562,14 @@ function render(D){
   document.body.style.backgroundAttachment='fixed';document.body.style.backgroundSize='cover';
   const app=document.getElementById('app');
   app.innerHTML=`
-  <div class="hero-wrap"><div class="hero" onclick="openParts()">
+  <div class="hero-wrap"><div class="hero">
     <div class="glow"></div>
+    <div class="hero-head">
+      <div class="applogo"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
+      <div class="locbar" id="tiles"></div>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-body" onclick="openParts()">
     <div class="hero-top">
       <div class="loc">${D.place.name}${D.place.country?', '+D.place.country:''}<small>${Math.abs(D.place.lat).toFixed(2)}°${D.place.lat>=0?'N':'S'}, ${Math.abs(D.place.lon).toFixed(2)}°${D.place.lon>=0?'E':'W'}</small></div>
       <div class="hero-tr">
@@ -596,6 +602,7 @@ function render(D){
       </div>
     </div>
     <div class="taphint">Tap for part-by-part →</div>
+    </div>
   </div></div>
 
   <h2>⏱️ Hour by hour</h2><p class="sub">Averaged temperature, <b style="color:var(--feels)">feels-like</b>, rain chance and mm. Scroll for 36 h →</p>
@@ -634,6 +641,7 @@ function render(D){
     ?'Numbers are averaged across '+D.sources.length+' national weather models (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, refreshed each time you open a location.'
     :'Showing the saved Gliwice snapshot — connect to the internet and reopen to pull a live 7-model average for any city.'}</div>`;
   document.getElementById('foot').textContent=(D.live?'Live data · Open-Meteo multi-model average':'Offline fallback')+' · pull-to-nothing, just reopen to refresh';
+  renderTiles();
   drawChart(D.hourly);
 }
 
@@ -704,7 +712,7 @@ let LOCS=loadLocs(), ACTIVE=0;
 function gpsIndex(){return LOCS.findIndex(l=>l&&l.gps);}
 
 function renderTiles(){
-  const el=document.getElementById('tiles'); el.className='locbar';
+  const el=document.getElementById('tiles'); if(!el)return; el.className='locbar';
   const n=LOCS.length, cur=LOCS[ACTIVE]||LOCS[0];
   if(n<=1){ el.innerHTML=`<button class="locnow" onclick="openManage()">${cur&&cur.gps?'📍 ':''}${cur?cur.name:'—'} <span class="cev">▾</span></button>`; return; }
   const pi=(ACTIVE-1+n)%n, ni=(ACTIVE+1)%n, prev=LOCS[pi], next=LOCS[ni];
