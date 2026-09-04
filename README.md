@@ -18,15 +18,15 @@ Grab the latest APK from either:
 
 Then on the phone:
 - Download `app-debug.apk` (open the page in the phone's browser, or transfer the file over).
-- Tap it. ColorOS will ask to **allow installing unknown apps** from that source — enable it, then tap **Install**.
+- Tap it. OS will ask to **allow installing unknown apps** from that source — enable it, then tap **Install**.
 - Open **Consensus Weather** from your app drawer.
 
 It's a debug-signed APK, which is fine for installing on your own phone (it just can't be published to the Play Store as-is).
 
-## Install on Android (Oppo Find X9 Pro)
+## Install on Android
 
 - Download `app-debug.apk` to the phone (open the Actions/Releases page in the phone's browser, or transfer the file).
-- Tap the file. ColorOS will ask to **allow installing unknown apps** from that source — enable it, then tap **Install**.
+- Tap the file. OS will ask to **allow installing unknown apps** from that source — enable it, then tap **Install**.
 - Open **Consensus Weather** from your app drawer.
 
 It's a debug-signed APK, which is fine for installing on your own phone (it just can't be published to the Play Store as-is).
