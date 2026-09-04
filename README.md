@@ -1,4 +1,7 @@
 # Consensus Weather
+<p align="center">
+  <img src="docs/logo.png" alt="Consensus Weather" width="380">
+</p>
 
 A playful weather app that shows a **36-hour forecast**, a **part-by-part** day/night breakdown, and a **7-day outlook** for **any city you add**. Every number is a **live average of 7 national weather models** — ECMWF, DWD ICON, NOAA GFS, MET Norway (Yr), Météo-France, JMA and ECCC — fetched from the free [Open-Meteo](https://open-meteo.com) API (no API key, no account). It also shows sun/moon rise & set with the current moon phase, a live pollen count, air quality, and lifestyle tips. The background is a living sky gradient that shifts with the time of day and conditions. Gliwice ships as an offline fallback so the app shows something even with no connection.
 
