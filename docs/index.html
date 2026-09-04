@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Consensus Weather</title>
+<meta name="theme-color" content="#0a0f26">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Consensus Weather">
+<link rel="apple-touch-icon" href="emblem.png">
+<link rel="icon" href="emblem.png">
 <style>
   :root{
     --rounded: ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", system-ui, -apple-system, Roboto, sans-serif;
@@ -71,31 +78,36 @@
 
   /* hero — glass panel that runs to the very top of the screen */
   .hero-wrap{position:relative;margin:0 -14px}
-  .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:rgba(8,10,26,.42);filter:blur(1px);z-index:0}
-  .hero{position:relative;z-index:1;border-radius:0 0 42px 42px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 22px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:linear-gradient(180deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0}
+  .hero{position:relative;z-index:1;border-radius:0 0 66px 66px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 22px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
   .hero .glow{position:absolute;inset:0;background:radial-gradient(520px 260px at 80% 10%,rgba(255,255,255,.22),rgba(255,255,255,0) 60%);pointer-events:none}
   .hero-head{position:relative;z-index:2}
   .hero-divider{height:1px;background:var(--line);margin:8px 0 2px;position:relative;z-index:2}
   .hero-body{position:relative;z-index:2;cursor:pointer;padding-top:8px}
-  .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;position:relative;z-index:2}
-  .loc{font-size:18px;font-weight:800}.loc small{display:block;font-size:12px;font-weight:600;opacity:.8;margin-top:3px}
-  .badge-live{font-size:10.5px;font-weight:800;background:rgba(255,255,255,.16);padding:6px 11px;border-radius:999px;white-space:nowrap}
-  .hero-main{display:flex;align-items:center;gap:8px;margin-top:8px;position:relative;z-index:2}
+  .hero-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:10px;position:relative;z-index:2}
+  .loc{justify-self:center;text-align:center}
+  .loc small{display:block;font-size:11px;font-weight:600;opacity:.8;margin-bottom:2px}
+  .locname{display:block;font-size:18px;font-weight:800;line-height:1.15}
+  .live-pill{justify-self:start;display:inline-flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.18);border-radius:14px;padding:3px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);text-align:center;white-space:nowrap}
+  .live-pill .lp1{font-size:9px;font-weight:800;padding:2px 8px 1px;letter-spacing:.1px;opacity:.92}
+  .live-pill .lp2{font-size:11px;font-weight:800;padding:2px 10px;border-radius:11px;background:rgba(255,255,255,.9);color:#3a2e6e}
+  .hero-top .unit-toggle{justify-self:end}
+  .hero-main{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;position:relative;z-index:2}
   .hero-pict{flex:0 0 auto;filter:drop-shadow(0 8px 16px rgba(0,0,0,.28))}
-  .hero-now{margin-left:auto;text-align:right}
+  .hero-now{text-align:left}
   .now-temp{font-size:74px;font-weight:800;line-height:.9;letter-spacing:-2px;text-shadow:0 6px 22px rgba(0,0,0,.3)}
   .now-temp span{font-size:30px;vertical-align:top;opacity:.85}
   .now-cond{font-size:18px;font-weight:800;margin-top:2px}
   .now-feels{font-size:13px;font-weight:700;opacity:.9;margin-top:1px}
-  .lohi-row{display:flex;gap:8px;margin-top:14px;position:relative;z-index:2}
-  .lohi{flex:1;background:rgba(255,255,255,.13);border-radius:14px;padding:9px 12px;font-size:13px;font-weight:800;text-align:center}
-  .hero-stats{display:flex;justify-content:center;gap:22px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
-  .hs{flex:0 0 auto;text-align:center;min-width:52px}
+  .lohi-row{display:flex;justify-content:center;gap:8px;margin-top:12px;position:relative;z-index:2}
+  .lohi{flex:0 0 auto;background:rgba(255,255,255,.13);border-radius:12px;padding:5px 12px;font-size:12px;font-weight:800;text-align:center}
+  .hero-stats{display:flex;justify-content:center;gap:14px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
+  .hs{flex:0 0 auto;text-align:center;min-width:48px}
   .hs span{font-size:16px;display:block}
   .hs b{font-size:15px;font-weight:800;display:block;margin-top:2px}
   .hs i{font-size:10px;font-weight:700;opacity:.72;font-style:normal;text-transform:uppercase;letter-spacing:.4px}
-  .hero-panel{margin-top:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:4px 14px 14px;position:relative;z-index:2}
-  .hero-panel .lohi-row{margin-top:12px}
+  .hero-panel{width:62%;max-width:340px;margin:14px auto 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:4px 10px 12px;position:relative;z-index:2}
+  .hero-panel .lohi-row{margin-top:10px}
 
   .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
   .stat{background:var(--card);border-radius:18px;padding:13px 8px;text-align:center;box-shadow:var(--shadow)}
@@ -571,11 +583,9 @@ function render(D){
     <div class="hero-divider"></div>
     <div class="hero-body" onclick="openParts()">
     <div class="hero-top">
-      <div class="loc">${D.place.name}${D.place.country?', '+D.place.country:''}<small>${Math.abs(D.place.lat).toFixed(2)}°${D.place.lat>=0?'N':'S'}, ${Math.abs(D.place.lon).toFixed(2)}°${D.place.lon>=0?'E':'W'}</small></div>
-      <div class="hero-tr">
-        <div class="unit-toggle" onclick="event.stopPropagation()"><button class="${UNIT==='C'?'on':''}" onclick="setUnit('C')">°C</button><button class="${UNIT==='F'?'on':''}" onclick="setUnit('F')">°F</button></div>
-        <div class="badge-live">${D.live?'LIVE · 7-model avg':'OFFLINE'} · ${D.updated||''}</div>
-      </div>
+      <div class="live-pill"><span class="lp1">${D.live?'LIVE · 7-model avg':'OFFLINE'}</span><span class="lp2">${D.updated||'--:--'}</span></div>
+      <div class="loc"><small>${Math.abs(D.place.lat).toFixed(2)}°${D.place.lat>=0?'N':'S'}, ${Math.abs(D.place.lon).toFixed(2)}°${D.place.lon>=0?'E':'W'}</small><span class="locname">${D.place.name}${D.place.country?', '+D.place.country:''}</span></div>
+      <div class="unit-toggle" onclick="event.stopPropagation()"><button class="${UNIT==='C'?'on':''}" onclick="setUnit('C')">°C</button><button class="${UNIT==='F'?'on':''}" onclick="setUnit('F')">°F</button></div>
     </div>
     <div class="hero-main">
       <div class="hero-pict">${pico(c.key,116)}</div>
