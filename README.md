@@ -103,3 +103,7 @@ Consensus_Weather/
 - No third-party libraries: pure framework `WebView` + `Activity`, so builds are fast and rarely break.
 - The chart, all weather icons, and sun/moon calculations are hand-rolled (SVG + a trimmed SunCalc) — no external chart library or CDN — so the UI renders even offline.
 - Live data & city search require internet; the bundled Gliwice snapshot covers the no-connection case.
+
+<p align="center">
+  <img src="docs/logo.png" alt="Consensus Weather" width="560">
+</p>
