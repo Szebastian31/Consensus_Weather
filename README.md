@@ -8,6 +8,17 @@ The app is a self-contained web app. It runs two ways from the same file:
 
 You never need Android Studio, Gradle, or a Mac/PC toolchain — **GitHub builds the APK for you in the cloud.**
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/hero.jpg" width="240"><br><sub>Live 7-model hero</sub></td>
+    <td align="center"><img src="docs/screenshots/breakdown.jpg" width="240"><br><sub>Hour by hour breakdown and temperature curve</sub></td>
+    <td align="center"><img src="docs/screenshots/week.jpg" width="240"><br><sub>7-day outlook & sun/moon</sub></td>
+    <td align="center"><img src="docs/screenshots/partbypart.jpg" width="240"><br><sub>Part-by-Part Pop-Up Breakdown</sub></td>
+  </tr>
+</table>
+
 ---
 
 ## Download & install (Android)
