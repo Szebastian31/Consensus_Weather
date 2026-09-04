@@ -1,5 +1,5 @@
 # Consensus Weather
-<p align="left">
+<p align="center">
   <img src="docs/logo.png" alt="Consensus Weather" width="560">
 </p>
 
