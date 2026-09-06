@@ -245,6 +245,10 @@
   <radialGradient id="gViolet" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#E2D6FF"/><stop offset="55%" stop-color="#9C7BF0"/><stop offset="100%" stop-color="#6B4BC7"/></radialGradient>
   <radialGradient id="gSteel" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#F1F5FF"/><stop offset="55%" stop-color="#B8C2DC"/><stop offset="100%" stop-color="#7E8AA8"/></radialGradient>
   <radialGradient id="gWind" cx="36%" cy="28%" r="90%"><stop offset="0%" stop-color="#EAF7FF"/><stop offset="60%" stop-color="#BFE6FF"/><stop offset="100%" stop-color="#7FC4F0"/></radialGradient>
+  <radialGradient id="gOrange" cx="36%" cy="28%" r="88%"><stop offset="0%" stop-color="#FFD9A0"/><stop offset="55%" stop-color="#FF9F45"/><stop offset="100%" stop-color="#F06A1F"/></radialGradient>
+  <radialGradient id="gTeal" cx="36%" cy="28%" r="88%"><stop offset="0%" stop-color="#CFFFF4"/><stop offset="55%" stop-color="#43C9B0"/><stop offset="100%" stop-color="#1E8F7C"/></radialGradient>
+  <radialGradient id="gAmber" cx="36%" cy="28%" r="88%"><stop offset="0%" stop-color="#FFE9B8"/><stop offset="55%" stop-color="#FFC14D"/><stop offset="100%" stop-color="#E89A12"/></radialGradient>
+  <radialGradient id="gNavy" cx="36%" cy="28%" r="88%"><stop offset="0%" stop-color="#CFE0FF"/><stop offset="55%" stop-color="#6E8FD6"/><stop offset="100%" stop-color="#33508F"/></radialGradient>
   <filter id="softsh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="3.2" flood-color="#0b1026" flood-opacity="0.30"/></filter>
 </defs></svg>
 <div class="wrap">
@@ -392,7 +396,7 @@ const I18N={
     partsTitle:"Part-by-part breakdown",
     seg_morning:"morning",seg_afternoon:"afternoon",seg_evening:"evening",seg_night:"night",
     seg_thisMorning:"This morning",seg_thisAfternoon:"This afternoon",seg_thisEvening:"This evening",seg_overnight:"Overnight",
-    n_around:"Around",n_downto:"down to",n_rainGood:"Good chance of rain",n_rainSlight:"Slight shower risk",n_dry:"Staying dry.",n_breezy:"Breezy.",n_light:"Light winds.",n_mixed:"Mixed",n_nodata:"Detailed data unavailable for this block.",feels:"feels",
+    n_around:"Around",n_downto:"down to",n_rainGood:"Good chance of rain",n_rainSlight:"Slight shower risk",n_snowGood:"Good chance of snow",n_snowSlight:"Slight snow risk",n_dry:"Staying dry.",n_breezy:"Breezy.",n_light:"Light winds.",n_mixed:"Mixed",n_nodata:"Detailed data unavailable for this block.",feels:"feels",
     tip_pollen_nodata:"Pollen: no data",tip_pollen_low:"Low pollen count",tip_pollen_mod:"Moderate pollen",tip_pollen_high:"High pollen — take care",
     tip_uv_vhigh:"Very high UV — cover up",tip_uv_high:"High UV — sunscreen",tip_uv_mod:"Moderate UV",tip_uv_low:"Low UV",
     tip_car_no:"Not ideal for car washing",tip_car_yes:"Good day to wash the car",
@@ -428,7 +432,7 @@ const I18N={
     partsTitle:"Szczegóły pór dnia",
     seg_morning:"rano",seg_afternoon:"popołudnie",seg_evening:"wieczór",seg_night:"noc",
     seg_thisMorning:"Dziś rano",seg_thisAfternoon:"Dziś po południu",seg_thisEvening:"Dziś wieczorem",seg_overnight:"W nocy",
-    n_around:"Około",n_downto:"do",n_rainGood:"Duża szansa deszczu",n_rainSlight:"Niewielkie ryzyko przelotnych opadów",n_dry:"Bez opadów.",n_breezy:"Wietrznie.",n_light:"Słaby wiatr.",n_mixed:"Zmiennie",n_nodata:"Brak szczegółowych danych dla tego okresu.",feels:"odczuwalna",
+    n_around:"Około",n_downto:"do",n_rainGood:"Duża szansa deszczu",n_rainSlight:"Niewielkie ryzyko przelotnych opadów",n_snowGood:"Duża szansa śniegu",n_snowSlight:"Niewielkie ryzyko śniegu",n_dry:"Bez opadów.",n_breezy:"Wietrznie.",n_light:"Słaby wiatr.",n_mixed:"Zmiennie",n_nodata:"Brak szczegółowych danych dla tego okresu.",feels:"odczuwalna",
     tip_pollen_nodata:"Pyłki: brak danych",tip_pollen_low:"Niski poziom pyłków",tip_pollen_mod:"Umiarkowany poziom pyłków",tip_pollen_high:"Wysoki poziom pyłków — uważaj",
     tip_uv_vhigh:"Bardzo wysokie UV — okryj się",tip_uv_high:"Wysokie UV — krem z filtrem",tip_uv_mod:"Umiarkowane UV",tip_uv_low:"Niskie UV",
     tip_car_no:"Kiepski dzień na mycie auta",tip_car_yes:"Dobry dzień na mycie auta",
@@ -464,7 +468,7 @@ const I18N={
     partsTitle:"Tagesabschnitte im Detail",
     seg_morning:"Morgen",seg_afternoon:"Nachmittag",seg_evening:"Abend",seg_night:"Nacht",
     seg_thisMorning:"Heute Morgen",seg_thisAfternoon:"Heute Nachmittag",seg_thisEvening:"Heute Abend",seg_overnight:"Über Nacht",
-    n_around:"Um",n_downto:"bis",n_rainGood:"Gute Regenchance",n_rainSlight:"Geringes Schauerrisiko",n_dry:"Bleibt trocken.",n_breezy:"Windig.",n_light:"Leichter Wind.",n_mixed:"Wechselhaft",n_nodata:"Keine Detaildaten für diesen Abschnitt.",feels:"gefühlt",
+    n_around:"Um",n_downto:"bis",n_rainGood:"Gute Regenchance",n_rainSlight:"Geringes Schauerrisiko",n_snowGood:"Gute Schneechance",n_snowSlight:"Geringes Schneerisiko",n_dry:"Bleibt trocken.",n_breezy:"Windig.",n_light:"Leichter Wind.",n_mixed:"Wechselhaft",n_nodata:"Keine Detaildaten für diesen Abschnitt.",feels:"gefühlt",
     tip_pollen_nodata:"Pollen: keine Daten",tip_pollen_low:"Niedrige Pollenbelastung",tip_pollen_mod:"Mäßige Pollenbelastung",tip_pollen_high:"Hohe Pollen — Vorsicht",
     tip_uv_vhigh:"Sehr hohes UV — bedecken",tip_uv_high:"Hohes UV — Sonnencreme",tip_uv_mod:"Mäßiges UV",tip_uv_low:"Niedriges UV",
     tip_car_no:"Kein guter Tag zum Autowaschen",tip_car_yes:"Guter Tag zum Autowaschen",
@@ -500,7 +504,7 @@ const I18N={
     partsTitle:"Detalle por franjas",
     seg_morning:"mañana",seg_afternoon:"tarde",seg_evening:"noche",seg_night:"madrugada",
     seg_thisMorning:"Esta mañana",seg_thisAfternoon:"Esta tarde",seg_thisEvening:"Esta noche",seg_overnight:"De madrugada",
-    n_around:"Alrededor de",n_downto:"hasta",n_rainGood:"Buena probabilidad de lluvia",n_rainSlight:"Ligero riesgo de chubascos",n_dry:"Seguirá seco.",n_breezy:"Ventoso.",n_light:"Viento flojo.",n_mixed:"Variable",n_nodata:"Sin datos detallados para este periodo.",feels:"sensación",
+    n_around:"Alrededor de",n_downto:"hasta",n_rainGood:"Buena probabilidad de lluvia",n_rainSlight:"Ligero riesgo de chubascos",n_snowGood:"Buena probabilidad de nieve",n_snowSlight:"Ligero riesgo de nieve",n_dry:"Seguirá seco.",n_breezy:"Ventoso.",n_light:"Viento flojo.",n_mixed:"Variable",n_nodata:"Sin datos detallados para este periodo.",feels:"sensación",
     tip_pollen_nodata:"Polen: sin datos",tip_pollen_low:"Nivel de polen bajo",tip_pollen_mod:"Polen moderado",tip_pollen_high:"Polen alto — cuidado",
     tip_uv_vhigh:"UV muy alto — cúbrete",tip_uv_high:"UV alto — protector solar",tip_uv_mod:"UV moderado",tip_uv_low:"UV bajo",
     tip_car_no:"Mal día para lavar el coche",tip_car_yes:"Buen día para lavar el coche",
@@ -536,7 +540,7 @@ const I18N={
     partsTitle:"Détail par moment",
     seg_morning:"matin",seg_afternoon:"après-midi",seg_evening:"soir",seg_night:"nuit",
     seg_thisMorning:"Ce matin",seg_thisAfternoon:"Cet après-midi",seg_thisEvening:"Ce soir",seg_overnight:"Cette nuit",
-    n_around:"Environ",n_downto:"jusqu'à",n_rainGood:"Bonne probabilité de pluie",n_rainSlight:"Léger risque d'averses",n_dry:"Reste sec.",n_breezy:"Venteux.",n_light:"Vent faible.",n_mixed:"Variable",n_nodata:"Données détaillées indisponibles pour cette période.",feels:"ressenti",
+    n_around:"Environ",n_downto:"jusqu'à",n_rainGood:"Bonne probabilité de pluie",n_rainSlight:"Léger risque d'averses",n_snowGood:"Bonne probabilité de neige",n_snowSlight:"Léger risque de neige",n_dry:"Reste sec.",n_breezy:"Venteux.",n_light:"Vent faible.",n_mixed:"Variable",n_nodata:"Données détaillées indisponibles pour cette période.",feels:"ressenti",
     tip_pollen_nodata:"Pollens : aucune donnée",tip_pollen_low:"Faible taux de pollens",tip_pollen_mod:"Pollens modérés",tip_pollen_high:"Pollens élevés — attention",
     tip_uv_vhigh:"UV très élevé — couvrez-vous",tip_uv_high:"UV élevé — crème solaire",tip_uv_mod:"UV modéré",tip_uv_low:"UV faible",
     tip_car_no:"Mauvais jour pour laver la voiture",tip_car_yes:"Bon jour pour laver la voiture",
@@ -572,7 +576,7 @@ const I18N={
     partsTitle:"Dettaglio per fasce",
     seg_morning:"mattina",seg_afternoon:"pomeriggio",seg_evening:"sera",seg_night:"notte",
     seg_thisMorning:"Stamattina",seg_thisAfternoon:"Questo pomeriggio",seg_thisEvening:"Stasera",seg_overnight:"Durante la notte",
-    n_around:"Intorno a",n_downto:"fino a",n_rainGood:"Buona probabilità di pioggia",n_rainSlight:"Lieve rischio di rovesci",n_dry:"Resta asciutto.",n_breezy:"Ventoso.",n_light:"Vento debole.",n_mixed:"Variabile",n_nodata:"Dati dettagliati non disponibili per questa fascia.",feels:"percepita",
+    n_around:"Intorno a",n_downto:"fino a",n_rainGood:"Buona probabilità di pioggia",n_rainSlight:"Lieve rischio di rovesci",n_snowGood:"Buona probabilità di neve",n_snowSlight:"Lieve rischio di neve",n_dry:"Resta asciutto.",n_breezy:"Ventoso.",n_light:"Vento debole.",n_mixed:"Variabile",n_nodata:"Dati dettagliati non disponibili per questa fascia.",feels:"percepita",
     tip_pollen_nodata:"Pollini: nessun dato",tip_pollen_low:"Basso livello di pollini",tip_pollen_mod:"Pollini moderati",tip_pollen_high:"Pollini alti — attenzione",
     tip_uv_vhigh:"UV molto alto — copriti",tip_uv_high:"UV alto — crema solare",tip_uv_mod:"UV moderato",tip_uv_low:"UV basso",
     tip_car_no:"Giornata poco adatta per lavare l'auto",tip_car_yes:"Buona giornata per lavare l'auto",
@@ -608,7 +612,7 @@ const I18N={
     partsTitle:"Details per dagdeel",
     seg_morning:"ochtend",seg_afternoon:"middag",seg_evening:"avond",seg_night:"nacht",
     seg_thisMorning:"Vanochtend",seg_thisAfternoon:"Vanmiddag",seg_thisEvening:"Vanavond",seg_overnight:"Vannacht",
-    n_around:"Rond",n_downto:"tot",n_rainGood:"Grote kans op regen",n_rainSlight:"Kleine kans op buien",n_dry:"Blijft droog.",n_breezy:"Winderig.",n_light:"Zwakke wind.",n_mixed:"Wisselend",n_nodata:"Geen gedetailleerde gegevens voor dit dagdeel.",feels:"gevoel",
+    n_around:"Rond",n_downto:"tot",n_rainGood:"Grote kans op regen",n_rainSlight:"Kleine kans op buien",n_snowGood:"Grote kans op sneeuw",n_snowSlight:"Kleine kans op sneeuw",n_dry:"Blijft droog.",n_breezy:"Winderig.",n_light:"Zwakke wind.",n_mixed:"Wisselend",n_nodata:"Geen gedetailleerde gegevens voor dit dagdeel.",feels:"gevoel",
     tip_pollen_nodata:"Pollen: geen gegevens",tip_pollen_low:"Lage pollenconcentratie",tip_pollen_mod:"Matige pollen",tip_pollen_high:"Hoge pollen — let op",
     tip_uv_vhigh:"Zeer hoge UV — bedek je",tip_uv_high:"Hoge UV — zonnebrand",tip_uv_mod:"Matige UV",tip_uv_low:"Lage UV",
     tip_car_no:"Geen goede dag om de auto te wassen",tip_car_yes:"Goede dag om de auto te wassen",
@@ -644,7 +648,7 @@ const I18N={
     partsTitle:"Detalhe por período",
     seg_morning:"manhã",seg_afternoon:"tarde",seg_evening:"noite",seg_night:"madrugada",
     seg_thisMorning:"Esta manhã",seg_thisAfternoon:"Esta tarde",seg_thisEvening:"Esta noite",seg_overnight:"Durante a madrugada",
-    n_around:"Cerca de",n_downto:"até",n_rainGood:"Boa probabilidade de chuva",n_rainSlight:"Ligeiro risco de aguaceiros",n_dry:"Continua seco.",n_breezy:"Ventoso.",n_light:"Vento fraco.",n_mixed:"Variável",n_nodata:"Dados detalhados indisponíveis para este período.",feels:"sensação",
+    n_around:"Cerca de",n_downto:"até",n_rainGood:"Boa probabilidade de chuva",n_rainSlight:"Ligeiro risco de aguaceiros",n_snowGood:"Boa probabilidade de neve",n_snowSlight:"Ligeiro risco de neve",n_dry:"Continua seco.",n_breezy:"Ventoso.",n_light:"Vento fraco.",n_mixed:"Variável",n_nodata:"Dados detalhados indisponíveis para este período.",feels:"sensação",
     tip_pollen_nodata:"Pólen: sem dados",tip_pollen_low:"Nível de pólen baixo",tip_pollen_mod:"Pólen moderado",tip_pollen_high:"Pólen alto — cuidado",
     tip_uv_vhigh:"UV muito alto — cubra-se",tip_uv_high:"UV alto — protetor solar",tip_uv_mod:"UV moderado",tip_uv_low:"UV baixo",
     tip_car_no:"Mau dia para lavar o carro",tip_car_yes:"Bom dia para lavar o carro",
@@ -680,7 +684,7 @@ const I18N={
     partsTitle:"Деталі за частинами дня",
     seg_morning:"ранок",seg_afternoon:"день",seg_evening:"вечір",seg_night:"ніч",
     seg_thisMorning:"Сьогодні вранці",seg_thisAfternoon:"Сьогодні вдень",seg_thisEvening:"Сьогодні ввечері",seg_overnight:"Уночі",
-    n_around:"Близько",n_downto:"до",n_rainGood:"Висока ймовірність дощу",n_rainSlight:"Незначний ризик злив",n_dry:"Залишиться сухо.",n_breezy:"Вітряно.",n_light:"Слабкий вітер.",n_mixed:"Мінливо",n_nodata:"Детальні дані для цього періоду відсутні.",feels:"відчувається",
+    n_around:"Близько",n_downto:"до",n_rainGood:"Висока ймовірність дощу",n_rainSlight:"Незначний ризик злив",n_snowGood:"Висока ймовірність снігу",n_snowSlight:"Незначний ризик снігу",n_dry:"Залишиться сухо.",n_breezy:"Вітряно.",n_light:"Слабкий вітер.",n_mixed:"Мінливо",n_nodata:"Детальні дані для цього періоду відсутні.",feels:"відчувається",
     tip_pollen_nodata:"Пилок: немає даних",tip_pollen_low:"Низький рівень пилку",tip_pollen_mod:"Помірний пилок",tip_pollen_high:"Високий пилок — обережно",
     tip_uv_vhigh:"Дуже високий УФ — прикрийтеся",tip_uv_high:"Високий УФ — крем від сонця",tip_uv_mod:"Помірний УФ",tip_uv_low:"Низький УФ",
     tip_car_no:"Не найкращий день для миття авто",tip_car_yes:"Гарний день для миття авто",
@@ -716,7 +720,7 @@ const I18N={
     partsTitle:"Подробно по частям дня",
     seg_morning:"утро",seg_afternoon:"день",seg_evening:"вечер",seg_night:"ночь",
     seg_thisMorning:"Сегодня утром",seg_thisAfternoon:"Сегодня днём",seg_thisEvening:"Сегодня вечером",seg_overnight:"Ночью",
-    n_around:"Около",n_downto:"до",n_rainGood:"Высокая вероятность дождя",n_rainSlight:"Небольшой риск ливней",n_dry:"Останется сухо.",n_breezy:"Ветрено.",n_light:"Слабый ветер.",n_mixed:"Переменно",n_nodata:"Подробных данных для этого периода нет.",feels:"ощущается",
+    n_around:"Около",n_downto:"до",n_rainGood:"Высокая вероятность дождя",n_rainSlight:"Небольшой риск ливней",n_snowGood:"Высокая вероятность снега",n_snowSlight:"Небольшой риск снега",n_dry:"Останется сухо.",n_breezy:"Ветрено.",n_light:"Слабый ветер.",n_mixed:"Переменно",n_nodata:"Подробных данных для этого периода нет.",feels:"ощущается",
     tip_pollen_nodata:"Пыльца: нет данных",tip_pollen_low:"Низкий уровень пыльцы",tip_pollen_mod:"Умеренная пыльца",tip_pollen_high:"Высокая пыльца — осторожно",
     tip_uv_vhigh:"Очень высокий УФ — прикройтесь",tip_uv_high:"Высокий УФ — крем от солнца",tip_uv_mod:"Умеренный УФ",tip_uv_low:"Низкий УФ",
     tip_car_no:"Не лучший день для мойки авто",tip_car_yes:"Хороший день для мойки авто",
@@ -752,7 +756,7 @@ const I18N={
     partsTitle:"分时段详情",
     seg_morning:"上午",seg_afternoon:"下午",seg_evening:"傍晚",seg_night:"夜间",
     seg_thisMorning:"今天上午",seg_thisAfternoon:"今天下午",seg_thisEvening:"今晚",seg_overnight:"夜间",
-    n_around:"约",n_downto:"低至",n_rainGood:"降雨可能性较大",n_rainSlight:"有轻微阵雨风险",n_dry:"保持干燥。",n_breezy:"有风。",n_light:"微风。",n_mixed:"多变",n_nodata:"该时段暂无详细数据。",feels:"体感",
+    n_around:"约",n_downto:"低至",n_rainGood:"降雨可能性较大",n_rainSlight:"有轻微阵雨风险",n_snowGood:"降雪可能性较大",n_snowSlight:"有轻微降雪风险",n_dry:"保持干燥。",n_breezy:"有风。",n_light:"微风。",n_mixed:"多变",n_nodata:"该时段暂无详细数据。",feels:"体感",
     tip_pollen_nodata:"花粉：无数据",tip_pollen_low:"花粉含量低",tip_pollen_mod:"花粉中等",tip_pollen_high:"花粉高 — 请注意",
     tip_uv_vhigh:"UV很高 — 请遮挡",tip_uv_high:"UV高 — 涂防晒",tip_uv_mod:"UV中等",tip_uv_low:"UV低",
     tip_car_no:"不适合洗车",tip_car_yes:"适合洗车",
@@ -788,7 +792,7 @@ const I18N={
     partsTitle:"時間帯ごとの詳細",
     seg_morning:"朝",seg_afternoon:"昼",seg_evening:"夕方",seg_night:"夜",
     seg_thisMorning:"今朝",seg_thisAfternoon:"今日の午後",seg_thisEvening:"今晩",seg_overnight:"夜通し",
-    n_around:"約",n_downto:"最低",n_rainGood:"雨の可能性が高い",n_rainSlight:"にわか雨のわずかな可能性",n_dry:"雨は降らない見込み。",n_breezy:"やや風が強い。",n_light:"風は弱い。",n_mixed:"変わりやすい",n_nodata:"この時間帯の詳細データはありません。",feels:"体感",
+    n_around:"約",n_downto:"最低",n_rainGood:"雨の可能性が高い",n_rainSlight:"にわか雨のわずかな可能性",n_snowGood:"雪の可能性が高い",n_snowSlight:"わずかな降雪の可能性",n_dry:"雨は降らない見込み。",n_breezy:"やや風が強い。",n_light:"風は弱い。",n_mixed:"変わりやすい",n_nodata:"この時間帯の詳細データはありません。",feels:"体感",
     tip_pollen_nodata:"花粉：データなし",tip_pollen_low:"花粉は少なめ",tip_pollen_mod:"花粉は中程度",tip_pollen_high:"花粉が多い — 注意",
     tip_uv_vhigh:"UV非常に強い — 肌を覆って",tip_uv_high:"UV強い — 日焼け止めを",tip_uv_mod:"UV中程度",tip_uv_low:"UV弱い",
     tip_car_no:"洗車には不向き",tip_car_yes:"洗車に良い日",
@@ -824,7 +828,7 @@ const I18N={
     partsTitle:"भाग-दर-भाग विवरण",
     seg_morning:"सुबह",seg_afternoon:"दोपहर",seg_evening:"शाम",seg_night:"रात",
     seg_thisMorning:"आज सुबह",seg_thisAfternoon:"आज दोपहर",seg_thisEvening:"आज शाम",seg_overnight:"रातभर",
-    n_around:"लगभग",n_downto:"तक",n_rainGood:"वर्षा की अच्छी संभावना",n_rainSlight:"हल्की बौछार का जोखिम",n_dry:"सूखा रहेगा।",n_breezy:"हवादार।",n_light:"हल्की हवा।",n_mixed:"मिलाजुला",n_nodata:"इस अवधि के लिए विस्तृत डेटा उपलब्ध नहीं।",feels:"महसूस",
+    n_around:"लगभग",n_downto:"तक",n_rainGood:"वर्षा की अच्छी संभावना",n_rainSlight:"हल्की बौछार का जोखिम",n_snowGood:"बर्फबारी की अच्छी संभावना",n_snowSlight:"हल्की बर्फ का जोखिम",n_dry:"सूखा रहेगा।",n_breezy:"हवादार।",n_light:"हल्की हवा।",n_mixed:"मिलाजुला",n_nodata:"इस अवधि के लिए विस्तृत डेटा उपलब्ध नहीं।",feels:"महसूस",
     tip_pollen_nodata:"पराग: डेटा नहीं",tip_pollen_low:"पराग कम",tip_pollen_mod:"पराग मध्यम",tip_pollen_high:"पराग अधिक — ध्यान रखें",
     tip_uv_vhigh:"बहुत अधिक UV — ढँकें",tip_uv_high:"अधिक UV — सनस्क्रीन",tip_uv_mod:"मध्यम UV",tip_uv_low:"कम UV",
     tip_car_no:"गाड़ी धोने के लिए अच्छा दिन नहीं",tip_car_yes:"गाड़ी धोने के लिए अच्छा दिन",
@@ -860,7 +864,7 @@ const I18N={
     partsTitle:"تفاصيل فترات اليوم",
     seg_morning:"صباحاً",seg_afternoon:"ظهراً",seg_evening:"مساءً",seg_night:"ليلاً",
     seg_thisMorning:"هذا الصباح",seg_thisAfternoon:"بعد ظهر اليوم",seg_thisEvening:"هذا المساء",seg_overnight:"أثناء الليل",
-    n_around:"حوالي",n_downto:"حتى",n_rainGood:"احتمال مطر جيد",n_rainSlight:"خطر زخات خفيف",n_dry:"يبقى جافاً.",n_breezy:"نسيم قوي.",n_light:"رياح خفيفة.",n_mixed:"متقلب",n_nodata:"لا تتوفر بيانات مفصلة لهذه الفترة.",feels:"محسوس",
+    n_around:"حوالي",n_downto:"حتى",n_rainGood:"احتمال مطر جيد",n_rainSlight:"خطر زخات خفيف",n_snowGood:"احتمال ثلوج جيد",n_snowSlight:"خطر ثلوج خفيف",n_dry:"يبقى جافاً.",n_breezy:"نسيم قوي.",n_light:"رياح خفيفة.",n_mixed:"متقلب",n_nodata:"لا تتوفر بيانات مفصلة لهذه الفترة.",feels:"محسوس",
     tip_pollen_nodata:"حبوب اللقاح: لا بيانات",tip_pollen_low:"مستوى حبوب لقاح منخفض",tip_pollen_mod:"حبوب لقاح متوسطة",tip_pollen_high:"حبوب لقاح مرتفعة — انتبه",
     tip_uv_vhigh:"أشعة مرتفعة جداً — تغطَّ",tip_uv_high:"أشعة مرتفعة — واقي شمس",tip_uv_mod:"أشعة متوسطة",tip_uv_low:"أشعة منخفضة",
     tip_car_no:"يوم غير مناسب لغسل السيارة",tip_car_yes:"يوم جيد لغسل السيارة",
@@ -1082,7 +1086,7 @@ function buildTips(D){
     {ic:'run',tx:((pmax<30&&tp!=null&&tp>=8&&tp<=26&&aqiGood)?t('tip_run_yes'):t('tip_run_no'))},
     {ic:'park',tx:((pmax<40&&tp!=null&&tp>=12&&tp<=28)?t('tip_out_yes'):t('tip_out_no'))},
     {ic:'bug',tx:((tp!=null&&tp>=18&&hum>=60)?t('tip_mosq_yes'):t('tip_mosq_no'))},
-    {ic:'shirt',tx:(tp==null?t('tip_cloth_layers'):tp<8?t('tip_cloth_warm'):tp>26?t('tip_cloth_light'):t('tip_cloth_comfort'))}
+    (function(){var ci,ck;if(tp==null){ci='tshirt';ck='layers';}else if(tp>=27){ci='undershirt';ck='light';}else if(tp>=18){ci='tshirt';ck='comfort';}else if(tp>=10){ci='hoodie';ck='layers';}else if(tp>=2){ci='jacket';ck='warm';}else{ci='glove';ck='warm';}return {ic:ci,tx:t('tip_cloth_'+ck)};})()
   ];
   if(aqi!=null) tips.push({ic:'mask',tx:airTx});
   return tips;
@@ -1181,7 +1185,7 @@ function render(D){
   <div class="days">${(()=>{const all=D.daily;const vals=all.flatMap(d=>[d.lo,d.hi]).filter(v=>v!=null);const gmin=vals.length?Math.min(...vals):0,gmax=vals.length?Math.max(...vals):1;
     return all.map((d,i)=>{const ok=d.lo!=null&&d.hi!=null;const l=ok?((d.lo-gmin)/(gmax-gmin||1))*100:0,w=ok?((d.hi-d.lo)/(gmax-gmin||1))*100:0;
     return `<div class="drow"><div class="dname">${i===0?t('today'):WD[d.date.getDay()]}<small>${d.date.getDate()}/${d.date.getMonth()+1}</small></div>
-      ${pico(d.key,34)}<div class="drain">${d.precip>=10?'💧'+d.precip+'%':''}</div>
+      ${pico(d.key,34)}<div class="drain">${d.precip>=10?((d.key&&d.key.indexOf('snow')>=0?'❄':'💧')+d.precip+'%'):''}</div>
       <div class="dlo">${d.lo==null?'–':tC(d.lo)+'°'}</div><div class="dtrack">${ok?`<div class="dfill" style="left:${l}%;width:${Math.max(w,6)}%"></div>`:''}</div><div class="dhi">${d.hi==null?'–':tC(d.hi)+'°'}</div></div>`;}).join('');})()}</div>
 
   ${sunMoonCard(D)}
@@ -1225,7 +1229,8 @@ function narr(key,hi,lo,precip,wind){
   const cond=LB(key)||t('n_mixed');
   if(hi==null) return cond+'. '+t('n_nodata');
   let s=cond+'. '+t('n_around')+' '+tC(hi)+'°'+(lo!=null&&hi-lo>=3?', '+t('n_downto')+' '+tC(lo)+'°':'')+'. ';
-  s+=precip>=40?t('n_rainGood')+' ('+precip+'%). ':precip>=15?t('n_rainSlight')+' ('+precip+'%). ':t('n_dry')+' ';
+  var snowy=(key&&key.indexOf('snow')>=0);
+  s+=precip>=40?t(snowy?'n_snowGood':'n_rainGood')+' ('+precip+'%). ':precip>=15?t(snowy?'n_snowSlight':'n_rainSlight')+' ('+precip+'%). ':t('n_dry')+' ';
   s+=wind>=25?t('n_breezy'):t('n_light');return s;
 }
 
@@ -1395,10 +1400,15 @@ function IC3(name,size){size=size||30;var S={
   wind:'<g filter="url(#softsh)" fill="none" stroke="url(#gWind)" stroke-width="4.4" stroke-linecap="round"><path d="M5 15h16a4.5 4.5 0 1 0-4.5-4.5"/><path d="M5 24h11a4 4 0 1 1-4 4"/></g>',
   flower:'<g filter="url(#softsh)"><g fill="url(#gPink)"><circle cx="20" cy="10" r="4.4"/><circle cx="10" cy="17" r="4.4"/><circle cx="30" cy="17" r="4.4"/><circle cx="14" cy="29" r="4.4"/><circle cx="26" cy="29" r="4.4"/></g><circle cx="20" cy="20" r="4.6" fill="url(#gSun)"/></g>',
   car:'<g filter="url(#softsh)"><path d="M11 20 l3.5-7 h11 l3.5 7 Z" fill="url(#gRed)"/><rect x="6" y="19" width="28" height="9" rx="3.5" fill="url(#gRed)"/><circle cx="13" cy="29" r="3.6" fill="#2b2b3a"/><circle cx="27" cy="29" r="3.6" fill="#2b2b3a"/><rect x="15.5" y="14.5" width="9" height="4.5" rx="1.4" fill="#dff0ff" opacity=".85"/><rect x="8" y="20.5" width="9" height="1.6" rx=".8" fill="#fff" opacity=".5"/></g>',
-  run:'<g filter="url(#softsh)"><circle cx="25" cy="9" r="4" fill="url(#gViolet)"/><g fill="none" stroke="url(#gViolet)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M25 14 l-5 7 l6 5"/><path d="M20 21 l-8 1"/><path d="M26 26 l-3 8"/><path d="M26 20 l7 3"/></g></g>',
+  run:'<g filter="url(#softsh)" fill="none" stroke="url(#gOrange)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="15" r="3.2" fill="url(#gOrange)" stroke="none"/><path d="M20 18 L20 26"/><path d="M20 26 L15 33M20 26 L25 33"/><path d="M17 20 L15 10M23 20 L25 10"/></g><g filter="url(#softsh)"><rect x="6" y="8.5" width="28" height="3" rx="1.5" fill="url(#gOrange)"/><rect x="5" y="5.5" width="4.5" height="9" rx="1.6" fill="url(#gOrange)"/><rect x="30.5" y="5.5" width="4.5" height="9" rx="1.6" fill="url(#gOrange)"/></g>',
   park:'<g filter="url(#softsh)"><rect x="18" y="21" width="4" height="13" rx="1.5" fill="#8a5a3c"/><circle cx="20" cy="15" r="10" fill="url(#gGreen)"/><ellipse cx="16" cy="11" rx="4" ry="2.4" fill="#fff" opacity=".4"/></g>',
-  bug:'<g filter="url(#softsh)"><ellipse cx="20" cy="23" rx="4.4" ry="7.5" fill="url(#gSteel)"/><circle cx="20" cy="12.5" r="3.6" fill="url(#gSteel)"/><ellipse cx="11" cy="17" rx="6.2" ry="3.2" fill="#dff0ff" opacity=".8"/><ellipse cx="29" cy="17" rx="6.2" ry="3.2" fill="#dff0ff" opacity=".8"/><path d="M20 12 l-3-5M20 12 l3-5" stroke="url(#gSteel)" stroke-width="2" stroke-linecap="round" fill="none"/></g>',
-  shirt:'<g filter="url(#softsh)"><path d="M15 7 L9 11 L12 18 L15.5 16 V33 H24.5 V16 L28 18 L31 11 L25 7 A5.2 5.2 0 0 1 15 7 Z" fill="url(#gViolet)"/><path d="M16 10 a4 4 0 0 0 8 0" fill="none" stroke="#fff" stroke-width="1.4" opacity=".5"/></g>',
+  bug:'<g filter="url(#softsh)"><g stroke="#6b7590" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".9"><path d="M17 22 l-9 8"/><path d="M17 24 l-8 10"/><path d="M23 22 l9 8"/><path d="M23 24 l8 10"/><path d="M18 20 l-11 2"/><path d="M22 20 l11 2"/></g><ellipse cx="13" cy="14" rx="7" ry="3" transform="rotate(-18 13 14)" fill="#dff0ff" opacity=".7"/><ellipse cx="27" cy="14" rx="7" ry="3" transform="rotate(18 27 14)" fill="#dff0ff" opacity=".7"/><path d="M20 17 C22 22 22 30 20 35 C18 30 18 22 20 17 Z" fill="url(#gSteel)"/><circle cx="20" cy="16" r="3.2" fill="url(#gSteel)"/><circle cx="20" cy="10.5" r="2.6" fill="url(#gSteel)"/><path d="M20 9 L20 3" stroke="#6b7590" stroke-width="1.6" stroke-linecap="round"/><path d="M18.6 9 L16 4M21.4 9 L24 4" stroke="#6b7590" stroke-width="1.2" stroke-linecap="round"/></g>',
+  undershirt:'<g filter="url(#softsh)"><rect x="13" y="11" width="14" height="22" rx="3" fill="url(#gAmber)"/><path d="M15 12 L16 4 h2 l1 7 Z" fill="url(#gAmber)"/><path d="M25 12 L24 4 h-2 l-1 7 Z" fill="url(#gAmber)"/><path d="M16 12 a4 3 0 0 0 8 0" fill="none" stroke="#fff" stroke-width="1.3" opacity=".5"/></g>',
+  tshirt:'<g filter="url(#softsh)"><path d="M15 7 L9 11 L12 18 L15.5 16 V33 H24.5 V16 L28 18 L31 11 L25 7 A5.2 5.2 0 0 1 15 7 Z" fill="url(#gTeal)"/><path d="M16 10 a4 4 0 0 0 8 0" fill="none" stroke="#fff" stroke-width="1.4" opacity=".5"/></g>',
+  hoodie:'<g filter="url(#softsh)"><path d="M14 8 L8 12 L11 19 L14.5 17 V33 H25.5 V17 L29 19 L32 12 L26 8 Z" fill="url(#gDrop)"/><path d="M14 8 C15 12 18 14 20 14 C22 14 25 12 26 8 C24 6 22 5 20 5 C18 5 16 6 14 8 Z" fill="url(#gDrop)"/><path d="M18 14 L18.5 21M22 14 L21.5 21" stroke="#eaf4ff" stroke-width="1.4" stroke-linecap="round" opacity=".7"/><path d="M15 24 h10" fill="none" stroke="#fff" stroke-width="1.2" opacity=".35"/></g>',
+  jacket:'<g filter="url(#softsh)"><path d="M14 9 L9 13 L11 20 L13.5 18.5 L12 34 H28 L26.5 18.5 L29 20 L31 13 L26 9 Z" fill="url(#gNavy)"/><line x1="20" y1="11" x2="20" y2="34" stroke="#dfe8ff" stroke-width="1.4" opacity=".55"/><circle cx="20" cy="16" r="1" fill="#eef2fc"/><circle cx="20" cy="21" r="1" fill="#eef2fc"/><circle cx="20" cy="26" r="1" fill="#eef2fc"/><circle cx="10.5" cy="19.5" r="1.9" fill="#efe6d2"/><circle cx="29.5" cy="19.5" r="1.9" fill="#efe6d2"/><g fill="#efe6d2"><circle cx="15" cy="9.5" r="2.3"/><circle cx="18" cy="8.4" r="2.6"/><circle cx="22" cy="8.4" r="2.6"/><circle cx="25" cy="9.5" r="2.3"/></g></g>',
+  glove:'<g filter="url(#softsh)"><path d="M11 20 a3.5 3.5 0 0 0 -3.5 3.5 a3.5 3.5 0 0 0 3.5 3.5" fill="none" stroke="url(#gWind)" stroke-width="4" stroke-linecap="round"/><path d="M11 17 h13 a4 4 0 0 1 4 4 v4 a8 8 0 0 1 -8 8 h-5 a4 4 0 0 1 -4-4 Z" fill="url(#gWind)"/><g fill="url(#gWind)"><rect x="11" y="12" width="4" height="8" rx="2"/><rect x="16" y="10" width="4" height="10" rx="2"/><rect x="21" y="11" width="4" height="9" rx="2"/><rect x="25" y="14" width="4" height="7" rx="2"/></g><rect x="14" y="30" width="15" height="4" rx="2" fill="#eaf4ff" opacity=".85"/></g>',
+  shirt:'<g filter="url(#softsh)"><path d="M15 7 L9 11 L12 18 L15.5 16 V33 H24.5 V16 L28 18 L31 11 L25 7 A5.2 5.2 0 0 1 15 7 Z" fill="url(#gTeal)"/><path d="M16 10 a4 4 0 0 0 8 0" fill="none" stroke="#fff" stroke-width="1.4" opacity=".5"/></g>',
   mask:'<g filter="url(#softsh)"><path d="M9 15 h22 a3 3 0 0 1 3 3 v3 c0 5-5.5 8.5-14 8.5 S6 26 6 21 v-3 a3 3 0 0 1 3-3 Z" fill="url(#gSteel)"/><path d="M9 17 H4M31 17 h5" stroke="url(#gSteel)" stroke-width="2.6" stroke-linecap="round"/><g stroke="#fff" stroke-width="1.4" opacity=".5"><line x1="11" y1="21" x2="29" y2="21"/><line x1="11" y1="25" x2="29" y2="25"/></g></g>'
 };S.uv=S.sun;
 return '<svg class="ic3" style="width:'+size+'px;height:'+size+'px" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">'+(S[name]||'')+'</svg>';}
