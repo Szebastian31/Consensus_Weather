@@ -9,12 +9,13 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
+import android.os.Build;
+import android.os. Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebSettings;
+import android.webkit. WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
     private SwipeRefreshLayout swipe;
     private boolean firstResume = true;
     private static final int REQ_LOC = 42;
+    private static final int REQ_NOTIF = 43;
 
     @SuppressLint({"SetJavaScriptEnabled","JavascriptInterface"})
     @Override
@@ -50,7 +52,7 @@ public class MainActivity extends Activity {
         swipe.setColorSchemeColors(Color.parseColor("#A78BFF"), Color.parseColor("#FF9E5A"));
         swipe.setProgressBackgroundColorSchemeColor(Color.parseColor("#241F3D"));
         swipe.addView(web, new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams. MATCH_PARENT));
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         swipe.setOnChildScrollUpCallback((parent, child) -> web.getScrollY() > 0);
         swipe.setOnRefreshListener(() -> {
             web.evaluateJavascript("window.refreshWeather && window.refreshWeather();", null);
@@ -70,6 +72,14 @@ public class MainActivity extends Activity {
         });
 
         setContentView(swipe);
+
+        // daily weather notifications (morning + evening)
+        WeatherNotifier.createChannel(this);
+        WeatherNotifier.scheduleAll(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIF);
+        }
     }
 
     private class Bridge {
@@ -136,6 +146,7 @@ public class MainActivity extends Activity {
     }
 
     private void sendLocation(Location loc) {
+        WeatherNotifier.saveLocation(this, loc.getLatitude(), loc.getLongitude());
         final String js = "window.onDeviceLocation && window.onDeviceLocation("
                 + loc.getLatitude() + "," + loc.getLongitude() + ");";
         runOnUiThread(() -> web.evaluateJavascript(js, null));
