@@ -372,8 +372,9 @@ function codeKey(code,isDay){
 </script>
 <script>
 /* ============ I18N (English + Polish filled; others fall back to English until added) ============ */
-const LANG_NAMES={en:"English",pl:"Polski",de:"Deutsch",uk:"Українська",es:"Español",fr:"Français",ru:"Русский",zh:"中文",ja:"日本語",pt:"Português",nl:"Nederlands",it:"Italiano",hi:"हिन्दी",ar:"العربية",el:"Ελληνικά",cs:"Čeština",sv:"Svenska",ko:"한국어",id:"Bahasa Indonesia",bn:"বাংলা",tr:"Türkçe",te:"తెలుగు",ro:"Română",hu:"Magyar",fi:"Suomi",no:"Norsk",sk:"Slovenčina",sw:"Kiswahili",fa:"فارسی"};
+const LANG_NAMES={en:"English",pl:"Polski",de:"Deutsch",uk:"Українська",es:"Español",fr:"Français",ru:"Русский",zh:"中文",ja:"日本語",pt:"Português",nl:"Nederlands",it:"Italiano",hi:"हिन्दी",ar:"العربية",el:"Ελληνικά",cs:"Čeština",sv:"Svenska",ko:"한국어",id:"Bahasa Indonesia",bn:"বাংলা",tr:"Türkçe",te:"తెలుగు",ro:"Română",hu:"Magyar",fi:"Suomi",no:"Norsk",sk:"Slovenčina",sw:"Kiswahili",fa:"فارسی",da:"Dansk",th:"ไทย",vi:"Tiếng Việt",bg:"Български"};
 const RTL_LANGS=["ar","fa"];
+const LANG_EN={en:"English",pl:"Polish",de:"German",uk:"Ukrainian",es:"Spanish",fr:"French",ru:"Russian",zh:"Chinese",ja:"Japanese",pt:"Portuguese",nl:"Dutch",it:"Italian",hi:"Hindi",ar:"Arabic",el:"Greek",cs:"Czech",sv:"Swedish",ko:"Korean",id:"Indonesian",bn:"Bengali",tr:"Turkish",te:"Telugu",ro:"Romanian",hu:"Hungarian",fi:"Finnish",no:"Norwegian",sk:"Slovak",sw:"Swahili",fa:"Persian",da:"Danish",th:"Thai",vi:"Vietnamese",bg:"Bulgarian"};
 const NTF={
   en:{title:"Weather in {city}",warmer:"a bit warmer than yesterday",colder:"a bit colder than yesterday",same:"about the same as yesterday"},
   pl:{title:"Pogoda w {city}",warmer:"nieco cieplej niż wczoraj",colder:"nieco chłodniej niż wczoraj",same:"podobnie jak wczoraj"},
@@ -403,7 +404,11 @@ const NTF={
   no:{title:"Vær i {city}",warmer:"litt varmere enn i går",colder:"litt kaldere enn i går",same:"omtrent som i går"},
   sk:{title:"Počasie v {city}",warmer:"o niečo teplejšie ako včera",colder:"o niečo chladnejšie ako včera",same:"približne ako včera"},
   sw:{title:"Hali ya hewa {city}",warmer:"joto kidogo kuliko jana",colder:"baridi kidogo kuliko jana",same:"takriban kama jana"},
-  fa:{title:"آب‌وهوای {city}",warmer:"کمی گرم‌تر از دیروز",colder:"کمی سردتر از دیروز",same:"تقریباً مثل دیروز"}
+  fa:{title:"آب‌وهوای {city}",warmer:"کمی گرم‌تر از دیروز",colder:"کمی سردتر از دیروز",same:"تقریباً مثل دیروز"},
+  da:{title:"Vejr i {city}",warmer:"lidt varmere end i går",colder:"lidt koldere end i går",same:"omtrent som i går"},
+  th:{title:"สภาพอากาศใน {city}",warmer:"อุ่นกว่าเมื่อวานเล็กน้อย",colder:"เย็นกว่าเมื่อวานเล็กน้อย",same:"พอๆ กับเมื่อวาน"},
+  vi:{title:"Thời tiết ở {city}",warmer:"ấm hơn hôm qua một chút",colder:"lạnh hơn hôm qua một chút",same:"gần như hôm qua"},
+  bg:{title:"Времето в {city}",warmer:"малко по-топло от вчера",colder:"малко по-студено от вчера",same:"приблизително като вчера"}
 };
 const I18N={
   en:{
@@ -1449,6 +1454,150 @@ const I18N={
     srcModel:"منبع / مدل",winHigh:"بیشینه بازه",winLow:"کمینه بازه",consensusAvg:"◆ میانگین اجماع",showAll:"نمایش همه {n} مدل ▾",hideModels:"پنهان‌کردن مدل‌ها ▴",
     noteLive:"اجماع زنده.",noteLiveBody:"اعداد میانگین {n} مدل ملی هواشناسی (ECMWF، DWD، NOAA، MET Norway، Météo-France، JMA، ECCC) از طریق Open-Meteo هستند و هر بار که مکانی را باز می‌کنید به‌روز می‌شوند.",noteOffline:"تصویر آفلاین.",noteOfflineBody:"نمایش تصویر ذخیره‌شده Gliwice — به اینترنت وصل شوید و دوباره باز کنید تا میانگین زنده ۷ مدل برای هر شهری را بگیرید.",
     footLive:"داده زنده · میانگین چندمدلی Open-Meteo",footOffline:"جایگزین آفلاین",footTail:" · برای به‌روزرسانی بکشید یا دوباره باز کنید"
+  },
+  da:{
+    langTitle:"Sprog",
+    days:["Søn","Man","Tir","Ons","Tor","Fre","Lør"],
+    cond_clear_day:"Solrigt",cond_clear_night:"Klart",cond_pcloudy:"Delvist skyet",cond_cloudy:"Skyet",cond_overcast:"Overskyet",cond_fog:"Tåge",cond_rain:"Regn",cond_snow:"Sne",cond_thunder:"Tordenvejr",
+    feelsLike:"Føles som",high:"Maks",low:"Min",now:"Nu",today:"I dag",
+    liveAvg:"LIVE · gennemsnit af 7 modeller",offline:"OFFLINE",tapParts:"Tryk for del-for-del →",
+    humidity:"Luftfugtighed",rain:"Regn",snow:"Sne",uvNow:"UV nu",
+    hourTitle:"Time for time",hourSub:"Gennemsnitstemperatur, føles-som, regnchance og mm. Rul for 36 t →",
+    curveTitle:"Temperaturkurve",curveSub:"Lufttemperatur vs. føles-som — viser ~18 t, rul for alle 36 →",legTemp:"Temperatur",legRain:"Regnchance",
+    weekTitle:"7-dages udsigt",weekSub:"Gennemsnitlige daglige maks og min for {place}.",
+    sunTitle:"Sol og Måne",sunSub:"Op, ned og månefase for {place}.",
+    pollenTitle:"Pollenniveau",pollenSub:"Mest aktive pollen her lige nu, via Open-Meteo air quality.",
+    tipsTitle:"Livsstilstips",tipsSub:"Råd baseret på dagens forhold.",
+    srcTitle:"Sådan sammenlignes kilderne",srcSub:"Gennemsnittet vises — udvid for at se alle {n} modellers spænd de næste 36 t.",
+    daylight:"Dagslys",riseW:"Op",setW:"Ned",lit:"oplyst",hrs:"t",mins:"min",
+    moon0:"Nymåne",moon1:"Tiltagende segl",moon2:"Første kvarter",moon3:"Tiltagende måne",moon4:"Fuldmåne",moon5:"Aftagende måne",moon6:"Sidste kvarter",moon7:"Aftagende segl",
+    p_alder:"El",p_birch:"Birk",p_grass:"Græs",p_mugwort:"Bynke",p_olive:"Oliven",p_ragweed:"Ambrosie",
+    lvl_none:"Ingen",lvl_low:"Lav",lvl_mod:"Moderat",lvl_high:"Høj",lvl_vhigh:"Meget høj",lvl_nodata:"Ingen data",
+    partsTitle:"Del for del",
+    seg_morning:"morgen",seg_afternoon:"eftermiddag",seg_evening:"aften",seg_night:"nat",
+    seg_thisMorning:"I morges",seg_thisAfternoon:"I eftermiddag",seg_thisEvening:"I aften",seg_overnight:"I løbet af natten",
+    n_around:"Omkring",n_downto:"ned til",n_rainGood:"Stor chance for regn",n_rainSlight:"Lille bygerisiko",n_snowGood:"Stor chance for sne",n_snowSlight:"Lille snerisiko",n_dry:"Forbliver tørt.",n_breezy:"Blæsende.",n_light:"Svag vind.",n_mixed:"Vekslende",n_nodata:"Ingen detaljerede data for dette interval.",feels:"føles",
+    tip_pollen_nodata:"Pollen: ingen data",tip_pollen_low:"Lavt pollenniveau",tip_pollen_mod:"Moderat pollen",tip_pollen_high:"Højt pollen — pas på",
+    tip_uv_vhigh:"Meget høj UV — dæk dig til",tip_uv_high:"Høj UV — solcreme",tip_uv_mod:"Moderat UV",tip_uv_low:"Lav UV",
+    tip_car_no:"Ikke ideel til bilvask",tip_car_yes:"God dag til bilvask",
+    tip_run_yes:"God til udendørs træning",tip_run_no:"Bedre at træne indendørs",
+    tip_out_yes:"Dejligt til en tur ud",tip_out_no:"Hold planerne fleksible",
+    tip_mosq_yes:"Nogle myg fremme",tip_mosq_no:"Få myg",
+    tip_cloth_layers:"Lag på lag",tip_cloth_warm:"Klæd dig varmt",tip_cloth_light:"Let påklædning",tip_cloth_comfort:"Behagelige lag",
+    tip_air_na:"Ingen luftdata",tip_air_clean:"Ren luft",tip_air_fair:"Rimelig luftkvalitet",tip_air_poor:"Dårlig luft — begræns anstrengelse",
+    yourLocations:"Dine steder",addLocation:"Tilføj sted",searchPh:"Søg by, f.eks. Kraków",searchBtn:"Søg",useMyLoc:"📍 Brug min nuværende placering",current:"nuværende",remove:"Fjern",noMatches:"Ingen match — prøv en anden stavning.",searching:"Søger…",searchNet:"Søgning kræver internetforbindelse.",maxLoc:"Du har allerede {n} steder — fjern ét først.",
+    loading:"Indlæser udsigt…",loadingCity:"Indlæser {city}…",findingLoc:"Finder din placering…",cantReach:"Kunne ikke nå vejrtjenesten.",cantReachSub:"Tjek forbindelsen og træk ned for at prøve igen.",
+    srcModel:"Kilde / model",winHigh:"Vindue maks",winLow:"Vindue min",consensusAvg:"◆ Konsensusgennemsnit",showAll:"Vis alle {n} modeller ▾",hideModels:"Skjul modeller ▴",
+    noteLive:"Live konsensus.",noteLiveBody:"Tallene er et gennemsnit af {n} nationale vejrmodeller (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, opdateres hver gang du åbner et sted.",noteOffline:"Offline øjebliksbillede.",noteOfflineBody:"Viser det gemte Gliwice-øjebliksbillede — opret forbindelse til internettet og åbn igen for et live gennemsnit af 7 modeller for enhver by.",
+    footLive:"Live data · Open-Meteo multi-model gennemsnit",footOffline:"Offline reserve",footTail:" · træk eller åbn igen for at opdatere"
+  },
+  th:{
+    langTitle:"ภาษา",
+    days:["อา","จ","อ","พ","พฤ","ศ","ส"],
+    cond_clear_day:"แดดจัด",cond_clear_night:"ท้องฟ้าแจ่มใส",cond_pcloudy:"มีเมฆบางส่วน",cond_cloudy:"มีเมฆมาก",cond_overcast:"เมฆครึ้ม",cond_fog:"หมอก",cond_rain:"ฝน",cond_snow:"หิมะ",cond_thunder:"พายุฝนฟ้าคะนอง",
+    feelsLike:"รู้สึกเหมือน",high:"สูงสุด",low:"ต่ำสุด",now:"ตอนนี้",today:"วันนี้",
+    liveAvg:"สด · เฉลี่ย 7 โมเดล",offline:"ออฟไลน์",tapParts:"แตะเพื่อดูรายช่วง →",
+    humidity:"ความชื้น",rain:"ฝน",snow:"หิมะ",uvNow:"UV ตอนนี้",
+    hourTitle:"รายชั่วโมง",hourSub:"อุณหภูมิเฉลี่ย, รู้สึกเหมือน, โอกาสฝน และ มม. เลื่อนดู 36 ชม. →",
+    curveTitle:"เส้นกราฟอุณหภูมิ",curveSub:"อุณหภูมิอากาศเทียบกับรู้สึกเหมือน — แสดง ~18 ชม. เลื่อนดูครบ 36 →",legTemp:"อุณหภูมิ",legRain:"โอกาสฝน",
+    weekTitle:"พยากรณ์ 7 วัน",weekSub:"ค่าสูงสุดและต่ำสุดรายวันเฉลี่ยสำหรับ {place}.",
+    sunTitle:"ดวงอาทิตย์และดวงจันทร์",sunSub:"เวลาขึ้น ตก และข้างขึ้นข้างแรมสำหรับ {place}.",
+    pollenTitle:"ปริมาณละอองเกสร",pollenSub:"ละอองเกสรที่มีมากที่สุดที่นี่ตอนนี้ ผ่าน Open-Meteo air quality.",
+    tipsTitle:"เคล็ดลับประจำวัน",tipsSub:"คำแนะนำจากสภาพอากาศวันนี้.",
+    srcTitle:"เปรียบเทียบแหล่งข้อมูล",srcSub:"แสดงค่าเฉลี่ย — ขยายเพื่อดูช่วงของทั้ง {n} โมเดลใน 36 ชม. ข้างหน้า.",
+    daylight:"ช่วงกลางวัน",riseW:"ขึ้น",setW:"ตก",lit:"สว่าง",hrs:"ชม.",mins:"นาที",
+    moon0:"จันทร์ดับ",moon1:"เสี้ยวข้างขึ้น",moon2:"ครึ่งดวงข้างขึ้น",moon3:"ค่อนดวงข้างขึ้น",moon4:"จันทร์เพ็ญ",moon5:"ค่อนดวงข้างแรม",moon6:"ครึ่งดวงข้างแรม",moon7:"เสี้ยวข้างแรม",
+    p_alder:"ต้นออลเดอร์",p_birch:"ต้นเบิร์ช",p_grass:"หญ้า",p_mugwort:"โกฐจุฬาลัมพา",p_olive:"มะกอกโอลีฟ",p_ragweed:"แร็กวีด",
+    lvl_none:"ไม่มี",lvl_low:"ต่ำ",lvl_mod:"ปานกลาง",lvl_high:"สูง",lvl_vhigh:"สูงมาก",lvl_nodata:"ไม่มีข้อมูล",
+    partsTitle:"รายละเอียดรายช่วง",
+    seg_morning:"เช้า",seg_afternoon:"บ่าย",seg_evening:"เย็น",seg_night:"กลางคืน",
+    seg_thisMorning:"เช้านี้",seg_thisAfternoon:"บ่ายนี้",seg_thisEvening:"เย็นนี้",seg_overnight:"ตลอดคืน",
+    n_around:"ประมาณ",n_downto:"ต่ำสุดถึง",n_rainGood:"โอกาสฝนสูง",n_rainSlight:"เสี่ยงฝนเล็กน้อย",n_snowGood:"โอกาสหิมะสูง",n_snowSlight:"เสี่ยงหิมะเล็กน้อย",n_dry:"อากาศแห้ง.",n_breezy:"ลมแรง.",n_light:"ลมอ่อน.",n_mixed:"แปรปรวน",n_nodata:"ไม่มีข้อมูลละเอียดสำหรับช่วงนี้.",feels:"รู้สึก",
+    tip_pollen_nodata:"ละอองเกสร: ไม่มีข้อมูล",tip_pollen_low:"ละอองเกสรต่ำ",tip_pollen_mod:"ละอองเกสรปานกลาง",tip_pollen_high:"ละอองเกสรสูง — ระวัง",
+    tip_uv_vhigh:"UV สูงมาก — ปกปิดร่างกาย",tip_uv_high:"UV สูง — ครีมกันแดด",tip_uv_mod:"UV ปานกลาง",tip_uv_low:"UV ต่ำ",
+    tip_car_no:"ไม่เหมาะกับการล้างรถ",tip_car_yes:"วันดีสำหรับล้างรถ",
+    tip_run_yes:"เหมาะกับการออกกำลังกลางแจ้ง",tip_run_no:"ควรออกกำลังในร่ม",
+    tip_out_yes:"เหมาะกับการออกไปเที่ยว",tip_out_no:"เผื่อแผนไว้ให้ยืดหยุ่น",
+    tip_mosq_yes:"มียุงบ้าง",tip_mosq_no:"ยุงน้อย",
+    tip_cloth_layers:"สวมเป็นชั้น",tip_cloth_warm:"แต่งตัวให้อบอุ่น",tip_cloth_light:"เสื้อผ้าบาง",tip_cloth_comfort:"ชั้นเสื้อผ้าสบาย",
+    tip_air_na:"ไม่มีข้อมูลอากาศ",tip_air_clean:"อากาศสะอาด",tip_air_fair:"คุณภาพอากาศพอใช้",tip_air_poor:"อากาศแย่ — ลดการออกแรง",
+    yourLocations:"ตำแหน่งของคุณ",addLocation:"เพิ่มตำแหน่ง",searchPh:"ค้นหาเมือง เช่น Kraków",searchBtn:"ค้นหา",useMyLoc:"📍 ใช้ตำแหน่งปัจจุบันของฉัน",current:"ปัจจุบัน",remove:"ลบ",noMatches:"ไม่พบผลลัพธ์ — ลองสะกดแบบอื่น.",searching:"กำลังค้นหา…",searchNet:"การค้นหาต้องใช้อินเทอร์เน็ต.",maxLoc:"คุณมี {n} ตำแหน่งแล้ว — ลบออกหนึ่งก่อน.",
+    loading:"กำลังโหลดพยากรณ์…",loadingCity:"กำลังโหลด {city}…",findingLoc:"กำลังค้นหาตำแหน่งของคุณ…",cantReach:"ไม่สามารถเชื่อมต่อบริการพยากรณ์อากาศ.",cantReachSub:"ตรวจสอบการเชื่อมต่อแล้วดึงลงเพื่อลองใหม่.",
+    srcModel:"แหล่งข้อมูล / โมเดล",winHigh:"สูงสุดของช่วง",winLow:"ต่ำสุดของช่วง",consensusAvg:"◆ ค่าเฉลี่ยฉันทามติ",showAll:"แสดงทั้ง {n} โมเดล ▾",hideModels:"ซ่อนโมเดล ▴",
+    noteLive:"ฉันทามติแบบสด.",noteLiveBody:"ตัวเลขเป็นค่าเฉลี่ยจาก {n} โมเดลพยากรณ์อากาศระดับชาติ (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) ผ่าน Open-Meteo อัปเดตทุกครั้งที่คุณเปิดตำแหน่ง.",noteOffline:"ภาพรวมออฟไลน์.",noteOfflineBody:"กำลังแสดงภาพรวม Gliwice ที่บันทึกไว้ — เชื่อมต่ออินเทอร์เน็ตแล้วเปิดใหม่เพื่อรับค่าเฉลี่ยสด 7 โมเดลสำหรับเมืองใดก็ได้.",
+    footLive:"ข้อมูลสด · ค่าเฉลี่ยหลายโมเดลจาก Open-Meteo",footOffline:"สำรองออฟไลน์",footTail:" · ดึงหรือเปิดใหม่เพื่อรีเฟรช"
+  },
+  vi:{
+    langTitle:"Ngôn ngữ",
+    days:["CN","T2","T3","T4","T5","T6","T7"],
+    cond_clear_day:"Nắng",cond_clear_night:"Quang đãng",cond_pcloudy:"Có mây rải rác",cond_cloudy:"Nhiều mây",cond_overcast:"U ám",cond_fog:"Sương mù",cond_rain:"Mưa",cond_snow:"Tuyết",cond_thunder:"Dông bão",
+    feelsLike:"Cảm giác như",high:"Cao",low:"Thấp",now:"Bây giờ",today:"Hôm nay",
+    liveAvg:"TRỰC TIẾP · trung bình 7 mô hình",offline:"NGOẠI TUYẾN",tapParts:"Chạm để xem từng phần →",
+    humidity:"Độ ẩm",rain:"Mưa",snow:"Tuyết",uvNow:"UV hiện tại",
+    hourTitle:"Theo giờ",hourSub:"Nhiệt độ trung bình, cảm giác, khả năng mưa và mm. Cuộn để xem 36 giờ →",
+    curveTitle:"Đường cong nhiệt độ",curveSub:"Nhiệt độ không khí so với cảm giác — hiển thị ~18 giờ, cuộn để xem cả 36 →",legTemp:"Nhiệt độ",legRain:"Khả năng mưa",
+    weekTitle:"Dự báo 7 ngày",weekSub:"Nhiệt độ cao và thấp trung bình hằng ngày cho {place}.",
+    sunTitle:"Mặt trời & Mặt trăng",sunSub:"Mọc, lặn và pha mặt trăng cho {place}.",
+    pollenTitle:"Mức phấn hoa",pollenSub:"Phấn hoa hoạt động mạnh nhất ở đây lúc này, qua Open-Meteo air quality.",
+    tipsTitle:"Mẹo hằng ngày",tipsSub:"Gợi ý dựa trên điều kiện hôm nay.",
+    srcTitle:"So sánh các nguồn",srcSub:"Hiển thị trung bình — mở rộng để xem khoảng của tất cả {n} mô hình trong 36 giờ tới.",
+    daylight:"Ánh sáng ban ngày",riseW:"Mọc",setW:"Lặn",lit:"được chiếu sáng",hrs:"giờ",mins:"phút",
+    moon0:"Trăng non",moon1:"Trăng lưỡi liềm đầu tháng",moon2:"Bán nguyệt đầu tháng",moon3:"Trăng khuyết đầu tháng",moon4:"Trăng tròn",moon5:"Trăng khuyết cuối tháng",moon6:"Bán nguyệt cuối tháng",moon7:"Trăng lưỡi liềm cuối tháng",
+    p_alder:"Tổng quán sủi",p_birch:"Bạch dương",p_grass:"Cỏ",p_mugwort:"Ngải cứu",p_olive:"Ô liu",p_ragweed:"Cỏ phấn hương",
+    lvl_none:"Không",lvl_low:"Thấp",lvl_mod:"Vừa",lvl_high:"Cao",lvl_vhigh:"Rất cao",lvl_nodata:"Không có dữ liệu",
+    partsTitle:"Phân tích từng phần",
+    seg_morning:"sáng",seg_afternoon:"chiều",seg_evening:"tối",seg_night:"đêm",
+    seg_thisMorning:"Sáng nay",seg_thisAfternoon:"Chiều nay",seg_thisEvening:"Tối nay",seg_overnight:"Qua đêm",
+    n_around:"Khoảng",n_downto:"xuống còn",n_rainGood:"Khả năng mưa cao",n_rainSlight:"Nguy cơ mưa rào nhẹ",n_snowGood:"Khả năng tuyết cao",n_snowSlight:"Nguy cơ tuyết nhẹ",n_dry:"Vẫn khô ráo.",n_breezy:"Có gió.",n_light:"Gió nhẹ.",n_mixed:"Thay đổi",n_nodata:"Không có dữ liệu chi tiết cho khoảng này.",feels:"cảm giác",
+    tip_pollen_nodata:"Phấn hoa: không có dữ liệu",tip_pollen_low:"Mức phấn hoa thấp",tip_pollen_mod:"Phấn hoa vừa",tip_pollen_high:"Phấn hoa cao — cẩn thận",
+    tip_uv_vhigh:"UV rất cao — che chắn",tip_uv_high:"UV cao — kem chống nắng",tip_uv_mod:"UV vừa",tip_uv_low:"UV thấp",
+    tip_car_no:"Không lý tưởng để rửa xe",tip_car_yes:"Ngày tốt để rửa xe",
+    tip_run_yes:"Tốt cho tập luyện ngoài trời",tip_run_no:"Nên tập trong nhà",
+    tip_out_yes:"Thích hợp để ra ngoài",tip_out_no:"Giữ kế hoạch linh hoạt",
+    tip_mosq_yes:"Có một số muỗi",tip_mosq_no:"Ít muỗi",
+    tip_cloth_layers:"Mặc nhiều lớp",tip_cloth_warm:"Mặc ấm",tip_cloth_light:"Trang phục mỏng",tip_cloth_comfort:"Lớp áo thoải mái",
+    tip_air_na:"Không có dữ liệu không khí",tip_air_clean:"Không khí sạch",tip_air_fair:"Chất lượng không khí khá",tip_air_poor:"Không khí kém — hạn chế gắng sức",
+    yourLocations:"Vị trí của bạn",addLocation:"Thêm vị trí",searchPh:"Tìm thành phố, vd. Kraków",searchBtn:"Tìm",useMyLoc:"📍 Dùng vị trí hiện tại của tôi",current:"hiện tại",remove:"Xóa",noMatches:"Không có kết quả — thử cách viết khác.",searching:"Đang tìm…",searchNet:"Tìm kiếm cần kết nối internet.",maxLoc:"Bạn đã có {n} vị trí — xóa bớt một cái trước.",
+    loading:"Đang tải dự báo…",loadingCity:"Đang tải {city}…",findingLoc:"Đang tìm vị trí của bạn…",cantReach:"Không thể kết nối dịch vụ thời tiết.",cantReachSub:"Kiểm tra kết nối và kéo xuống để thử lại.",
+    srcModel:"Nguồn / mô hình",winHigh:"Cao nhất khoảng",winLow:"Thấp nhất khoảng",consensusAvg:"◆ Trung bình đồng thuận",showAll:"Hiện tất cả {n} mô hình ▾",hideModels:"Ẩn mô hình ▴",
+    noteLive:"Đồng thuận trực tiếp.",noteLiveBody:"Các số liệu là trung bình của {n} mô hình thời tiết quốc gia (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) qua Open-Meteo, làm mới mỗi khi bạn mở một vị trí.",noteOffline:"Ảnh chụp ngoại tuyến.",noteOfflineBody:"Đang hiển thị ảnh chụp Gliwice đã lưu — kết nối internet và mở lại để lấy trung bình trực tiếp 7 mô hình cho bất kỳ thành phố nào.",
+    footLive:"Dữ liệu trực tiếp · trung bình đa mô hình Open-Meteo",footOffline:"Dự phòng ngoại tuyến",footTail:" · kéo hoặc mở lại để làm mới"
+  },
+  bg:{
+    langTitle:"Език",
+    days:["Нд","Пн","Вт","Ср","Чт","Пт","Сб"],
+    cond_clear_day:"Слънчево",cond_clear_night:"Ясно",cond_pcloudy:"Частична облачност",cond_cloudy:"Облачно",cond_overcast:"Плътна облачност",cond_fog:"Мъгла",cond_rain:"Дъжд",cond_snow:"Сняг",cond_thunder:"Гръмотевични бури",
+    feelsLike:"Усеща се като",high:"Макс.",low:"Мин.",now:"Сега",today:"Днес",
+    liveAvg:"НА ЖИВО · средно от 7 модела",offline:"ОФЛАЙН",tapParts:"Докоснете за подробности →",
+    humidity:"Влажност",rain:"Дъжд",snow:"Сняг",uvNow:"UV сега",
+    hourTitle:"Час по час",hourSub:"Средна температура, усещане, вероятност за дъжд и мм. Плъзнете за 36 ч →",
+    curveTitle:"Крива на температурата",curveSub:"Температура на въздуха спрямо усещане — показани ~18 ч, плъзнете за всички 36 →",legTemp:"Температура",legRain:"Вероятност за дъжд",
+    weekTitle:"Прогноза за 7 дни",weekSub:"Средни дневни максимуми и минимуми за {place}.",
+    sunTitle:"Слънце и Луна",sunSub:"Изгрев, залез и фаза на Луната за {place}.",
+    pollenTitle:"Ниво на полен",pollenSub:"Най-активните полени тук в момента, чрез Open-Meteo air quality.",
+    tipsTitle:"Съвети за деня",tipsSub:"Насоки според днешните условия.",
+    srcTitle:"Как се сравняват източниците",srcSub:"Показана е средната стойност — разгънете, за да видите диапазоните на всички {n} модела през следващите 36 ч.",
+    daylight:"Дневна светлина",riseW:"Изгрев",setW:"Залез",lit:"осветена",hrs:"ч",mins:"мин",
+    moon0:"Новолуние",moon1:"Растящ сърп",moon2:"Първа четвърт",moon3:"Растяща луна",moon4:"Пълнолуние",moon5:"Намаляваща луна",moon6:"Последна четвърт",moon7:"Намаляващ сърп",
+    p_alder:"Елша",p_birch:"Бреза",p_grass:"Треви",p_mugwort:"Пелин",p_olive:"Маслина",p_ragweed:"Амброзия",
+    lvl_none:"Няма",lvl_low:"Ниско",lvl_mod:"Умерено",lvl_high:"Високо",lvl_vhigh:"Много високо",lvl_nodata:"Няма данни",
+    partsTitle:"Разбивка по части",
+    seg_morning:"сутрин",seg_afternoon:"следобед",seg_evening:"вечер",seg_night:"нощ",
+    seg_thisMorning:"Тази сутрин",seg_thisAfternoon:"Този следобед",seg_thisEvening:"Тази вечер",seg_overnight:"През нощта",
+    n_around:"Около",n_downto:"до",n_rainGood:"Голяма вероятност за дъжд",n_rainSlight:"Слаб риск от валежи",n_snowGood:"Голяма вероятност за сняг",n_snowSlight:"Слаб риск от сняг",n_dry:"Остава сухо.",n_breezy:"Ветровито.",n_light:"Слаб вятър.",n_mixed:"Променливо",n_nodata:"Няма подробни данни за този интервал.",feels:"усещане",
+    tip_pollen_nodata:"Полен: няма данни",tip_pollen_low:"Ниско ниво на полен",tip_pollen_mod:"Умерен полен",tip_pollen_high:"Висок полен — внимавайте",
+    tip_uv_vhigh:"Много висок UV — покрийте се",tip_uv_high:"Висок UV — слънцезащита",tip_uv_mod:"Умерен UV",tip_uv_low:"Нисък UV",
+    tip_car_no:"Не е идеално за миене на кола",tip_car_yes:"Добър ден за миене на кола",
+    tip_run_yes:"Подходящо за спорт навън",tip_run_no:"По-добре тренирайте на закрито",
+    tip_out_yes:"Приятно за излизане",tip_out_no:"Дръжте плановете гъвкави",
+    tip_mosq_yes:"Има комари наоколо",tip_mosq_no:"Малко комари",
+    tip_cloth_layers:"На пластове",tip_cloth_warm:"Облечете се топло",tip_cloth_light:"Леко облекло",tip_cloth_comfort:"Удобни пластове",
+    tip_air_na:"Няма данни за въздуха",tip_air_clean:"Чист въздух",tip_air_fair:"Приемливо качество на въздуха",tip_air_poor:"Лош въздух — ограничете натоварването",
+    yourLocations:"Вашите места",addLocation:"Добави място",searchPh:"Търсете град, напр. Kraków",searchBtn:"Търси",useMyLoc:"📍 Използвай текущото ми местоположение",current:"текущо",remove:"Премахни",noMatches:"Няма съвпадения — опитайте друг правопис.",searching:"Търсене…",searchNet:"Търсенето изисква интернет връзка.",maxLoc:"Вече имате {n} места — първо премахнете едно.",
+    loading:"Зареждане на прогнозата…",loadingCity:"Зареждане на {city}…",findingLoc:"Намиране на местоположението ви…",cantReach:"Не може да се свърже с метеоуслугата.",cantReachSub:"Проверете връзката и дръпнете надолу за нов опит.",
+    srcModel:"Източник / модел",winHigh:"Макс. за периода",winLow:"Мин. за периода",consensusAvg:"◆ Консенсусна средна",showAll:"Покажи всички {n} модела ▾",hideModels:"Скрий моделите ▴",
+    noteLive:"Консенсус на живо.",noteLiveBody:"Стойностите са средно от {n} национални метеомодела (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) чрез Open-Meteo, обновяват се при всяко отваряне на място.",noteOffline:"Офлайн снимка.",noteOfflineBody:"Показва запазената снимка на Gliwice — свържете се с интернет и отворете отново за средна на живо от 7 модела за всеки град.",
+    footLive:"Данни на живо · средно от няколко модела Open-Meteo",footOffline:"Офлайн резерва",footTail:" · дръпнете или отворете отново за обновяване"
   }
 };
 let LANG=(function(){try{var s=localStorage.getItem('cw_lang');if(s&&LANG_NAMES[s])return s;}catch(e){}var n=(navigator.language||'en').slice(0,2).toLowerCase();return LANG_NAMES[n]?n:'en';})();
@@ -1994,8 +2143,9 @@ function toggleNotif(){
 }
 function renderLangList(){
   var box=document.getElementById('langList'); if(!box)return;
-  box.innerHTML=Object.keys(LANG_NAMES).map(function(code){
-    return '<div class="locitem'+(code===LANG?' on':'')+'" onclick="setLang(\''+code+'\')"><span>'+LANG_NAMES[code]+'</span>'+(code===LANG?'<em>✓</em>':'')+'</div>';
+  box.innerHTML=Object.keys(LANG_NAMES).sort(function(a,b){return (LANG_EN[a]||a).localeCompare(LANG_EN[b]||b);}).map(function(code){
+    var en=LANG_EN[code]||code,nat=LANG_NAMES[code],label=(nat&&nat!==en)?en+' / '+nat:en;
+    return '<div class="locitem'+(code===LANG?' on':'')+'" onclick="setLang(\''+code+'\')"><span>'+label+'</span>'+(code===LANG?'<em>✓</em>':'')+'</div>';
   }).join('');
 }
 function openLangSheet(){renderLangList();document.getElementById('langSheet').classList.add('open');setRefresh(false);}
