@@ -1,7 +1,6 @@
 package com.consensus.weather;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import androidx.core.app.NotificationCompat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,222 +18,206 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util. Calendar;
+import java.util.Calendar;
+import java.util.Iterator;
 
 public class WeatherNotifier extends BroadcastReceiver {
     static final String CHANNEL_ID = "daily_weather";
-    static final String ACTION_NOTIFY = "com.consensus.weather.NOTIFY";
     static final String PREFS = "cw_notif";
     static final int SLOT_MORNING = 1, SLOT_EVENING = 2;
     static final int HOUR_MORNING = 8, HOUR_EVENING = 19;
+    static final String[] MODELS = {
+        "ecmwf_ifs025","icon_seamless","gfs_seamless","metno_seamless",
+        "meteofrance_seamless","jma_seamless","gem_seamless"
+    };
 
-    @Override
-    public void onReceive(final Context ctx, Intent intent) {
-        String action = intent != null ? intent.getAction() : null;
-        if (action != null && (Intent.ACTION_BOOT_COMPLETED.equals(action)
-                || "android.intent.action.QUICKBOOT_POWERON".equals(action))) {
-            scheduleAll(ctx);
-            return;
-        }
-        final int slot = intent != null ? intent.getIntExtra("slot", SLOT_MORNING) : SLOT_MORNING;
-        scheduleSlot(ctx, slot);
-        final PendingResult pr = goAsync();
-        new Thread(new Runnable() {
-            @Override public void run() {
-                try { doWork(ctx, slot); } catch (Throwable ignored) {} finally { pr.finish(); }
-            }
-        }).start();
+    static SharedPreferences prefs(Context c){ return c.getSharedPreferences(PREFS, Context.MODE_PRIVATE); }
+    public static boolean isEnabled(Context c){ return prefs(c).getBoolean("enabled", true); }
+    public static void setEnabled(Context c, boolean on){
+        prefs(c).edit().putBoolean("enabled", on).apply();
+        if(on) scheduleAll(c); else cancelAll(c);
     }
-
-    // ---------- enable / disable ----------
-    static boolean isEnabled(Context ctx) {
-        return ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean("enabled", true);
+    public static void saveLocation(Context c, double lat, double lon){
+        prefs(c).edit().putFloat("lat",(float)lat).putFloat("lon",(float)lon).apply();
     }
-    static void setEnabled(Context ctx, boolean on) {
-        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean("enabled", on).apply();
-        if (on) scheduleAll(ctx); else cancelAll(ctx);
-    }
-    static void cancelAll(Context ctx) {
-        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        if (am == null) return;
-        am.cancel(slotPending(ctx, SLOT_MORNING));
-        am.cancel(slotPending(ctx, SLOT_EVENING));
+    public static void setNotifStrings(Context c, String json){
+        prefs(c).edit().putString("strings", json).apply();
     }
 
-    // ---------- scheduling ----------
-    static void scheduleAll(Context ctx) {
-        if (!isEnabled(ctx)) return;
-        scheduleSlot(ctx, SLOT_MORNING);
-        scheduleSlot(ctx, SLOT_EVENING);
+    public static void scheduleAll(Context c){
+        if(!isEnabled(c)) return;
+        scheduleSlot(c, SLOT_MORNING, HOUR_MORNING);
+        scheduleSlot(c, SLOT_EVENING, HOUR_EVENING);
     }
-
-    static void scheduleSlot(Context ctx, int slot) {
-        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-        if (am == null) return;
-        int hour = slot == SLOT_EVENING ? HOUR_EVENING : HOUR_MORNING;
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, hour);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        if (c.getTimeInMillis() <= System.currentTimeMillis()) c.add(Calendar.DAY_OF_YEAR, 1);
-        PendingIntent pi = slotPending(ctx, slot);
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pi);
-            } else {
-                am.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pi);
-            }
-        } catch (Exception ignored) {}
+    static void scheduleSlot(Context c, int slot, int hour){
+        AlarmManager am = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+        Calendar t = Calendar.getInstance();
+        t.set(Calendar.HOUR_OF_DAY, hour); t.set(Calendar.MINUTE,0); t.set(Calendar.SECOND,0);
+        if(t.getTimeInMillis() <= System.currentTimeMillis()) t.add(Calendar.DAY_OF_YEAR,1);
+        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, t.getTimeInMillis(), slotPending(c, slot));
     }
-
-    private static PendingIntent slotPending(Context ctx, int slot) {
-        Intent i = new Intent(ctx, WeatherNotifier.class);
-        i.setAction(ACTION_NOTIFY);
-        i.putExtra("slot", slot);
+    static void cancelAll(Context c){
+        AlarmManager am = (AlarmManager)c.getSystemService(Context.ALARM_SERVICE);
+        am.cancel(slotPending(c, SLOT_MORNING));
+        am.cancel(slotPending(c, SLOT_EVENING));
+    }
+    static PendingIntent slotPending(Context c, int slot){
+        Intent i = new Intent(c, WeatherNotifier.class).putExtra("slot", slot);
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) flags |= PendingIntent.FLAG_IMMUTABLE;
-        return PendingIntent.getBroadcast(ctx, slot, i, flags);
+        if(Build.VERSION. SDK_INT >= 23) flags |= PendingIntent.FLAG_IMMUTABLE;
+        return PendingIntent.getBroadcast(c, 100+slot, i, flags);
     }
 
-    static void createChannel(Context ctx) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager nm = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-            if (nm == null) return;
-            NotificationChannel ch = new NotificationChannel(CHANNEL_ID, "Daily weather",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            ch.setDescription("Morning and evening weather summaries");
-            nm.createNotificationChannel(ch);
+    public static void createChannel(Context c){
+        if(Build.VERSION.SDK_INT >= 26){
+            NotificationChannel ch = new NotificationChannel(CHANNEL_ID, "Daily weather", NotificationManager.IMPORTANCE_DEFAULT);
+            ch.setDescription("Morning and evening weather summary");
+            ((NotificationManager)c.getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(ch);
         }
     }
 
-    static void saveLocation(Context ctx, double lat, double lon) {
-        SharedPreferences p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        p.edit().putString("lat", String.valueOf(lat)).putString("lon", String.valueOf(lon)).apply();
+    @Override public void onReceive(final Context ctx, Intent intent){
+        if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())){ scheduleAll(ctx); return; }
+        final int slot = intent.getIntExtra("slot", SLOT_MORNING);
+        scheduleSlot(ctx, slot, slot==SLOT_MORNING? HOUR_MORNING:HOUR_EVENING); // reschedule next day
+        if(!isEnabled(ctx)) return;
+        final PendingResult pr = goAsync();
+        new Thread(new Runnable(){ public void run(){
+            try{ doWork(ctx, slot); } catch(Exception e){} finally{ pr.finish(); }
+        }}).start();
     }
 
-    // ---------- work ----------
-    private void doWork(Context ctx, int slot) throws Exception {
-        if (!isEnabled(ctx)) return;
-        SharedPreferences p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        String slat = p.getString("lat", null), slon = p.getString("lon", null);
-        if (slat == null || slon == null) return;
-        double lat = Double.parseDouble(slat), lon = Double.parseDouble(slon);
+    static void doWork(Context c, int slot) throws Exception {
+        SharedPreferences p = prefs(c);
+        double lat = p.getFloat("lat", Float.NaN);
+        double lon = p.getFloat("lon", Float.NaN);
+        if(Double.isNaN(lat) || Double.isNaN(lon)) return;
 
-        String url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon
-                + "&current=temperature_2m,weather_code"
-                + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max"
-                + "&timezone=auto&past_days=1&forecast_days=2";
-        JSONObject j = new JSONObject(httpGet(url, 6000));
-        JSONObject cur = j.optJSONObject("current");
-        JSONObject daily = j.optJSONObject("daily");
-        if (daily == null) return;
-        JSONArray hi = daily.getJSONArray("temperature_2m_max");
-        JSONArray lo = daily.getJSONArray("temperature_2m_min");
-        JSONArray code = daily.getJSONArray("weather_code");
-        JSONArray pop = daily.optJSONArray("precipitation_probability_max");
-        int idx = slot == SLOT_EVENING ? 2 : 1;
-        if (idx >= hi.length()) idx = hi.length() - 1;
-        int prevIdx = Math.max(0, idx - 1);
+        StringBuilder models = new StringBuilder();
+        for(int i=0;i<MODELS.length;i++){ if(i>0) models.append(","); models.append(MODELS[i]); }
+        String url = "https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon
+            + "&daily=temperature_2m_max,temperature_2m_min,weather_code"
+            + "&models="+models + "&past_days=1&forecast_days=2&timezone=auto";
+        JSONObject daily = new JSONObject(httpGet(url)).getJSONObject("daily");
 
-        int dHi = (int) Math.round(hi.getDouble(idx));
-        int dLo = (int) Math.round(lo.getDouble(idx));
-        int pHi = (int) Math.round(hi.getDouble(prevIdx));
-        int wc = code.getInt(idx);
-        int pr = (pop != null && idx < pop.length() && !pop.isNull(idx)) ? pop.getInt(idx) : -1;
-        int nowT = (cur != null && cur.has("temperature_2m")) ? (int) Math.round(cur.getDouble("temperature_2m")) : dHi;
-        String cond = condWord(wc);
-        String place = reverseGeocode(lat, lon);
+        int idx = (slot==SLOT_EVENING) ? 2 : 1;  // evening previews tomorrow; morning = today
+        int ref = idx - 1;                        // compare to previous day
+        double hi    = avgDaily(daily, "temperature_2m_max", idx);
+        double lo    = avgDaily(daily, "temperature_2m_min", idx);
+        double hiRef = avgDaily(daily, "temperature_2m_max", ref);
+        int code     = firstCode(daily, "weather_code", idx);
+        if(Double.isNaN(hi)) return;
 
-        String when = slot == SLOT_EVENING ? "tomorrow" : "today";
-        String ref = slot == SLOT_EVENING ? "today" : "yesterday";
-        int diff = dHi - pHi;
-        String cmp;
-        if (diff >= 4) cmp = " Much warmer than " + ref + ".";
-        else if (diff >= 1) cmp = " A bit warmer than " + ref + ".";
-        else if (diff <= -4) cmp = " Much colder than " + ref + ".";
-        else if (diff <= -1) cmp = " A bit colder than " + ref + ".";
-        else cmp = " About the same as " + ref + ".";
+        JSONObject S = loadStrings(c);
+        String unit = S.optString("unit","C");
+        String lang = S.optString("lang","en");
+        String city = reverseGeocode(lat, lon, lang);
 
-        String rain = "";
-        if ((wc >= 71 && wc <= 77) || wc == 85 || wc == 86) rain = " Snow likely.";
-        else if (pr >= 50 || (wc >= 51 && wc <= 67) || (wc >= 80 && wc <= 82) || wc >= 95) rain = " Rain likely.";
+        String cond = condText(S, code);
+        double diff = hi - hiRef;
+        String cmp = diff >= 1.5 ? S.optString("warmer","a bit warmer than yesterday")
+                   : diff <= -1.5 ? S.optString("colder","a bit colder than yesterday")
+                   : S.optString("same","about the same as yesterday");
 
-        String title = headline(dHi) + (slot == SLOT_EVENING ? " tomorrow" : " today");
-        String body = nowT + "° " + cond + " in " + place + " " + when
-                + ", high " + dHi + "°, low " + dLo + "°." + cmp + rain + " Tap to view.";
-        postNotification(ctx, slot, title, body);
+        String title = S.optString("title","Weather in {city}").replace("{city}", city);
+        String body  = fmtTemp(hi, unit) + "\u00B0 " + cond + "  \u2193" + fmtTemp(lo, unit) + "\u00B0\n" + cap(cmp);
+        postNotification(c, slot, title, body);
     }
 
-    private static String headline(int hi) {
-        if (hi < 3) return "Cold";
-        if (hi < 12) return "Cool";
-        if (hi < 20) return "Mild";
-        if (hi < 27) return "Warm";
-        return "Hot";
+    static double avgDaily(JSONObject daily, String base, int idx){
+        double sum=0; int n=0;
+        for(Iterator<String> it=daily.keys(); it.hasNext();){
+            String k = it.next();
+            if(k.startsWith(base)){
+                JSONArray a = daily.optJSONArray(k);
+                if(a!=null && idx>=0 && idx<a.length() && !a.isNull(idx)){ sum += a.optDouble(idx); n++; }
+            }
+        }
+        return n>0 ? sum/n : Double.NaN;
     }
-
-    private static String condWord(int c) {
-        if (c == 0) return "Clear";
-        if (c == 1) return "Mainly clear";
-        if (c == 2) return "Partly cloudy";
-        if (c == 3) return "Overcast";
-        if (c == 45 || c == 48) return "Fog";
-        if (c >= 51 && c <= 57) return "Drizzle";
-        if (c >= 61 && c <= 67) return "Rain";
-        if (c >= 71 && c <= 77) return "Snow";
-        if (c >= 80 && c <= 82) return "Rain showers";
-        if (c == 85 || c == 86) return "Snow showers";
-        if (c >= 95) return "Thunderstorms";
-        return "Mixed";
+    static int firstCode(JSONObject daily, String base, int idx){
+        for(Iterator<String> it=daily.keys(); it.hasNext();){
+            String k = it.next();
+            if(k.startsWith(base)){
+                JSONArray a = daily.optJSONArray(k);
+                if(a!=null && idx>=0 && idx<a.length() && !a.isNull(idx)) return a.optInt(idx,0);
+            }
+        }
+        return 0;
     }
-
-    private static String reverseGeocode(double lat, double lon) {
-        try {
-            String u = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat
-                    + "&longitude=" + lon + "&localityLanguage=en";
-            JSONObject j = new JSONObject(httpGet(u, 4000));
-            String city = j.optString("city", "");
-            if (city.isEmpty()) city = j.optString("locality", "");
-            if (city.isEmpty()) city = j.optString("principalSubdivision", "");
-            if (!city.isEmpty()) return city;
-        } catch (Exception ignored) {}
-        return "your area";
+    static JSONObject loadStrings(Context c){
+        try{ String s = prefs(c).getString("strings", null); if(s!=null) return new JSONObject(s); }catch(Exception e){}
+        return new JSONObject();
     }
+    static String condText(JSONObject S, int code){
+        String key = condKey(code);
+        JSONObject cond = S.optJSONObject("cond");
+        String def = enCond(key);
+        return cond!=null ? cond.optString(key, def) : def;
+    }
+    static String condKey(int code){
+        if(code==0) return "clear_day";
+        if(code==1||code==2) return "pcloudy";
+        if(code==3) return "overcast";
+        if(code==45||code==48) return "fog";
+        if((code>=71&&code<=77)||(code>=85&&code<=86)) return "snow";
+        if(code>=95) return "thunder";
+        if((code>=51&&code<=67)||(code>=80&&code<=82)) return "rain";
+        return "cloudy";
+    }
+    static String enCond(String k){
+        switch(k){
+            case "clear_day": return "Sunny";
+            case "clear_night": return "Clear";
+            case "pcloudy": return "Partly cloudy";
+            case "cloudy": return "Cloudy";
+            case "overcast": return "Overcast";
+            case "fog": return "Fog";
+            case "rain": return "Rain";
+            case "snow": return "Snow";
+            case "thunder": return "Thunderstorms";
+        }
+        return "";
+    }
+    static int fmtTemp(double celsius, String unit){
+        double v = "F".equals(unit) ? celsius*9/5+32 : celsius;
+        return (int)Math.round(v);
+    }
+    static String cap(String s){ return (s==null||s.isEmpty())?s:Character.toUpperCase(s.charAt(0))+s.substring(1); }
 
-    private static String httpGet(String urlStr, int timeout) throws Exception {
-        HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
-        conn.setConnectTimeout(timeout);
-        conn.setReadTimeout(timeout);
-        conn.setRequestProperty("Accept", "application/json");
-        StringBuilder sb = new StringBuilder();
-        BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-        String line;
-        while ((line = r.readLine()) != null) sb.append(line);
-        r.close();
-        conn.disconnect();
+    static String reverseGeocode(double lat, double lon, String lang){
+        try{
+            String u = "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lon+"&localityLanguage="+lang;
+            JSONObject j = new JSONObject(httpGet(u));
+            String city = j.optString("city","");
+            if(city.isEmpty()) city = j.optString("locality","");
+            if(city.isEmpty()) city = j.optString("principalSubdivision","");
+            return city;
+        }catch(Exception e){ return ""; }
+    }
+    static String httpGet(String urlStr) throws Exception {
+        HttpURLConnection cn = (HttpURLConnection)new URL(urlStr).openConnection();
+        cn.setConnectTimeout(10000); cn.setReadTimeout(12000);
+        cn.setRequestProperty("User-Agent","ConsensusWeather");
+        BufferedReader br = new BufferedReader(new InputStreamReader(cn.getInputStream()));
+        StringBuilder sb = new StringBuilder(); String line;
+        while((line=br.readLine())!=null) sb.append(line);
+        br.close(); cn.disconnect();
         return sb.toString();
     }
-
-    private static void postNotification(Context ctx, int slot, String title, String body) {
-        NotificationManager nm = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (nm == null) return;
-        Intent open = new Intent(ctx, MainActivity.class);
-        open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent. FLAG_ACTIVITY_CLEAR_TOP);
-        int piFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) piFlags |= PendingIntent.FLAG_IMMUTABLE;
-        PendingIntent contentPI = PendingIntent.getActivity(ctx, 100 + slot, open, piFlags);
-
-        Notification.Builder b = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                ? new Notification.Builder(ctx, CHANNEL_ID)
-                : new Notification.Builder(ctx);
-        b.setSmallIcon(R.drawable.ic_launcher)
-         .setContentTitle(title)
-         .setContentText(body)
-         .setStyle(new Notification.BigTextStyle().bigText(body))
-         .setAutoCancel(true)
-         .setContentIntent(contentPI)
-         .setWhen(System.currentTimeMillis());
-        nm.notify(slot, b.build());
+    static void postNotification(Context c, int slot, String title, String body){
+        NotificationCompat.Builder b = new NotificationCompat.Builder(c, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        Intent open = c.getPackageManager().getLaunchIntentForPackage(c.getPackageName());
+        if(open!=null){
+            int f = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT>=23?PendingIntent.FLAG_IMMUTABLE:0);
+            b.setContentIntent(PendingIntent.getActivity(c, 200+slot, open, f));
+        }
+        ((NotificationManager)c.getSystemService(Context.NOTIFICATION_SERVICE)).notify(slot, b.build());
     }
 }
