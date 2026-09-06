@@ -18,7 +18,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Calendar;
+import java.util. Calendar;
 
 public class WeatherNotifier extends BroadcastReceiver {
     static final String CHANNEL_ID = "daily_weather";
@@ -36,7 +36,7 @@ public class WeatherNotifier extends BroadcastReceiver {
             return;
         }
         final int slot = intent != null ? intent.getIntExtra("slot", SLOT_MORNING) : SLOT_MORNING;
-        scheduleSlot(ctx, slot); // re-arm the same slot for tomorrow
+        scheduleSlot(ctx, slot);
         final PendingResult pr = goAsync();
         new Thread(new Runnable() {
             @Override public void run() {
@@ -45,8 +45,24 @@ public class WeatherNotifier extends BroadcastReceiver {
         }).start();
     }
 
+    // ---------- enable / disable ----------
+    static boolean isEnabled(Context ctx) {
+        return ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean("enabled", true);
+    }
+    static void setEnabled(Context ctx, boolean on) {
+        ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean("enabled", on).apply();
+        if (on) scheduleAll(ctx); else cancelAll(ctx);
+    }
+    static void cancelAll(Context ctx) {
+        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (am == null) return;
+        am.cancel(slotPending(ctx, SLOT_MORNING));
+        am.cancel(slotPending(ctx, SLOT_EVENING));
+    }
+
     // ---------- scheduling ----------
     static void scheduleAll(Context ctx) {
+        if (!isEnabled(ctx)) return;
         scheduleSlot(ctx, SLOT_MORNING);
         scheduleSlot(ctx, SLOT_EVENING);
     }
@@ -76,7 +92,7 @@ public class WeatherNotifier extends BroadcastReceiver {
         i.setAction(ACTION_NOTIFY);
         i.putExtra("slot", slot);
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build. VERSION.SDK_INT >= Build.VERSION_CODES.M) flags |= PendingIntent.FLAG_IMMUTABLE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) flags |= PendingIntent.FLAG_IMMUTABLE;
         return PendingIntent.getBroadcast(ctx, slot, i, flags);
     }
 
@@ -98,9 +114,10 @@ public class WeatherNotifier extends BroadcastReceiver {
 
     // ---------- work ----------
     private void doWork(Context ctx, int slot) throws Exception {
+        if (!isEnabled(ctx)) return;
         SharedPreferences p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         String slat = p.getString("lat", null), slon = p.getString("lon", null);
-        if (slat == null || slon == null) return; // no location captured yet
+        if (slat == null || slon == null) return;
         double lat = Double.parseDouble(slat), lon = Double.parseDouble(slon);
 
         String url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon
@@ -115,7 +132,6 @@ public class WeatherNotifier extends BroadcastReceiver {
         JSONArray lo = daily.getJSONArray("temperature_2m_min");
         JSONArray code = daily.getJSONArray("weather_code");
         JSONArray pop = daily.optJSONArray("precipitation_probability_max");
-        // indices: 0 = yesterday, 1 = today, 2 = tomorrow
         int idx = slot == SLOT_EVENING ? 2 : 1;
         if (idx >= hi.length()) idx = hi.length() - 1;
         int prevIdx = Math.max(0, idx - 1);
@@ -203,7 +219,7 @@ public class WeatherNotifier extends BroadcastReceiver {
         NotificationManager nm = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm == null) return;
         Intent open = new Intent(ctx, MainActivity.class);
-        open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        open.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent. FLAG_ACTIVITY_CLEAR_TOP);
         int piFlags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) piFlags |= PendingIntent.FLAG_IMMUTABLE;
         PendingIntent contentPI = PendingIntent.getActivity(ctx, 100 + slot, open, piFlags);
