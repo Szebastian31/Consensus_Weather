@@ -24,7 +24,12 @@
     background:linear-gradient(180deg,#0a0f26 0%,#161d47 55%,#282c5e 100%);background-attachment:fixed;background-size:cover;
     min-height:100vh;padding:0 14px 90px;-webkit-font-smoothing:antialiased;transition:background .8s ease}
   .wrap{max-width:600px;margin:0 auto}
-  .applogo{display:flex;align-items:center;justify-content:center;gap:12px;padding:0 0 10px}
+  .applogo{display:flex;align-items:center;justify-content:center;gap:12px;padding:0}
+  .logo-row{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:8px;padding:0 0 8px}
+  .hhbtn{width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff;font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  .hhbtn:active{background:rgba(255,255,255,.24)}
+  .hhbtn.off{color:rgba(255,255,255,.5)}
+  .hhi{width:20px;height:20px;display:block}
   .logo-badge{width:46px;height:46px;border-radius:13px;object-fit:cover;box-shadow:0 8px 18px -8px rgba(0,0,0,.55)}
   .logo-word{display:flex;flex-direction:column;line-height:1.04}
   .lw1{font-size:21px;font-weight:800;letter-spacing:.2px;background:linear-gradient(90deg,#FFB020,#E4657F);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -242,14 +247,14 @@
   <div class="sheet-card">
     <div class="grab"></div>
     <button class="closex" onclick="closeSheet()">✕</button>
-    <h3>Your locations</h3>
+    <h3 id="locSheetTitle">Your locations</h3>
     <div id="locList" class="loclist"></div>
-    <div class="addhdr">Add a location</div>
+    <div class="addhdr" id="addHdr">Add a location</div>
     <div class="searchrow">
       <input id="q" placeholder="Search city, e.g. Kraków" autocomplete="off">
-      <button class="gobtn" onclick="doSearch()">Search</button>
+      <button class="gobtn" id="searchGo" onclick="doSearch()">Search</button>
     </div>
-    <button class="myloc" onclick="useMyLocation()">📍 Use my current location</button>
+    <button class="myloc" id="myLocBtn" onclick="useMyLocation()">📍 Use my current location</button>
     <div class="results" id="results"></div>
   </div>
 </div>
@@ -258,8 +263,17 @@
   <div class="sheet-card">
     <div class="grab"></div>
     <button class="closex" onclick="closeParts()">✕</button>
-    <h3>Part-by-part breakdown</h3>
+    <h3 id="partsSheetTitle">Part-by-part breakdown</h3>
     <div class="segs" id="partBody"></div>
+  </div>
+</div>
+
+<div class="sheet" id="langSheet">
+  <div class="sheet-card">
+    <div class="grab"></div>
+    <button class="closex" onclick="closeLangSheet()">✕</button>
+    <h3 id="langSheetTitle">Language</h3>
+    <div id="langList" class="loclist"></div>
   </div>
 </div>
 
@@ -293,8 +307,7 @@ function pico(key,size){size=size||34;
   }
   return `<svg class="pico" style="width:${size}px;height:${size}px" viewBox="0 0 104 104" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
 }
-const KEYLABEL={'clear-day':'Sunny','clear-night':'Clear','pcloudy-day':'Partly cloudy','pcloudy-night':'Partly cloudy','cloudy':'Cloudy','overcast':'Overcast','fog':'Fog','rain':'Rain','snow':'Snow','thunder':'Thunderstorms'};
-function LB(key){return KEYLABEL[key]||KEYLABEL[key.replace('-day','').replace('-night','')]||'';}
+function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='clear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
 const HEROGRAD={
   'clear-day':'linear-gradient(135deg,#3E90E0 0%,#5FB0F2 45%,#FFC24B 100%)',
   'clear-night':'linear-gradient(135deg,#221A52 0%,#3A2E7A 55%,#5B4B9E 100%)',
@@ -345,6 +358,527 @@ function codeKey(code,isDay){
 }
 </script>
 <script>
+/* ============ I18N (English + Polish filled; others fall back to English until added) ============ */
+const LANG_NAMES={en:"English",pl:"Polski",de:"Deutsch",uk:"Українська",es:"Español",fr:"Français",ru:"Русский",zh:"中文",ja:"日本語",pt:"Português",nl:"Nederlands",it:"Italiano",hi:"हिन्दी",ar:"العربية"};
+const RTL_LANGS=["ar"];
+const I18N={
+  en:{
+    langTitle:"Language",
+    days:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
+    cond_clear_day:"Sunny",cond_clear_night:"Clear",cond_pcloudy:"Partly cloudy",cond_cloudy:"Cloudy",cond_overcast:"Overcast",cond_fog:"Fog",cond_rain:"Rain",cond_snow:"Snow",cond_thunder:"Thunderstorms",
+    feelsLike:"Feels like",high:"High",low:"Low",now:"Now",today:"Today",
+    liveAvg:"LIVE · 7-model avg",offline:"OFFLINE",tapParts:"Tap for part-by-part →",
+    humidity:"Humidity",rain:"Rain",snow:"Snow",uvNow:"UV now",
+    hourTitle:"Hour by hour",hourSub:"Averaged temperature, feels-like, rain chance and mm. Scroll for 36 h →",
+    curveTitle:"Temperature curve",curveSub:"Consensus air temperature vs. feels-like — showing ~18 h, scroll for all 36 →",legTemp:"Temperature",legRain:"Rain chance",
+    weekTitle:"7-day outlook",weekSub:"Averaged daily highs and lows for {place}.",
+    sunTitle:"Sun & Moon",sunSub:"Rise, set and moon phase for {place}.",
+    pollenTitle:"Pollen count",pollenSub:"Most active pollens here right now, via Open-Meteo air quality.",
+    tipsTitle:"Lifestyle tips",tipsSub:"Guidance derived from today's conditions.",
+    srcTitle:"How the sources compare",srcSub:"Consensus average shown — expand to see all {n} models' ranges over the next 36 h.",
+    daylight:"Daylight",riseW:"Rise",setW:"Set",lit:"lit",hrs:"hrs",mins:"mins",
+    moon0:"New moon",moon1:"Waxing crescent",moon2:"First quarter",moon3:"Waxing gibbous",moon4:"Full moon",moon5:"Waning gibbous",moon6:"Last quarter",moon7:"Waning crescent",
+    p_alder:"Alder",p_birch:"Birch",p_grass:"Grass",p_mugwort:"Mugwort",p_olive:"Olive",p_ragweed:"Ragweed",
+    lvl_none:"None",lvl_low:"Low",lvl_mod:"Moderate",lvl_high:"High",lvl_vhigh:"Very high",lvl_nodata:"No data",
+    partsTitle:"Part-by-part breakdown",
+    seg_morning:"morning",seg_afternoon:"afternoon",seg_evening:"evening",seg_night:"night",
+    seg_thisMorning:"This morning",seg_thisAfternoon:"This afternoon",seg_thisEvening:"This evening",seg_overnight:"Overnight",
+    n_around:"Around",n_downto:"down to",n_rainGood:"Good chance of rain",n_rainSlight:"Slight shower risk",n_dry:"Staying dry.",n_breezy:"Breezy.",n_light:"Light winds.",n_mixed:"Mixed",n_nodata:"Detailed data unavailable for this block.",feels:"feels",
+    tip_pollen_nodata:"Pollen: no data",tip_pollen_low:"Low pollen count",tip_pollen_mod:"Moderate pollen",tip_pollen_high:"High pollen — take care",
+    tip_uv_vhigh:"Very high UV — cover up",tip_uv_high:"High UV — sunscreen",tip_uv_mod:"Moderate UV",tip_uv_low:"Low UV",
+    tip_car_no:"Not ideal for car washing",tip_car_yes:"Good day to wash the car",
+    tip_run_yes:"Good for outdoor workouts",tip_run_no:"Better to train indoors",
+    tip_out_yes:"Nice for a day out",tip_out_no:"Keep plans flexible",
+    tip_mosq_yes:"Some mosquitoes about",tip_mosq_no:"Few mosquitoes",
+    tip_cloth_layers:"Layers",tip_cloth_warm:"Dress warm",tip_cloth_light:"Light clothing",tip_cloth_comfort:"Comfortable layers",
+    tip_air_na:"Air data unavailable",tip_air_clean:"Clean air",tip_air_fair:"Fair air quality",tip_air_poor:"Poor air — limit exertion",
+    yourLocations:"Your locations",addLocation:"Add a location",searchPh:"Search city, e.g. Kraków",searchBtn:"Search",useMyLoc:"📍 Use my current location",current:"current",remove:"Remove",noMatches:"No matches — try another spelling.",searching:"Searching…",searchNet:"Search needs an internet connection.",maxLoc:"You already have {n} locations — remove one first.",
+    loading:"Loading forecast…",loadingCity:"Loading {city}…",findingLoc:"Finding your location…",cantReach:"Couldn't reach the weather service.",cantReachSub:"Check your connection and pull down to retry.",
+    srcModel:"Source / model",winHigh:"Window high",winLow:"Window low",consensusAvg:"◆ Consensus average",showAll:"Show all {n} models ▾",hideModels:"Hide models ▴",
+    noteLive:"Live consensus.",noteLiveBody:"Numbers are averaged across {n} national weather models (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, refreshed each time you open a location.",noteOffline:"Offline snapshot.",noteOfflineBody:"Showing the saved Gliwice snapshot — connect to the internet and reopen to pull a live 7-model average for any city.",
+    footLive:"Live data · Open-Meteo multi-model average",footOffline:"Offline fallback",footTail:" · pull-to-refresh or reopen to refresh"
+  },
+  pl:{
+    langTitle:"Język",
+    days:["Nd","Pn","Wt","Śr","Cz","Pt","So"],
+    cond_clear_day:"Słonecznie",cond_clear_night:"Bezchmurnie",cond_pcloudy:"Częściowe zachmurzenie",cond_cloudy:"Pochmurno",cond_overcast:"Zachmurzenie całkowite",cond_fog:"Mgła",cond_rain:"Deszcz",cond_snow:"Śnieg",cond_thunder:"Burze",
+    feelsLike:"Odczuwalna",high:"Maks.",low:"Min.",now:"Teraz",today:"Dziś",
+    liveAvg:"NA ŻYWO · śr. 7 modeli",offline:"OFFLINE",tapParts:"Dotknij, aby zobaczyć szczegóły →",
+    humidity:"Wilgotność",rain:"Deszcz",snow:"Śnieg",uvNow:"UV teraz",
+    hourTitle:"Godzina po godzinie",hourSub:"Uśredniona temperatura, odczuwalna, szansa opadów i mm. Przewiń, aby zobaczyć 36 h →",
+    curveTitle:"Wykres temperatury",curveSub:"Temperatura powietrza vs. odczuwalna — pokazane ~18 h, przewiń, aby zobaczyć 36 →",legTemp:"Temperatura",legRain:"Szansa opadów",
+    weekTitle:"Prognoza 7-dniowa",weekSub:"Uśrednione dobowe maksima i minima dla {place}.",
+    sunTitle:"Słońce i Księżyc",sunSub:"Wschód, zachód i faza księżyca dla {place}.",
+    pollenTitle:"Pyłki",pollenSub:"Najbardziej aktywne pyłki tutaj teraz, wg jakości powietrza Open-Meteo.",
+    tipsTitle:"Porady na dziś",tipsSub:"Wskazówki na podstawie dzisiejszych warunków.",
+    srcTitle:"Porównanie źródeł",srcSub:"Pokazano średnią konsensusu — rozwiń, aby zobaczyć zakresy wszystkich {n} modeli na najbliższe 36 h.",
+    daylight:"Długość dnia",riseW:"Wschód",setW:"Zachód",lit:"oświetlenia",hrs:"godz.",mins:"min",
+    moon0:"Nów",moon1:"Przybywający sierp",moon2:"Pierwsza kwadra",moon3:"Przybywający garb",moon4:"Pełnia",moon5:"Ubywający garb",moon6:"Ostatnia kwadra",moon7:"Ubywający sierp",
+    p_alder:"Olcha",p_birch:"Brzoza",p_grass:"Trawy",p_mugwort:"Bylica",p_olive:"Oliwka",p_ragweed:"Ambrozja",
+    lvl_none:"Brak",lvl_low:"Niski",lvl_mod:"Umiarkowany",lvl_high:"Wysoki",lvl_vhigh:"Bardzo wysoki",lvl_nodata:"Brak danych",
+    partsTitle:"Szczegóły pór dnia",
+    seg_morning:"rano",seg_afternoon:"popołudnie",seg_evening:"wieczór",seg_night:"noc",
+    seg_thisMorning:"Dziś rano",seg_thisAfternoon:"Dziś po południu",seg_thisEvening:"Dziś wieczorem",seg_overnight:"W nocy",
+    n_around:"Około",n_downto:"do",n_rainGood:"Duża szansa deszczu",n_rainSlight:"Niewielkie ryzyko przelotnych opadów",n_dry:"Bez opadów.",n_breezy:"Wietrznie.",n_light:"Słaby wiatr.",n_mixed:"Zmiennie",n_nodata:"Brak szczegółowych danych dla tego okresu.",feels:"odczuwalna",
+    tip_pollen_nodata:"Pyłki: brak danych",tip_pollen_low:"Niski poziom pyłków",tip_pollen_mod:"Umiarkowany poziom pyłków",tip_pollen_high:"Wysoki poziom pyłków — uważaj",
+    tip_uv_vhigh:"Bardzo wysokie UV — okryj się",tip_uv_high:"Wysokie UV — krem z filtrem",tip_uv_mod:"Umiarkowane UV",tip_uv_low:"Niskie UV",
+    tip_car_no:"Kiepski dzień na mycie auta",tip_car_yes:"Dobry dzień na mycie auta",
+    tip_run_yes:"Dobry na trening na zewnątrz",tip_run_no:"Lepiej trenować w domu",
+    tip_out_yes:"Dobry dzień na wyjście",tip_out_no:"Zachowaj elastyczność planów",
+    tip_mosq_yes:"Trochę komarów",tip_mosq_no:"Mało komarów",
+    tip_cloth_layers:"Warstwy",tip_cloth_warm:"Ubierz się ciepło",tip_cloth_light:"Lekkie ubranie",tip_cloth_comfort:"Wygodne warstwy",
+    tip_air_na:"Brak danych o powietrzu",tip_air_clean:"Czyste powietrze",tip_air_fair:"Umiarkowana jakość powietrza",tip_air_poor:"Słaba jakość — ogranicz wysiłek",
+    yourLocations:"Twoje lokalizacje",addLocation:"Dodaj lokalizację",searchPh:"Szukaj miasta, np. Kraków",searchBtn:"Szukaj",useMyLoc:"📍 Użyj mojej lokalizacji",current:"bieżąca",remove:"Usuń",noMatches:"Brak wyników — spróbuj inaczej.",searching:"Szukam…",searchNet:"Wyszukiwanie wymaga internetu.",maxLoc:"Masz już {n} lokalizacji — najpierw usuń jedną.",
+    loading:"Ładowanie prognozy…",loadingCity:"Ładowanie {city}…",findingLoc:"Ustalanie lokalizacji…",cantReach:"Nie można połączyć się z serwisem pogodowym.",cantReachSub:"Sprawdź połączenie i pociągnij w dół, aby ponowić.",
+    srcModel:"Źródło / model",winHigh:"Maks. w oknie",winLow:"Min. w oknie",consensusAvg:"◆ Średnia konsensusu",showAll:"Pokaż wszystkie {n} modeli ▾",hideModels:"Ukryj modele ▴",
+    noteLive:"Konsensus na żywo.",noteLiveBody:"Wartości są uśrednione z {n} krajowych modeli pogodowych (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) przez Open-Meteo, odświeżane przy każdym otwarciu lokalizacji.",noteOffline:"Zrzut offline.",noteOfflineBody:"Pokazano zapisany zrzut dla Gliwic — połącz się z internetem i otwórz ponownie, aby pobrać średnią z 7 modeli dla dowolnego miasta.",
+    footLive:"Dane na żywo · średnia wielomodelowa Open-Meteo",footOffline:"Tryb offline",footTail:" · pociągnij lub otwórz ponownie, aby odświeżyć"
+  },
+  de:{
+    langTitle:"Sprache",
+    days:["So","Mo","Di","Mi","Do","Fr","Sa"],
+    cond_clear_day:"Sonnig",cond_clear_night:"Klar",cond_pcloudy:"Teilweise bewölkt",cond_cloudy:"Bewölkt",cond_overcast:"Bedeckt",cond_fog:"Nebel",cond_rain:"Regen",cond_snow:"Schnee",cond_thunder:"Gewitter",
+    feelsLike:"Gefühlt",high:"Max.",low:"Min.",now:"Jetzt",today:"Heute",
+    liveAvg:"LIVE · Ø 7 Modelle",offline:"OFFLINE",tapParts:"Tippen für Details →",
+    humidity:"Luftfeuchte",rain:"Regen",snow:"Schnee",uvNow:"UV jetzt",
+    hourTitle:"Stunde für Stunde",hourSub:"Gemittelte Temperatur, gefühlt, Regenwahrscheinlichkeit und mm. Für 36 Std. wischen →",
+    curveTitle:"Temperaturkurve",curveSub:"Lufttemperatur vs. gefühlt — ~18 Std. gezeigt, für alle 36 wischen →",legTemp:"Temperatur",legRain:"Regenrisiko",
+    weekTitle:"7-Tage-Ausblick",weekSub:"Gemittelte Höchst- und Tiefstwerte für {place}.",
+    sunTitle:"Sonne & Mond",sunSub:"Auf-, Untergang und Mondphase für {place}.",
+    pollenTitle:"Pollen",pollenSub:"Aktivste Pollen hier gerade jetzt, via Open-Meteo Luftqualität.",
+    tipsTitle:"Alltagstipps",tipsSub:"Hinweise basierend auf den heutigen Bedingungen.",
+    srcTitle:"Quellen im Vergleich",srcSub:"Konsens-Durchschnitt gezeigt — ausklappen für die Bereiche aller {n} Modelle der nächsten 36 Std.",
+    daylight:"Tageslänge",riseW:"Aufgang",setW:"Untergang",lit:"beleuchtet",hrs:"Std.",mins:"Min.",
+    moon0:"Neumond",moon1:"Zunehmende Sichel",moon2:"Erstes Viertel",moon3:"Zunehmender Mond",moon4:"Vollmond",moon5:"Abnehmender Mond",moon6:"Letztes Viertel",moon7:"Abnehmende Sichel",
+    p_alder:"Erle",p_birch:"Birke",p_grass:"Gräser",p_mugwort:"Beifuß",p_olive:"Olive",p_ragweed:"Ambrosia",
+    lvl_none:"Keine",lvl_low:"Niedrig",lvl_mod:"Mäßig",lvl_high:"Hoch",lvl_vhigh:"Sehr hoch",lvl_nodata:"Keine Daten",
+    partsTitle:"Tagesabschnitte im Detail",
+    seg_morning:"Morgen",seg_afternoon:"Nachmittag",seg_evening:"Abend",seg_night:"Nacht",
+    seg_thisMorning:"Heute Morgen",seg_thisAfternoon:"Heute Nachmittag",seg_thisEvening:"Heute Abend",seg_overnight:"Über Nacht",
+    n_around:"Um",n_downto:"bis",n_rainGood:"Gute Regenchance",n_rainSlight:"Geringes Schauerrisiko",n_dry:"Bleibt trocken.",n_breezy:"Windig.",n_light:"Leichter Wind.",n_mixed:"Wechselhaft",n_nodata:"Keine Detaildaten für diesen Abschnitt.",feels:"gefühlt",
+    tip_pollen_nodata:"Pollen: keine Daten",tip_pollen_low:"Niedrige Pollenbelastung",tip_pollen_mod:"Mäßige Pollenbelastung",tip_pollen_high:"Hohe Pollen — Vorsicht",
+    tip_uv_vhigh:"Sehr hohes UV — bedecken",tip_uv_high:"Hohes UV — Sonnencreme",tip_uv_mod:"Mäßiges UV",tip_uv_low:"Niedriges UV",
+    tip_car_no:"Kein guter Tag zum Autowaschen",tip_car_yes:"Guter Tag zum Autowaschen",
+    tip_run_yes:"Gut für Sport im Freien",tip_run_no:"Besser drinnen trainieren",
+    tip_out_yes:"Schön für einen Ausflug",tip_out_no:"Pläne flexibel halten",
+    tip_mosq_yes:"Einige Mücken unterwegs",tip_mosq_no:"Wenige Mücken",
+    tip_cloth_layers:"Schichten",tip_cloth_warm:"Warm anziehen",tip_cloth_light:"Leichte Kleidung",tip_cloth_comfort:"Bequeme Schichten",
+    tip_air_na:"Keine Luftdaten",tip_air_clean:"Saubere Luft",tip_air_fair:"Mäßige Luftqualität",tip_air_poor:"Schlechte Luft — Anstrengung meiden",
+    yourLocations:"Deine Orte",addLocation:"Ort hinzufügen",searchPh:"Stadt suchen, z. B. Kraków",searchBtn:"Suchen",useMyLoc:"📍 Meinen Standort verwenden",current:"aktuell",remove:"Entfernen",noMatches:"Keine Treffer — andere Schreibweise versuchen.",searching:"Suche…",searchNet:"Suche benötigt Internet.",maxLoc:"Du hast bereits {n} Orte — entferne zuerst einen.",
+    loading:"Prognose wird geladen…",loadingCity:"{city} wird geladen…",findingLoc:"Standort wird ermittelt…",cantReach:"Wetterdienst nicht erreichbar.",cantReachSub:"Verbindung prüfen und nach unten ziehen zum Wiederholen.",
+    srcModel:"Quelle / Modell",winHigh:"Max. im Zeitraum",winLow:"Min. im Zeitraum",consensusAvg:"◆ Konsens-Durchschnitt",showAll:"Alle {n} Modelle zeigen ▾",hideModels:"Modelle ausblenden ▴",
+    noteLive:"Live-Konsens.",noteLiveBody:"Werte sind über {n} nationale Wettermodelle (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo gemittelt, aktualisiert bei jedem Öffnen eines Orts.",noteOffline:"Offline-Momentaufnahme.",noteOfflineBody:"Gespeicherte Momentaufnahme für Gliwice — verbinde dich mit dem Internet und öffne erneut für einen Live-7-Modell-Durchschnitt jeder Stadt.",
+    footLive:"Live-Daten · Open-Meteo Mehrmodell-Durchschnitt",footOffline:"Offline-Fallback",footTail:" · zum Aktualisieren ziehen oder neu öffnen"
+  },
+  es:{
+    langTitle:"Idioma",
+    days:["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"],
+    cond_clear_day:"Soleado",cond_clear_night:"Despejado",cond_pcloudy:"Parcialmente nublado",cond_cloudy:"Nublado",cond_overcast:"Cubierto",cond_fog:"Niebla",cond_rain:"Lluvia",cond_snow:"Nieve",cond_thunder:"Tormentas",
+    feelsLike:"Sensación",high:"Máx.",low:"Mín.",now:"Ahora",today:"Hoy",
+    liveAvg:"EN VIVO · media 7 modelos",offline:"SIN CONEXIÓN",tapParts:"Toca para ver detalles →",
+    humidity:"Humedad",rain:"Lluvia",snow:"Nieve",uvNow:"UV ahora",
+    hourTitle:"Hora a hora",hourSub:"Temperatura media, sensación, probabilidad de lluvia y mm. Desliza para ver 36 h →",
+    curveTitle:"Curva de temperatura",curveSub:"Temperatura del aire vs. sensación — se muestran ~18 h, desliza para las 36 →",legTemp:"Temperatura",legRain:"Prob. de lluvia",
+    weekTitle:"Pronóstico de 7 días",weekSub:"Máximas y mínimas diarias medias para {place}.",
+    sunTitle:"Sol y Luna",sunSub:"Salida, puesta y fase lunar para {place}.",
+    pollenTitle:"Polen",pollenSub:"Pólenes más activos aquí ahora, vía calidad del aire de Open-Meteo.",
+    tipsTitle:"Consejos del día",tipsSub:"Orientación según las condiciones de hoy.",
+    srcTitle:"Comparación de fuentes",srcSub:"Se muestra la media de consenso — expande para ver los rangos de los {n} modelos en las próximas 36 h.",
+    daylight:"Horas de luz",riseW:"Salida",setW:"Puesta",lit:"iluminada",hrs:"h",mins:"min",
+    moon0:"Luna nueva",moon1:"Creciente",moon2:"Cuarto creciente",moon3:"Gibosa creciente",moon4:"Luna llena",moon5:"Gibosa menguante",moon6:"Cuarto menguante",moon7:"Menguante",
+    p_alder:"Aliso",p_birch:"Abedul",p_grass:"Gramíneas",p_mugwort:"Artemisa",p_olive:"Olivo",p_ragweed:"Ambrosía",
+    lvl_none:"Ninguno",lvl_low:"Bajo",lvl_mod:"Moderado",lvl_high:"Alto",lvl_vhigh:"Muy alto",lvl_nodata:"Sin datos",
+    partsTitle:"Detalle por franjas",
+    seg_morning:"mañana",seg_afternoon:"tarde",seg_evening:"noche",seg_night:"madrugada",
+    seg_thisMorning:"Esta mañana",seg_thisAfternoon:"Esta tarde",seg_thisEvening:"Esta noche",seg_overnight:"De madrugada",
+    n_around:"Alrededor de",n_downto:"hasta",n_rainGood:"Buena probabilidad de lluvia",n_rainSlight:"Ligero riesgo de chubascos",n_dry:"Seguirá seco.",n_breezy:"Ventoso.",n_light:"Viento flojo.",n_mixed:"Variable",n_nodata:"Sin datos detallados para este periodo.",feels:"sensación",
+    tip_pollen_nodata:"Polen: sin datos",tip_pollen_low:"Nivel de polen bajo",tip_pollen_mod:"Polen moderado",tip_pollen_high:"Polen alto — cuidado",
+    tip_uv_vhigh:"UV muy alto — cúbrete",tip_uv_high:"UV alto — protector solar",tip_uv_mod:"UV moderado",tip_uv_low:"UV bajo",
+    tip_car_no:"Mal día para lavar el coche",tip_car_yes:"Buen día para lavar el coche",
+    tip_run_yes:"Bueno para entrenar al aire libre",tip_run_no:"Mejor entrenar en interior",
+    tip_out_yes:"Buen día para salir",tip_out_no:"Mantén planes flexibles",
+    tip_mosq_yes:"Algunos mosquitos",tip_mosq_no:"Pocos mosquitos",
+    tip_cloth_layers:"Por capas",tip_cloth_warm:"Abrígate",tip_cloth_light:"Ropa ligera",tip_cloth_comfort:"Capas cómodas",
+    tip_air_na:"Sin datos de aire",tip_air_clean:"Aire limpio",tip_air_fair:"Calidad del aire aceptable",tip_air_poor:"Aire malo — limita el esfuerzo",
+    yourLocations:"Tus ubicaciones",addLocation:"Añadir ubicación",searchPh:"Busca una ciudad, p. ej. Kraków",searchBtn:"Buscar",useMyLoc:"📍 Usar mi ubicación",current:"actual",remove:"Quitar",noMatches:"Sin resultados — prueba otra grafía.",searching:"Buscando…",searchNet:"La búsqueda necesita internet.",maxLoc:"Ya tienes {n} ubicaciones — quita una primero.",
+    loading:"Cargando pronóstico…",loadingCity:"Cargando {city}…",findingLoc:"Buscando tu ubicación…",cantReach:"No se pudo conectar con el servicio meteorológico.",cantReachSub:"Revisa tu conexión y desliza hacia abajo para reintentar.",
+    srcModel:"Fuente / modelo",winHigh:"Máx. del periodo",winLow:"Mín. del periodo",consensusAvg:"◆ Media de consenso",showAll:"Ver los {n} modelos ▾",hideModels:"Ocultar modelos ▴",
+    noteLive:"Consenso en vivo.",noteLiveBody:"Los valores se promedian entre {n} modelos meteorológicos nacionales (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) vía Open-Meteo, actualizados cada vez que abres una ubicación.",noteOffline:"Instantánea sin conexión.",noteOfflineBody:"Mostrando la instantánea guardada de Gliwice — conéctate a internet y vuelve a abrir para obtener una media en vivo de 7 modelos para cualquier ciudad.",
+    footLive:"Datos en vivo · media multimodelo de Open-Meteo",footOffline:"Modo sin conexión",footTail:" · desliza o vuelve a abrir para actualizar"
+  },
+  fr:{
+    langTitle:"Langue",
+    days:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],
+    cond_clear_day:"Ensoleillé",cond_clear_night:"Dégagé",cond_pcloudy:"Partiellement nuageux",cond_cloudy:"Nuageux",cond_overcast:"Couvert",cond_fog:"Brouillard",cond_rain:"Pluie",cond_snow:"Neige",cond_thunder:"Orages",
+    feelsLike:"Ressenti",high:"Max.",low:"Min.",now:"Maintenant",today:"Auj.",
+    liveAvg:"EN DIRECT · moy. 7 modèles",offline:"HORS LIGNE",tapParts:"Toucher pour les détails →",
+    humidity:"Humidité",rain:"Pluie",snow:"Neige",uvNow:"UV maintenant",
+    hourTitle:"Heure par heure",hourSub:"Température moyenne, ressenti, probabilité de pluie et mm. Faites défiler pour 36 h →",
+    curveTitle:"Courbe de température",curveSub:"Température de l'air vs. ressenti — ~18 h affichées, faites défiler pour les 36 →",legTemp:"Température",legRain:"Risque de pluie",
+    weekTitle:"Prévisions sur 7 jours",weekSub:"Maximales et minimales quotidiennes moyennes pour {place}.",
+    sunTitle:"Soleil et Lune",sunSub:"Lever, coucher et phase lunaire pour {place}.",
+    pollenTitle:"Pollens",pollenSub:"Pollens les plus actifs ici en ce moment, via la qualité de l'air Open-Meteo.",
+    tipsTitle:"Conseils du jour",tipsSub:"Recommandations selon les conditions d'aujourd'hui.",
+    srcTitle:"Comparaison des sources",srcSub:"Moyenne de consensus affichée — développez pour voir les plages des {n} modèles sur les 36 prochaines h.",
+    daylight:"Durée du jour",riseW:"Lever",setW:"Coucher",lit:"éclairée",hrs:"h",mins:"min",
+    moon0:"Nouvelle lune",moon1:"Premier croissant",moon2:"Premier quartier",moon3:"Gibbeuse croissante",moon4:"Pleine lune",moon5:"Gibbeuse décroissante",moon6:"Dernier quartier",moon7:"Dernier croissant",
+    p_alder:"Aulne",p_birch:"Bouleau",p_grass:"Graminées",p_mugwort:"Armoise",p_olive:"Olivier",p_ragweed:"Ambroisie",
+    lvl_none:"Aucun",lvl_low:"Faible",lvl_mod:"Modéré",lvl_high:"Élevé",lvl_vhigh:"Très élevé",lvl_nodata:"Aucune donnée",
+    partsTitle:"Détail par moment",
+    seg_morning:"matin",seg_afternoon:"après-midi",seg_evening:"soir",seg_night:"nuit",
+    seg_thisMorning:"Ce matin",seg_thisAfternoon:"Cet après-midi",seg_thisEvening:"Ce soir",seg_overnight:"Cette nuit",
+    n_around:"Environ",n_downto:"jusqu'à",n_rainGood:"Bonne probabilité de pluie",n_rainSlight:"Léger risque d'averses",n_dry:"Reste sec.",n_breezy:"Venteux.",n_light:"Vent faible.",n_mixed:"Variable",n_nodata:"Données détaillées indisponibles pour cette période.",feels:"ressenti",
+    tip_pollen_nodata:"Pollens : aucune donnée",tip_pollen_low:"Faible taux de pollens",tip_pollen_mod:"Pollens modérés",tip_pollen_high:"Pollens élevés — attention",
+    tip_uv_vhigh:"UV très élevé — couvrez-vous",tip_uv_high:"UV élevé — crème solaire",tip_uv_mod:"UV modéré",tip_uv_low:"UV faible",
+    tip_car_no:"Mauvais jour pour laver la voiture",tip_car_yes:"Bon jour pour laver la voiture",
+    tip_run_yes:"Bon pour le sport en extérieur",tip_run_no:"Mieux vaut s'entraîner à l'intérieur",
+    tip_out_yes:"Belle journée pour sortir",tip_out_no:"Gardez des plans flexibles",
+    tip_mosq_yes:"Quelques moustiques",tip_mosq_no:"Peu de moustiques",
+    tip_cloth_layers:"Superposez",tip_cloth_warm:"Couvrez-vous",tip_cloth_light:"Vêtements légers",tip_cloth_comfort:"Couches confortables",
+    tip_air_na:"Aucune donnée d'air",tip_air_clean:"Air pur",tip_air_fair:"Qualité de l'air correcte",tip_air_poor:"Air médiocre — limitez l'effort",
+    yourLocations:"Vos lieux",addLocation:"Ajouter un lieu",searchPh:"Rechercher une ville, ex. Kraków",searchBtn:"Rechercher",useMyLoc:"📍 Utiliser ma position",current:"actuel",remove:"Retirer",noMatches:"Aucun résultat — essayez une autre orthographe.",searching:"Recherche…",searchNet:"La recherche nécessite internet.",maxLoc:"Vous avez déjà {n} lieux — retirez-en un d'abord.",
+    loading:"Chargement des prévisions…",loadingCity:"Chargement de {city}…",findingLoc:"Localisation en cours…",cantReach:"Service météo injoignable.",cantReachSub:"Vérifiez votre connexion et tirez vers le bas pour réessayer.",
+    srcModel:"Source / modèle",winHigh:"Max. sur la période",winLow:"Min. sur la période",consensusAvg:"◆ Moyenne de consensus",showAll:"Voir les {n} modèles ▾",hideModels:"Masquer les modèles ▴",
+    noteLive:"Consensus en direct.",noteLiveBody:"Les valeurs sont moyennées sur {n} modèles météo nationaux (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, actualisés à chaque ouverture d'un lieu.",noteOffline:"Instantané hors ligne.",noteOfflineBody:"Affichage de l'instantané enregistré pour Gliwice — connectez-vous à internet et rouvrez pour obtenir une moyenne en direct de 7 modèles pour n'importe quelle ville.",
+    footLive:"Données en direct · moyenne multi-modèles Open-Meteo",footOffline:"Repli hors ligne",footTail:" · tirez ou rouvrez pour actualiser"
+  },
+  it:{
+    langTitle:"Lingua",
+    days:["Dom","Lun","Mar","Mer","Gio","Ven","Sab"],
+    cond_clear_day:"Soleggiato",cond_clear_night:"Sereno",cond_pcloudy:"Parzialmente nuvoloso",cond_cloudy:"Nuvoloso",cond_overcast:"Coperto",cond_fog:"Nebbia",cond_rain:"Pioggia",cond_snow:"Neve",cond_thunder:"Temporali",
+    feelsLike:"Percepita",high:"Max",low:"Min",now:"Ora",today:"Oggi",
+    liveAvg:"LIVE · media 7 modelli",offline:"OFFLINE",tapParts:"Tocca per i dettagli →",
+    humidity:"Umidità",rain:"Pioggia",snow:"Neve",uvNow:"UV ora",
+    hourTitle:"Ora per ora",hourSub:"Temperatura media, percepita, probabilità di pioggia e mm. Scorri per 36 h →",
+    curveTitle:"Curva della temperatura",curveSub:"Temperatura dell'aria vs. percepita — mostrate ~18 h, scorri per tutte le 36 →",legTemp:"Temperatura",legRain:"Prob. di pioggia",
+    weekTitle:"Previsioni a 7 giorni",weekSub:"Massime e minime giornaliere medie per {place}.",
+    sunTitle:"Sole e Luna",sunSub:"Alba, tramonto e fase lunare per {place}.",
+    pollenTitle:"Pollini",pollenSub:"Pollini più attivi qui in questo momento, tramite qualità dell'aria Open-Meteo.",
+    tipsTitle:"Consigli del giorno",tipsSub:"Indicazioni basate sulle condizioni di oggi.",
+    srcTitle:"Confronto delle fonti",srcSub:"Mostrata la media di consenso — espandi per vedere gli intervalli di tutti i {n} modelli nelle prossime 36 h.",
+    daylight:"Ore di luce",riseW:"Alba",setW:"Tramonto",lit:"illuminata",hrs:"h",mins:"min",
+    moon0:"Luna nuova",moon1:"Falce crescente",moon2:"Primo quarto",moon3:"Gibbosa crescente",moon4:"Luna piena",moon5:"Gibbosa calante",moon6:"Ultimo quarto",moon7:"Falce calante",
+    p_alder:"Ontano",p_birch:"Betulla",p_grass:"Graminacee",p_mugwort:"Artemisia",p_olive:"Olivo",p_ragweed:"Ambrosia",
+    lvl_none:"Nessuno",lvl_low:"Basso",lvl_mod:"Moderato",lvl_high:"Alto",lvl_vhigh:"Molto alto",lvl_nodata:"Nessun dato",
+    partsTitle:"Dettaglio per fasce",
+    seg_morning:"mattina",seg_afternoon:"pomeriggio",seg_evening:"sera",seg_night:"notte",
+    seg_thisMorning:"Stamattina",seg_thisAfternoon:"Questo pomeriggio",seg_thisEvening:"Stasera",seg_overnight:"Durante la notte",
+    n_around:"Intorno a",n_downto:"fino a",n_rainGood:"Buona probabilità di pioggia",n_rainSlight:"Lieve rischio di rovesci",n_dry:"Resta asciutto.",n_breezy:"Ventoso.",n_light:"Vento debole.",n_mixed:"Variabile",n_nodata:"Dati dettagliati non disponibili per questa fascia.",feels:"percepita",
+    tip_pollen_nodata:"Pollini: nessun dato",tip_pollen_low:"Basso livello di pollini",tip_pollen_mod:"Pollini moderati",tip_pollen_high:"Pollini alti — attenzione",
+    tip_uv_vhigh:"UV molto alto — copriti",tip_uv_high:"UV alto — crema solare",tip_uv_mod:"UV moderato",tip_uv_low:"UV basso",
+    tip_car_no:"Giornata poco adatta per lavare l'auto",tip_car_yes:"Buona giornata per lavare l'auto",
+    tip_run_yes:"Buono per allenarsi all'aperto",tip_run_no:"Meglio allenarsi al chiuso",
+    tip_out_yes:"Bella giornata per uscire",tip_out_no:"Mantieni piani flessibili",
+    tip_mosq_yes:"Qualche zanzara in giro",tip_mosq_no:"Poche zanzare",
+    tip_cloth_layers:"A strati",tip_cloth_warm:"Vestiti pesante",tip_cloth_light:"Abbigliamento leggero",tip_cloth_comfort:"Strati comodi",
+    tip_air_na:"Nessun dato sull'aria",tip_air_clean:"Aria pulita",tip_air_fair:"Qualità dell'aria discreta",tip_air_poor:"Aria scarsa — limita gli sforzi",
+    yourLocations:"Le tue località",addLocation:"Aggiungi località",searchPh:"Cerca una città, es. Kraków",searchBtn:"Cerca",useMyLoc:"📍 Usa la mia posizione",current:"attuale",remove:"Rimuovi",noMatches:"Nessun risultato — prova un'altra grafia.",searching:"Ricerca…",searchNet:"La ricerca richiede internet.",maxLoc:"Hai già {n} località — rimuovine una prima.",
+    loading:"Caricamento previsioni…",loadingCity:"Caricamento di {city}…",findingLoc:"Individuazione della posizione…",cantReach:"Servizio meteo non raggiungibile.",cantReachSub:"Controlla la connessione e trascina in giù per riprovare.",
+    srcModel:"Fonte / modello",winHigh:"Max nel periodo",winLow:"Min nel periodo",consensusAvg:"◆ Media di consenso",showAll:"Mostra tutti i {n} modelli ▾",hideModels:"Nascondi modelli ▴",
+    noteLive:"Consenso in diretta.",noteLiveBody:"I valori sono mediati su {n} modelli meteo nazionali (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) tramite Open-Meteo, aggiornati a ogni apertura di una località.",noteOffline:"Istantanea offline.",noteOfflineBody:"Visualizzazione dell'istantanea salvata per Gliwice — connettiti a internet e riapri per ottenere una media in diretta di 7 modelli per qualsiasi città.",
+    footLive:"Dati in diretta · media multi-modello Open-Meteo",footOffline:"Ripiego offline",footTail:" · trascina o riapri per aggiornare"
+  },
+  nl:{
+    langTitle:"Taal",
+    days:["Zo","Ma","Di","Wo","Do","Vr","Za"],
+    cond_clear_day:"Zonnig",cond_clear_night:"Helder",cond_pcloudy:"Half bewolkt",cond_cloudy:"Bewolkt",cond_overcast:"Betrokken",cond_fog:"Mist",cond_rain:"Regen",cond_snow:"Sneeuw",cond_thunder:"Onweer",
+    feelsLike:"Gevoel",high:"Max.",low:"Min.",now:"Nu",today:"Vandaag",
+    liveAvg:"LIVE · gem. 7 modellen",offline:"OFFLINE",tapParts:"Tik voor details →",
+    humidity:"Vochtigheid",rain:"Regen",snow:"Sneeuw",uvNow:"UV nu",
+    hourTitle:"Uur voor uur",hourSub:"Gemiddelde temperatuur, gevoel, regenkans en mm. Veeg voor 36 u →",
+    curveTitle:"Temperatuurcurve",curveSub:"Luchttemperatuur vs. gevoel — ~18 u getoond, veeg voor alle 36 →",legTemp:"Temperatuur",legRain:"Regenkans",
+    weekTitle:"7-daagse verwachting",weekSub:"Gemiddelde dagelijkse maxima en minima voor {place}.",
+    sunTitle:"Zon & Maan",sunSub:"Op-, ondergang en maanfase voor {place}.",
+    pollenTitle:"Pollen",pollenSub:"Meest actieve pollen hier op dit moment, via Open-Meteo-luchtkwaliteit.",
+    tipsTitle:"Tips voor vandaag",tipsSub:"Advies op basis van de omstandigheden van vandaag.",
+    srcTitle:"Bronnen vergeleken",srcSub:"Consensusgemiddelde getoond — klap uit voor de bereiken van alle {n} modellen in de komende 36 u.",
+    daylight:"Daglengte",riseW:"Op",setW:"Onder",lit:"verlicht",hrs:"u",mins:"min",
+    moon0:"Nieuwe maan",moon1:"Wassende sikkel",moon2:"Eerste kwartier",moon3:"Wassende maan",moon4:"Volle maan",moon5:"Afnemende maan",moon6:"Laatste kwartier",moon7:"Afnemende sikkel",
+    p_alder:"Els",p_birch:"Berk",p_grass:"Grassen",p_mugwort:"Bijvoet",p_olive:"Olijf",p_ragweed:"Ambrosia",
+    lvl_none:"Geen",lvl_low:"Laag",lvl_mod:"Matig",lvl_high:"Hoog",lvl_vhigh:"Zeer hoog",lvl_nodata:"Geen gegevens",
+    partsTitle:"Details per dagdeel",
+    seg_morning:"ochtend",seg_afternoon:"middag",seg_evening:"avond",seg_night:"nacht",
+    seg_thisMorning:"Vanochtend",seg_thisAfternoon:"Vanmiddag",seg_thisEvening:"Vanavond",seg_overnight:"Vannacht",
+    n_around:"Rond",n_downto:"tot",n_rainGood:"Grote kans op regen",n_rainSlight:"Kleine kans op buien",n_dry:"Blijft droog.",n_breezy:"Winderig.",n_light:"Zwakke wind.",n_mixed:"Wisselend",n_nodata:"Geen gedetailleerde gegevens voor dit dagdeel.",feels:"gevoel",
+    tip_pollen_nodata:"Pollen: geen gegevens",tip_pollen_low:"Lage pollenconcentratie",tip_pollen_mod:"Matige pollen",tip_pollen_high:"Hoge pollen — let op",
+    tip_uv_vhigh:"Zeer hoge UV — bedek je",tip_uv_high:"Hoge UV — zonnebrand",tip_uv_mod:"Matige UV",tip_uv_low:"Lage UV",
+    tip_car_no:"Geen goede dag om de auto te wassen",tip_car_yes:"Goede dag om de auto te wassen",
+    tip_run_yes:"Goed voor buiten sporten",tip_run_no:"Beter binnen trainen",
+    tip_out_yes:"Fijne dag om eropuit te gaan",tip_out_no:"Houd plannen flexibel",
+    tip_mosq_yes:"Wat muggen actief",tip_mosq_no:"Weinig muggen",
+    tip_cloth_layers:"Laagjes",tip_cloth_warm:"Kleed je warm",tip_cloth_light:"Lichte kleding",tip_cloth_comfort:"Comfortabele laagjes",
+    tip_air_na:"Geen luchtgegevens",tip_air_clean:"Schone lucht",tip_air_fair:"Redelijke luchtkwaliteit",tip_air_poor:"Slechte lucht — beperk inspanning",
+    yourLocations:"Jouw locaties",addLocation:"Locatie toevoegen",searchPh:"Zoek een stad, bijv. Kraków",searchBtn:"Zoeken",useMyLoc:"📍 Mijn locatie gebruiken",current:"huidig",remove:"Verwijder",noMatches:"Geen resultaten — probeer een andere spelling.",searching:"Zoeken…",searchNet:"Zoeken vereist internet.",maxLoc:"Je hebt al {n} locaties — verwijder er eerst een.",
+    loading:"Verwachting laden…",loadingCity:"{city} laden…",findingLoc:"Locatie bepalen…",cantReach:"Weerdienst niet bereikbaar.",cantReachSub:"Controleer je verbinding en trek omlaag om opnieuw te proberen.",
+    srcModel:"Bron / model",winHigh:"Max. in periode",winLow:"Min. in periode",consensusAvg:"◆ Consensusgemiddelde",showAll:"Toon alle {n} modellen ▾",hideModels:"Verberg modellen ▴",
+    noteLive:"Live consensus.",noteLiveBody:"Waarden zijn gemiddeld over {n} nationale weermodellen (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, ververst telkens als je een locatie opent.",noteOffline:"Offline momentopname.",noteOfflineBody:"Toont de opgeslagen momentopname voor Gliwice — maak verbinding met internet en heropen voor een live 7-modellengemiddelde voor elke stad.",
+    footLive:"Live gegevens · Open-Meteo multi-modelgemiddelde",footOffline:"Offline terugval",footTail:" · trek of heropen om te verversen"
+  },
+  pt:{
+    langTitle:"Idioma",
+    days:["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"],
+    cond_clear_day:"Ensolarado",cond_clear_night:"Céu limpo",cond_pcloudy:"Parcialmente nublado",cond_cloudy:"Nublado",cond_overcast:"Encoberto",cond_fog:"Nevoeiro",cond_rain:"Chuva",cond_snow:"Neve",cond_thunder:"Trovoadas",
+    feelsLike:"Sensação",high:"Máx.",low:"Mín.",now:"Agora",today:"Hoje",
+    liveAvg:"AO VIVO · média 7 modelos",offline:"OFFLINE",tapParts:"Toque para ver detalhes →",
+    humidity:"Humidade",rain:"Chuva",snow:"Neve",uvNow:"UV agora",
+    hourTitle:"Hora a hora",hourSub:"Temperatura média, sensação, probabilidade de chuva e mm. Deslize para ver 36 h →",
+    curveTitle:"Curva de temperatura",curveSub:"Temperatura do ar vs. sensação — ~18 h mostradas, deslize para as 36 →",legTemp:"Temperatura",legRain:"Prob. de chuva",
+    weekTitle:"Previsão de 7 dias",weekSub:"Máximas e mínimas diárias médias para {place}.",
+    sunTitle:"Sol e Lua",sunSub:"Nascer, pôr e fase da lua para {place}.",
+    pollenTitle:"Pólen",pollenSub:"Pólens mais ativos aqui agora, via qualidade do ar Open-Meteo.",
+    tipsTitle:"Dicas do dia",tipsSub:"Orientação com base nas condições de hoje.",
+    srcTitle:"Comparação de fontes",srcSub:"Média de consenso mostrada — expanda para ver os intervalos dos {n} modelos nas próximas 36 h.",
+    daylight:"Horas de luz",riseW:"Nascer",setW:"Pôr",lit:"iluminada",hrs:"h",mins:"min",
+    moon0:"Lua nova",moon1:"Crescente côncava",moon2:"Quarto crescente",moon3:"Crescente gibosa",moon4:"Lua cheia",moon5:"Minguante gibosa",moon6:"Quarto minguante",moon7:"Minguante côncava",
+    p_alder:"Amieiro",p_birch:"Bétula",p_grass:"Gramíneas",p_mugwort:"Artemísia",p_olive:"Oliveira",p_ragweed:"Ambrósia",
+    lvl_none:"Nenhum",lvl_low:"Baixo",lvl_mod:"Moderado",lvl_high:"Alto",lvl_vhigh:"Muito alto",lvl_nodata:"Sem dados",
+    partsTitle:"Detalhe por período",
+    seg_morning:"manhã",seg_afternoon:"tarde",seg_evening:"noite",seg_night:"madrugada",
+    seg_thisMorning:"Esta manhã",seg_thisAfternoon:"Esta tarde",seg_thisEvening:"Esta noite",seg_overnight:"Durante a madrugada",
+    n_around:"Cerca de",n_downto:"até",n_rainGood:"Boa probabilidade de chuva",n_rainSlight:"Ligeiro risco de aguaceiros",n_dry:"Continua seco.",n_breezy:"Ventoso.",n_light:"Vento fraco.",n_mixed:"Variável",n_nodata:"Dados detalhados indisponíveis para este período.",feels:"sensação",
+    tip_pollen_nodata:"Pólen: sem dados",tip_pollen_low:"Nível de pólen baixo",tip_pollen_mod:"Pólen moderado",tip_pollen_high:"Pólen alto — cuidado",
+    tip_uv_vhigh:"UV muito alto — cubra-se",tip_uv_high:"UV alto — protetor solar",tip_uv_mod:"UV moderado",tip_uv_low:"UV baixo",
+    tip_car_no:"Mau dia para lavar o carro",tip_car_yes:"Bom dia para lavar o carro",
+    tip_run_yes:"Bom para treinar ao ar livre",tip_run_no:"Melhor treinar dentro de casa",
+    tip_out_yes:"Bom dia para sair",tip_out_no:"Mantenha planos flexíveis",
+    tip_mosq_yes:"Alguns mosquitos",tip_mosq_no:"Poucos mosquitos",
+    tip_cloth_layers:"Camadas",tip_cloth_warm:"Agasalhe-se",tip_cloth_light:"Roupa leve",tip_cloth_comfort:"Camadas confortáveis",
+    tip_air_na:"Sem dados do ar",tip_air_clean:"Ar limpo",tip_air_fair:"Qualidade do ar razoável",tip_air_poor:"Ar fraco — limite o esforço",
+    yourLocations:"Os seus locais",addLocation:"Adicionar local",searchPh:"Procurar cidade, ex. Kraków",searchBtn:"Procurar",useMyLoc:"📍 Usar a minha localização",current:"atual",remove:"Remover",noMatches:"Sem resultados — tente outra grafia.",searching:"A procurar…",searchNet:"A procura precisa de internet.",maxLoc:"Já tem {n} locais — remova um primeiro.",
+    loading:"A carregar previsão…",loadingCity:"A carregar {city}…",findingLoc:"A localizar…",cantReach:"Serviço meteorológico indisponível.",cantReachSub:"Verifique a ligação e puxe para baixo para tentar novamente.",
+    srcModel:"Fonte / modelo",winHigh:"Máx. no período",winLow:"Mín. no período",consensusAvg:"◆ Média de consenso",showAll:"Mostrar todos os {n} modelos ▾",hideModels:"Ocultar modelos ▴",
+    noteLive:"Consenso ao vivo.",noteLiveBody:"Os valores são a média de {n} modelos meteorológicos nacionais (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, atualizados sempre que abre um local.",noteOffline:"Instantâneo offline.",noteOfflineBody:"A mostrar o instantâneo guardado de Gliwice — ligue-se à internet e reabra para obter uma média ao vivo de 7 modelos para qualquer cidade.",
+    footLive:"Dados ao vivo · média multimodelo Open-Meteo",footOffline:"Alternativa offline",footTail:" · puxe ou reabra para atualizar"
+  },
+  uk:{
+    langTitle:"Мова",
+    days:["Нд","Пн","Вт","Ср","Чт","Пт","Сб"],
+    cond_clear_day:"Сонячно",cond_clear_night:"Ясно",cond_pcloudy:"Мінлива хмарність",cond_cloudy:"Хмарно",cond_overcast:"Похмуро",cond_fog:"Туман",cond_rain:"Дощ",cond_snow:"Сніг",cond_thunder:"Грози",
+    feelsLike:"Відчувається",high:"Макс.",low:"Мін.",now:"Зараз",today:"Сьогодні",
+    liveAvg:"НАЖИВО · сер. 7 моделей",offline:"ОФЛАЙН",tapParts:"Торкніться для деталей →",
+    humidity:"Вологість",rain:"Дощ",snow:"Сніг",uvNow:"УФ зараз",
+    hourTitle:"Погодинно",hourSub:"Усереднена температура, відчувається, ймовірність дощу та мм. Гортайте для 36 год →",
+    curveTitle:"Крива температури",curveSub:"Температура повітря проти відчутної — показано ~18 год, гортайте для всіх 36 →",legTemp:"Температура",legRain:"Ймовірність дощу",
+    weekTitle:"Прогноз на 7 днів",weekSub:"Усереднені добові максимуми й мінімуми для {place}.",
+    sunTitle:"Сонце і Місяць",sunSub:"Схід, захід і фаза Місяця для {place}.",
+    pollenTitle:"Пилок",pollenSub:"Найактивніший пилок тут зараз, за даними якості повітря Open-Meteo.",
+    tipsTitle:"Поради на день",tipsSub:"Рекомендації на основі сьогоднішніх умов.",
+    srcTitle:"Порівняння джерел",srcSub:"Показано середнє консенсусу — розгорніть, щоб побачити діапазони всіх {n} моделей на наступні 36 год.",
+    daylight:"Тривалість дня",riseW:"Схід",setW:"Захід",lit:"освітлено",hrs:"год",mins:"хв",
+    moon0:"Новий місяць",moon1:"Молодий місяць",moon2:"Перша чверть",moon3:"Зростаючий місяць",moon4:"Повний місяць",moon5:"Спадний місяць",moon6:"Остання чверть",moon7:"Старий місяць",
+    p_alder:"Вільха",p_birch:"Береза",p_grass:"Трави",p_mugwort:"Полин",p_olive:"Олива",p_ragweed:"Амброзія",
+    lvl_none:"Немає",lvl_low:"Низький",lvl_mod:"Помірний",lvl_high:"Високий",lvl_vhigh:"Дуже високий",lvl_nodata:"Немає даних",
+    partsTitle:"Деталі за частинами дня",
+    seg_morning:"ранок",seg_afternoon:"день",seg_evening:"вечір",seg_night:"ніч",
+    seg_thisMorning:"Сьогодні вранці",seg_thisAfternoon:"Сьогодні вдень",seg_thisEvening:"Сьогодні ввечері",seg_overnight:"Уночі",
+    n_around:"Близько",n_downto:"до",n_rainGood:"Висока ймовірність дощу",n_rainSlight:"Незначний ризик злив",n_dry:"Залишиться сухо.",n_breezy:"Вітряно.",n_light:"Слабкий вітер.",n_mixed:"Мінливо",n_nodata:"Детальні дані для цього періоду відсутні.",feels:"відчувається",
+    tip_pollen_nodata:"Пилок: немає даних",tip_pollen_low:"Низький рівень пилку",tip_pollen_mod:"Помірний пилок",tip_pollen_high:"Високий пилок — обережно",
+    tip_uv_vhigh:"Дуже високий УФ — прикрийтеся",tip_uv_high:"Високий УФ — крем від сонця",tip_uv_mod:"Помірний УФ",tip_uv_low:"Низький УФ",
+    tip_car_no:"Не найкращий день для миття авто",tip_car_yes:"Гарний день для миття авто",
+    tip_run_yes:"Добре для тренувань надворі",tip_run_no:"Краще тренуватися вдома",
+    tip_out_yes:"Гарний день для прогулянки",tip_out_no:"Тримайте плани гнучкими",
+    tip_mosq_yes:"Трохи комарів",tip_mosq_no:"Мало комарів",
+    tip_cloth_layers:"Шарами",tip_cloth_warm:"Вдягніться тепло",tip_cloth_light:"Легкий одяг",tip_cloth_comfort:"Зручні шари",
+    tip_air_na:"Немає даних про повітря",tip_air_clean:"Чисте повітря",tip_air_fair:"Прийнятна якість повітря",tip_air_poor:"Погане повітря — обмежте навантаження",
+    yourLocations:"Ваші локації",addLocation:"Додати локацію",searchPh:"Пошук міста, напр. Kraków",searchBtn:"Пошук",useMyLoc:"📍 Моє місцезнаходження",current:"поточна",remove:"Видалити",noMatches:"Немає збігів — спробуйте інше написання.",searching:"Пошук…",searchNet:"Для пошуку потрібен інтернет.",maxLoc:"У вас уже {n} локацій — спершу видаліть одну.",
+    loading:"Завантаження прогнозу…",loadingCity:"Завантаження {city}…",findingLoc:"Визначення місцезнаходження…",cantReach:"Не вдалося зв'язатися з погодним сервісом.",cantReachSub:"Перевірте з'єднання та потягніть вниз, щоб повторити.",
+    srcModel:"Джерело / модель",winHigh:"Макс. за період",winLow:"Мін. за період",consensusAvg:"◆ Середнє консенсусу",showAll:"Показати всі {n} моделей ▾",hideModels:"Сховати моделі ▴",
+    noteLive:"Консенсус наживо.",noteLiveBody:"Значення усереднені за {n} національними моделями погоди (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) через Open-Meteo, оновлюються щоразу під час відкриття локації.",noteOffline:"Офлайн-знімок.",noteOfflineBody:"Показано збережений знімок для Гливиць — під'єднайтеся до інтернету й відкрийте знову, щоб отримати живе середнє з 7 моделей для будь-якого міста.",
+    footLive:"Живі дані · багатомодельне середнє Open-Meteo",footOffline:"Офлайн-резерв",footTail:" · потягніть або відкрийте знову для оновлення"
+  },
+  ru:{
+    langTitle:"Язык",
+    days:["Вс","Пн","Вт","Ср","Чт","Пт","Сб"],
+    cond_clear_day:"Солнечно",cond_clear_night:"Ясно",cond_pcloudy:"Переменная облачность",cond_cloudy:"Облачно",cond_overcast:"Пасмурно",cond_fog:"Туман",cond_rain:"Дождь",cond_snow:"Снег",cond_thunder:"Грозы",
+    feelsLike:"Ощущается",high:"Макс.",low:"Мин.",now:"Сейчас",today:"Сегодня",
+    liveAvg:"В ЭФИРЕ · ср. 7 моделей",offline:"ОФФЛАЙН",tapParts:"Нажмите для деталей →",
+    humidity:"Влажность",rain:"Дождь",snow:"Снег",uvNow:"УФ сейчас",
+    hourTitle:"По часам",hourSub:"Усреднённая температура, ощущается, вероятность дождя и мм. Листайте на 36 ч →",
+    curveTitle:"График температуры",curveSub:"Температура воздуха и ощущаемая — показано ~18 ч, листайте на все 36 →",legTemp:"Температура",legRain:"Вероятн. дождя",
+    weekTitle:"Прогноз на 7 дней",weekSub:"Усреднённые суточные максимумы и минимумы для {place}.",
+    sunTitle:"Солнце и Луна",sunSub:"Восход, закат и фаза Луны для {place}.",
+    pollenTitle:"Пыльца",pollenSub:"Самая активная пыльца здесь сейчас, по данным качества воздуха Open-Meteo.",
+    tipsTitle:"Советы на день",tipsSub:"Рекомендации на основе сегодняшних условий.",
+    srcTitle:"Сравнение источников",srcSub:"Показано среднее консенсуса — разверните, чтобы увидеть диапазоны всех {n} моделей на ближайшие 36 ч.",
+    daylight:"Долгота дня",riseW:"Восход",setW:"Закат",lit:"освещена",hrs:"ч",mins:"мин",
+    moon0:"Новолуние",moon1:"Молодая луна",moon2:"Первая четверть",moon3:"Растущая луна",moon4:"Полнолуние",moon5:"Убывающая луна",moon6:"Последняя четверть",moon7:"Старая луна",
+    p_alder:"Ольха",p_birch:"Берёза",p_grass:"Травы",p_mugwort:"Полынь",p_olive:"Олива",p_ragweed:"Амброзия",
+    lvl_none:"Нет",lvl_low:"Низкий",lvl_mod:"Умеренный",lvl_high:"Высокий",lvl_vhigh:"Очень высокий",lvl_nodata:"Нет данных",
+    partsTitle:"Подробно по частям дня",
+    seg_morning:"утро",seg_afternoon:"день",seg_evening:"вечер",seg_night:"ночь",
+    seg_thisMorning:"Сегодня утром",seg_thisAfternoon:"Сегодня днём",seg_thisEvening:"Сегодня вечером",seg_overnight:"Ночью",
+    n_around:"Около",n_downto:"до",n_rainGood:"Высокая вероятность дождя",n_rainSlight:"Небольшой риск ливней",n_dry:"Останется сухо.",n_breezy:"Ветрено.",n_light:"Слабый ветер.",n_mixed:"Переменно",n_nodata:"Подробных данных для этого периода нет.",feels:"ощущается",
+    tip_pollen_nodata:"Пыльца: нет данных",tip_pollen_low:"Низкий уровень пыльцы",tip_pollen_mod:"Умеренная пыльца",tip_pollen_high:"Высокая пыльца — осторожно",
+    tip_uv_vhigh:"Очень высокий УФ — прикройтесь",tip_uv_high:"Высокий УФ — крем от солнца",tip_uv_mod:"Умеренный УФ",tip_uv_low:"Низкий УФ",
+    tip_car_no:"Не лучший день для мойки авто",tip_car_yes:"Хороший день для мойки авто",
+    tip_run_yes:"Хорошо для тренировок на улице",tip_run_no:"Лучше тренироваться дома",
+    tip_out_yes:"Хороший день для прогулки",tip_out_no:"Держите планы гибкими",
+    tip_mosq_yes:"Немного комаров",tip_mosq_no:"Мало комаров",
+    tip_cloth_layers:"Слоями",tip_cloth_warm:"Оденьтесь теплее",tip_cloth_light:"Лёгкая одежда",tip_cloth_comfort:"Удобные слои",
+    tip_air_na:"Нет данных о воздухе",tip_air_clean:"Чистый воздух",tip_air_fair:"Приемлемое качество воздуха",tip_air_poor:"Плохой воздух — ограничьте нагрузку",
+    yourLocations:"Ваши локации",addLocation:"Добавить локацию",searchPh:"Поиск города, напр. Kraków",searchBtn:"Поиск",useMyLoc:"📍 Использовать моё местоположение",current:"текущая",remove:"Удалить",noMatches:"Ничего не найдено — попробуйте другое написание.",searching:"Поиск…",searchNet:"Для поиска нужен интернет.",maxLoc:"У вас уже {n} локаций — сначала удалите одну.",
+    loading:"Загрузка прогноза…",loadingCity:"Загрузка {city}…",findingLoc:"Определение местоположения…",cantReach:"Не удалось связаться с погодным сервисом.",cantReachSub:"Проверьте соединение и потяните вниз, чтобы повторить.",
+    srcModel:"Источник / модель",winHigh:"Макс. за период",winLow:"Мин. за период",consensusAvg:"◆ Среднее консенсуса",showAll:"Показать все {n} моделей ▾",hideModels:"Скрыть модели ▴",
+    noteLive:"Консенсус в реальном времени.",noteLiveBody:"Значения усреднены по {n} национальным моделям погоды (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) через Open-Meteo, обновляются при каждом открытии локации.",noteOffline:"Офлайн-снимок.",noteOfflineBody:"Показан сохранённый снимок для Гливице — подключитесь к интернету и откройте снова, чтобы получить живое среднее из 7 моделей для любого города.",
+    footLive:"Живые данные · многомодельное среднее Open-Meteo",footOffline:"Офлайн-резерв",footTail:" · потяните или откройте снова для обновления"
+  },
+  zh:{
+    langTitle:"语言",
+    days:["日","一","二","三","四","五","六"],
+    cond_clear_day:"晴",cond_clear_night:"晴",cond_pcloudy:"局部多云",cond_cloudy:"多云",cond_overcast:"阴",cond_fog:"雾",cond_rain:"雨",cond_snow:"雪",cond_thunder:"雷雨",
+    feelsLike:"体感",high:"最高",low:"最低",now:"现在",today:"今天",
+    liveAvg:"实时 · 7模型平均",offline:"离线",tapParts:"点按查看详情 →",
+    humidity:"湿度",rain:"降雨",snow:"降雪",uvNow:"当前UV",
+    hourTitle:"逐小时",hourSub:"平均气温、体感、降雨概率和毫米。滑动查看36小时 →",
+    curveTitle:"气温曲线",curveSub:"气温与体感对比 — 显示约18小时，滑动查看全部36小时 →",legTemp:"气温",legRain:"降雨概率",
+    weekTitle:"7天预报",weekSub:"{place} 的每日平均最高和最低气温。",
+    sunTitle:"日月",sunSub:"{place} 的日出、日落和月相。",
+    pollenTitle:"花粉",pollenSub:"当前此处最活跃的花粉，数据来自 Open-Meteo 空气质量。",
+    tipsTitle:"生活建议",tipsSub:"根据今日天气给出的建议。",
+    srcTitle:"数据源对比",srcSub:"显示共识平均值 — 展开可查看全部 {n} 个模型未来36小时的范围。",
+    daylight:"昼长",riseW:"升起",setW:"落下",lit:"亮面",hrs:"小时",mins:"分钟",
+    moon0:"新月",moon1:"娥眉月",moon2:"上弦月",moon3:"盈凸月",moon4:"满月",moon5:"亏凸月",moon6:"下弦月",moon7:"残月",
+    p_alder:"桤木",p_birch:"桦树",p_grass:"草类",p_mugwort:"艾蒿",p_olive:"橄榄",p_ragweed:"豚草",
+    lvl_none:"无",lvl_low:"低",lvl_mod:"中等",lvl_high:"高",lvl_vhigh:"很高",lvl_nodata:"无数据",
+    partsTitle:"分时段详情",
+    seg_morning:"上午",seg_afternoon:"下午",seg_evening:"傍晚",seg_night:"夜间",
+    seg_thisMorning:"今天上午",seg_thisAfternoon:"今天下午",seg_thisEvening:"今晚",seg_overnight:"夜间",
+    n_around:"约",n_downto:"低至",n_rainGood:"降雨可能性较大",n_rainSlight:"有轻微阵雨风险",n_dry:"保持干燥。",n_breezy:"有风。",n_light:"微风。",n_mixed:"多变",n_nodata:"该时段暂无详细数据。",feels:"体感",
+    tip_pollen_nodata:"花粉：无数据",tip_pollen_low:"花粉含量低",tip_pollen_mod:"花粉中等",tip_pollen_high:"花粉高 — 请注意",
+    tip_uv_vhigh:"UV很高 — 请遮挡",tip_uv_high:"UV高 — 涂防晒",tip_uv_mod:"UV中等",tip_uv_low:"UV低",
+    tip_car_no:"不适合洗车",tip_car_yes:"适合洗车",
+    tip_run_yes:"适合户外运动",tip_run_no:"最好在室内锻炼",
+    tip_out_yes:"适合外出的一天",tip_out_no:"计划保持灵活",
+    tip_mosq_yes:"有些蚊子",tip_mosq_no:"蚊子较少",
+    tip_cloth_layers:"分层穿",tip_cloth_warm:"穿暖和些",tip_cloth_light:"穿轻便衣物",tip_cloth_comfort:"舒适分层",
+    tip_air_na:"无空气数据",tip_air_clean:"空气清新",tip_air_fair:"空气质量尚可",tip_air_poor:"空气较差 — 减少剧烈活动",
+    yourLocations:"你的位置",addLocation:"添加位置",searchPh:"搜索城市，例如 Kraków",searchBtn:"搜索",useMyLoc:"📍 使用我的位置",current:"当前",remove:"移除",noMatches:"无结果 — 换个拼写试试。",searching:"搜索中…",searchNet:"搜索需要联网。",maxLoc:"你已有 {n} 个位置 — 请先移除一个。",
+    loading:"正在加载预报…",loadingCity:"正在加载 {city}…",findingLoc:"正在定位…",cantReach:"无法连接天气服务。",cantReachSub:"请检查网络并下拉重试。",
+    srcModel:"来源 / 模型",winHigh:"区间最高",winLow:"区间最低",consensusAvg:"◆ 共识平均",showAll:"显示全部 {n} 个模型 ▾",hideModels:"隐藏模型 ▴",
+    noteLive:"实时共识。",noteLiveBody:"数值为 {n} 个国家气象模型（ECMWF、DWD、NOAA、MET Norway、Météo-France、JMA、ECCC）经 Open-Meteo 的平均值，每次打开位置时刷新。",noteOffline:"离线快照。",noteOfflineBody:"显示 Gliwice 的已保存快照 — 联网并重新打开即可获取任意城市的实时7模型平均值。",
+    footLive:"实时数据 · Open-Meteo 多模型平均",footOffline:"离线回退",footTail:" · 下拉或重新打开以刷新"
+  },
+  ja:{
+    langTitle:"言語",
+    days:["日","月","火","水","木","金","土"],
+    cond_clear_day:"晴れ",cond_clear_night:"快晴",cond_pcloudy:"晴れ時々曇り",cond_cloudy:"曇り",cond_overcast:"本曇り",cond_fog:"霧",cond_rain:"雨",cond_snow:"雪",cond_thunder:"雷雨",
+    feelsLike:"体感",high:"最高",low:"最低",now:"現在",today:"今日",
+    liveAvg:"ライブ · 7モデル平均",offline:"オフライン",tapParts:"タップで詳細 →",
+    humidity:"湿度",rain:"降水",snow:"降雪",uvNow:"UV 現在",
+    hourTitle:"1時間ごと",hourSub:"平均気温・体感・降水確率とmm。36時間分はスクロール →",
+    curveTitle:"気温グラフ",curveSub:"気温と体感の比較 — 約18時間表示、36時間分はスクロール →",legTemp:"気温",legRain:"降水確率",
+    weekTitle:"7日間予報",weekSub:"{place} の日別平均の最高・最低気温。",
+    sunTitle:"太陽と月",sunSub:"{place} の日の出・日の入りと月相。",
+    pollenTitle:"花粉",pollenSub:"現在この地点で最も活発な花粉（Open-Meteo 大気質より）。",
+    tipsTitle:"暮らしのヒント",tipsSub:"今日の状況に基づくアドバイス。",
+    srcTitle:"ソース比較",srcSub:"コンセンサス平均を表示 — 展開すると今後36時間の全 {n} モデルの範囲を確認できます。",
+    daylight:"昼の長さ",riseW:"出",setW:"入",lit:"照度",hrs:"時間",mins:"分",
+    moon0:"新月",moon1:"三日月",moon2:"上弦",moon3:"十三夜",moon4:"満月",moon5:"寝待月",moon6:"下弦",moon7:"有明月",
+    p_alder:"ハンノキ",p_birch:"カバノキ",p_grass:"イネ科",p_mugwort:"ヨモギ",p_olive:"オリーブ",p_ragweed:"ブタクサ",
+    lvl_none:"なし",lvl_low:"低い",lvl_mod:"中程度",lvl_high:"高い",lvl_vhigh:"非常に高い",lvl_nodata:"データなし",
+    partsTitle:"時間帯ごとの詳細",
+    seg_morning:"朝",seg_afternoon:"昼",seg_evening:"夕方",seg_night:"夜",
+    seg_thisMorning:"今朝",seg_thisAfternoon:"今日の午後",seg_thisEvening:"今晩",seg_overnight:"夜通し",
+    n_around:"約",n_downto:"最低",n_rainGood:"雨の可能性が高い",n_rainSlight:"にわか雨のわずかな可能性",n_dry:"雨は降らない見込み。",n_breezy:"やや風が強い。",n_light:"風は弱い。",n_mixed:"変わりやすい",n_nodata:"この時間帯の詳細データはありません。",feels:"体感",
+    tip_pollen_nodata:"花粉：データなし",tip_pollen_low:"花粉は少なめ",tip_pollen_mod:"花粉は中程度",tip_pollen_high:"花粉が多い — 注意",
+    tip_uv_vhigh:"UV非常に強い — 肌を覆って",tip_uv_high:"UV強い — 日焼け止めを",tip_uv_mod:"UV中程度",tip_uv_low:"UV弱い",
+    tip_car_no:"洗車には不向き",tip_car_yes:"洗車に良い日",
+    tip_run_yes:"屋外運動に良い",tip_run_no:"屋内での運動がおすすめ",
+    tip_out_yes:"お出かけ日和",tip_out_no:"予定は柔軟に",
+    tip_mosq_yes:"蚊がやや多い",tip_mosq_no:"蚊は少ない",
+    tip_cloth_layers:"重ね着",tip_cloth_warm:"暖かい服装で",tip_cloth_light:"軽装で",tip_cloth_comfort:"快適な重ね着",
+    tip_air_na:"大気データなし",tip_air_clean:"空気はきれい",tip_air_fair:"空気の質はまずまず",tip_air_poor:"空気が悪い — 激しい運動は控えて",
+    yourLocations:"あなたの地点",addLocation:"地点を追加",searchPh:"都市を検索（例：Kraków）",searchBtn:"検索",useMyLoc:"📍 現在地を使う",current:"現在地",remove:"削除",noMatches:"該当なし — 別の綴りをお試しください。",searching:"検索中…",searchNet:"検索にはインターネットが必要です。",maxLoc:"すでに {n} 地点あります — 先に1つ削除してください。",
+    loading:"予報を読み込み中…",loadingCity:"{city} を読み込み中…",findingLoc:"現在地を取得中…",cantReach:"気象サービスに接続できませんでした。",cantReachSub:"接続を確認し、下に引いて再試行してください。",
+    srcModel:"ソース / モデル",winHigh:"期間の最高",winLow:"期間の最低",consensusAvg:"◆ コンセンサス平均",showAll:"全 {n} モデルを表示 ▾",hideModels:"モデルを隠す ▴",
+    noteLive:"ライブのコンセンサス。",noteLiveBody:"数値は {n} の国家気象モデル（ECMWF、DWD、NOAA、MET Norway、Météo-France、JMA、ECCC）を Open-Meteo 経由で平均したもので、地点を開くたびに更新されます。",noteOffline:"オフラインのスナップショット。",noteOfflineBody:"保存された Gliwice のスナップショットを表示中 — インターネットに接続して開き直すと、任意の都市のライブ7モデル平均を取得できます。",
+    footLive:"ライブデータ · Open-Meteo マルチモデル平均",footOffline:"オフライン代替",footTail:" · 下に引くか開き直して更新"
+  },
+  hi:{
+    langTitle:"भाषा",
+    days:["रवि","सोम","मंगल","बुध","गुरु","शुक्र","शनि"],
+    cond_clear_day:"धूप",cond_clear_night:"साफ़",cond_pcloudy:"आंशिक बादल",cond_cloudy:"बादल",cond_overcast:"घने बादल",cond_fog:"कोहरा",cond_rain:"वर्षा",cond_snow:"बर्फ़",cond_thunder:"आंधी-तूफ़ान",
+    feelsLike:"महसूस",high:"अधि.",low:"न्यून.",now:"अभी",today:"आज",
+    liveAvg:"लाइव · 7-मॉडल औसत",offline:"ऑफ़लाइन",tapParts:"विवरण के लिए टैप करें →",
+    humidity:"नमी",rain:"वर्षा",snow:"बर्फ़",uvNow:"अभी UV",
+    hourTitle:"घंटे-दर-घंटे",hourSub:"औसत तापमान, महसूस, वर्षा की संभावना और मिमी। 36 घंटे के लिए स्क्रॉल करें →",
+    curveTitle:"तापमान वक्र",curveSub:"हवा का तापमान बनाम महसूस — ~18 घंटे दिखाए गए, पूरे 36 के लिए स्क्रॉल करें →",legTemp:"तापमान",legRain:"वर्षा संभावना",
+    weekTitle:"7-दिन का पूर्वानुमान",weekSub:"{place} के लिए औसत दैनिक अधिकतम और न्यूनतम।",
+    sunTitle:"सूर्य और चंद्रमा",sunSub:"{place} के लिए उदय, अस्त और चंद्र-कला।",
+    pollenTitle:"पराग",pollenSub:"यहाँ अभी सबसे सक्रिय पराग, Open-Meteo वायु गुणवत्ता के अनुसार।",
+    tipsTitle:"जीवनशैली सुझाव",tipsSub:"आज की स्थिति के आधार पर मार्गदर्शन।",
+    srcTitle:"स्रोतों की तुलना",srcSub:"सहमति औसत दिखाया गया — अगले 36 घंटे में सभी {n} मॉडलों की सीमा देखने के लिए विस्तार करें।",
+    daylight:"दिन की अवधि",riseW:"उदय",setW:"अस्त",lit:"प्रकाशित",hrs:"घंटे",mins:"मिनट",
+    moon0:"अमावस्या",moon1:"शुक्ल बालचंद्र",moon2:"प्रथम चतुर्थांश",moon3:"शुक्ल उपपूर्ण",moon4:"पूर्णिमा",moon5:"कृष्ण उपपूर्ण",moon6:"अंतिम चतुर्थांश",moon7:"कृष्ण बालचंद्र",
+    p_alder:"एल्डर",p_birch:"बर्च",p_grass:"घास",p_mugwort:"मगवर्ट",p_olive:"जैतून",p_ragweed:"रैगवीड",
+    lvl_none:"कोई नहीं",lvl_low:"कम",lvl_mod:"मध्यम",lvl_high:"अधिक",lvl_vhigh:"बहुत अधिक",lvl_nodata:"डेटा नहीं",
+    partsTitle:"भाग-दर-भाग विवरण",
+    seg_morning:"सुबह",seg_afternoon:"दोपहर",seg_evening:"शाम",seg_night:"रात",
+    seg_thisMorning:"आज सुबह",seg_thisAfternoon:"आज दोपहर",seg_thisEvening:"आज शाम",seg_overnight:"रातभर",
+    n_around:"लगभग",n_downto:"तक",n_rainGood:"वर्षा की अच्छी संभावना",n_rainSlight:"हल्की बौछार का जोखिम",n_dry:"सूखा रहेगा।",n_breezy:"हवादार।",n_light:"हल्की हवा।",n_mixed:"मिलाजुला",n_nodata:"इस अवधि के लिए विस्तृत डेटा उपलब्ध नहीं।",feels:"महसूस",
+    tip_pollen_nodata:"पराग: डेटा नहीं",tip_pollen_low:"पराग कम",tip_pollen_mod:"पराग मध्यम",tip_pollen_high:"पराग अधिक — ध्यान रखें",
+    tip_uv_vhigh:"बहुत अधिक UV — ढँकें",tip_uv_high:"अधिक UV — सनस्क्रीन",tip_uv_mod:"मध्यम UV",tip_uv_low:"कम UV",
+    tip_car_no:"गाड़ी धोने के लिए अच्छा दिन नहीं",tip_car_yes:"गाड़ी धोने के लिए अच्छा दिन",
+    tip_run_yes:"बाहरी कसरत के लिए अच्छा",tip_run_no:"घर के अंदर व्यायाम बेहतर",
+    tip_out_yes:"बाहर घूमने के लिए अच्छा दिन",tip_out_no:"योजनाएँ लचीली रखें",
+    tip_mosq_yes:"कुछ मच्छर हैं",tip_mosq_no:"मच्छर कम हैं",
+    tip_cloth_layers:"परतों में",tip_cloth_warm:"गर्म कपड़े पहनें",tip_cloth_light:"हल्के कपड़े",tip_cloth_comfort:"आरामदायक परतें",
+    tip_air_na:"वायु डेटा नहीं",tip_air_clean:"स्वच्छ हवा",tip_air_fair:"वायु गुणवत्ता ठीक-ठाक",tip_air_poor:"खराब हवा — मेहनत सीमित करें",
+    yourLocations:"आपके स्थान",addLocation:"स्थान जोड़ें",searchPh:"शहर खोजें, जैसे Kraków",searchBtn:"खोजें",useMyLoc:"📍 मेरा स्थान उपयोग करें",current:"वर्तमान",remove:"हटाएँ",noMatches:"कोई परिणाम नहीं — दूसरी वर्तनी आज़माएँ।",searching:"खोज रहे हैं…",searchNet:"खोज के लिए इंटरनेट चाहिए।",maxLoc:"आपके पास पहले से {n} स्थान हैं — पहले एक हटाएँ।",
+    loading:"पूर्वानुमान लोड हो रहा है…",loadingCity:"{city} लोड हो रहा है…",findingLoc:"आपका स्थान खोजा जा रहा है…",cantReach:"मौसम सेवा तक नहीं पहुँच सके।",cantReachSub:"कनेक्शन जाँचें और पुनः प्रयास हेतु नीचे खींचें।",
+    srcModel:"स्रोत / मॉडल",winHigh:"अवधि में अधिकतम",winLow:"अवधि में न्यूनतम",consensusAvg:"◆ सहमति औसत",showAll:"सभी {n} मॉडल दिखाएँ ▾",hideModels:"मॉडल छिपाएँ ▴",
+    noteLive:"लाइव सहमति।",noteLiveBody:"मान {n} राष्ट्रीय मौसम मॉडलों (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) का Open-Meteo के माध्यम से औसत हैं, हर बार स्थान खोलने पर ताज़ा होते हैं।",noteOffline:"ऑफ़लाइन स्नैपशॉट।",noteOfflineBody:"Gliwice का सहेजा गया स्नैपशॉट दिखाया जा रहा है — इंटरनेट से जुड़ें और किसी भी शहर के लिए लाइव 7-मॉडल औसत हेतु फिर से खोलें।",
+    footLive:"लाइव डेटा · Open-Meteo बहु-मॉडल औसत",footOffline:"ऑफ़लाइन फ़ॉलबैक",footTail:" · ताज़ा करने हेतु खींचें या फिर से खोलें"
+  },
+  ar:{
+    langTitle:"اللغة",
+    days:["أحد","إثن","ثلا","أرب","خمي","جمع","سبت"],
+    cond_clear_day:"مشمس",cond_clear_night:"صافٍ",cond_pcloudy:"غائم جزئياً",cond_cloudy:"غائم",cond_overcast:"ملبد",cond_fog:"ضباب",cond_rain:"مطر",cond_snow:"ثلج",cond_thunder:"عواصف رعدية",
+    feelsLike:"محسوس",high:"العظمى",low:"الصغرى",now:"الآن",today:"اليوم",
+    liveAvg:"مباشر · متوسط 7 نماذج",offline:"دون اتصال",tapParts:"اضغط للتفاصيل →",
+    humidity:"الرطوبة",rain:"مطر",snow:"ثلج",uvNow:"الأشعة الآن",
+    hourTitle:"ساعة بساعة",hourSub:"متوسط الحرارة، المحسوس، احتمال المطر والمليمترات. مرّر لعرض 36 ساعة →",
+    curveTitle:"منحنى الحرارة",curveSub:"حرارة الهواء مقابل المحسوس — تظهر ~18 ساعة، مرّر لكل الـ36 →",legTemp:"الحرارة",legRain:"احتمال المطر",
+    weekTitle:"توقعات 7 أيام",weekSub:"متوسط العظمى والصغرى اليومية لـ {place}.",
+    sunTitle:"الشمس والقمر",sunSub:"الشروق والغروب وطور القمر لـ {place}.",
+    pollenTitle:"حبوب اللقاح",pollenSub:"أكثر حبوب اللقاح نشاطاً هنا الآن، عبر جودة الهواء من Open-Meteo.",
+    tipsTitle:"نصائح يومية",tipsSub:"إرشادات بناءً على أحوال اليوم.",
+    srcTitle:"مقارنة المصادر",srcSub:"يظهر متوسط التوافق — وسّع لعرض نطاقات كل الـ {n} نماذج خلال الـ36 ساعة القادمة.",
+    daylight:"طول النهار",riseW:"الشروق",setW:"الغروب",lit:"مضاء",hrs:"س",mins:"د",
+    moon0:"محاق",moon1:"هلال متزايد",moon2:"الربع الأول",moon3:"أحدب متزايد",moon4:"بدر",moon5:"أحدب متناقص",moon6:"الربع الأخير",moon7:"هلال متناقص",
+    p_alder:"جار الماء",p_birch:"البتولا",p_grass:"الأعشاب",p_mugwort:"الشيح",p_olive:"الزيتون",p_ragweed:"عشبة الرجيد",
+    lvl_none:"لا شيء",lvl_low:"منخفض",lvl_mod:"متوسط",lvl_high:"مرتفع",lvl_vhigh:"مرتفع جداً",lvl_nodata:"لا بيانات",
+    partsTitle:"تفاصيل فترات اليوم",
+    seg_morning:"صباحاً",seg_afternoon:"ظهراً",seg_evening:"مساءً",seg_night:"ليلاً",
+    seg_thisMorning:"هذا الصباح",seg_thisAfternoon:"بعد ظهر اليوم",seg_thisEvening:"هذا المساء",seg_overnight:"أثناء الليل",
+    n_around:"حوالي",n_downto:"حتى",n_rainGood:"احتمال مطر جيد",n_rainSlight:"خطر زخات خفيف",n_dry:"يبقى جافاً.",n_breezy:"نسيم قوي.",n_light:"رياح خفيفة.",n_mixed:"متقلب",n_nodata:"لا تتوفر بيانات مفصلة لهذه الفترة.",feels:"محسوس",
+    tip_pollen_nodata:"حبوب اللقاح: لا بيانات",tip_pollen_low:"مستوى حبوب لقاح منخفض",tip_pollen_mod:"حبوب لقاح متوسطة",tip_pollen_high:"حبوب لقاح مرتفعة — انتبه",
+    tip_uv_vhigh:"أشعة مرتفعة جداً — تغطَّ",tip_uv_high:"أشعة مرتفعة — واقي شمس",tip_uv_mod:"أشعة متوسطة",tip_uv_low:"أشعة منخفضة",
+    tip_car_no:"يوم غير مناسب لغسل السيارة",tip_car_yes:"يوم جيد لغسل السيارة",
+    tip_run_yes:"جيد للتمارين في الخارج",tip_run_no:"الأفضل التمرن في الداخل",
+    tip_out_yes:"يوم جميل للخروج",tip_out_no:"اجعل خططك مرنة",
+    tip_mosq_yes:"بعض البعوض",tip_mosq_no:"بعوض قليل",
+    tip_cloth_layers:"طبقات",tip_cloth_warm:"البس ملابس دافئة",tip_cloth_light:"ملابس خفيفة",tip_cloth_comfort:"طبقات مريحة",
+    tip_air_na:"لا بيانات عن الهواء",tip_air_clean:"هواء نقي",tip_air_fair:"جودة هواء مقبولة",tip_air_poor:"هواء رديء — قلل المجهود",
+    yourLocations:"مواقعك",addLocation:"إضافة موقع",searchPh:"ابحث عن مدينة، مثل Kraków",searchBtn:"بحث",useMyLoc:"📍 استخدم موقعي",current:"الحالي",remove:"إزالة",noMatches:"لا نتائج — جرّب تهجئة أخرى.",searching:"جارٍ البحث…",searchNet:"البحث يتطلب اتصالاً بالإنترنت.",maxLoc:"لديك بالفعل {n} مواقع — أزل واحداً أولاً.",
+    loading:"جارٍ تحميل التوقعات…",loadingCity:"جارٍ تحميل {city}…",findingLoc:"جارٍ تحديد موقعك…",cantReach:"تعذّر الوصول إلى خدمة الطقس.",cantReachSub:"تحقق من اتصالك واسحب للأسفل لإعادة المحاولة.",
+    srcModel:"المصدر / النموذج",winHigh:"العظمى في الفترة",winLow:"الصغرى في الفترة",consensusAvg:"◆ متوسط التوافق",showAll:"عرض كل الـ {n} نماذج ▾",hideModels:"إخفاء النماذج ▴",
+    noteLive:"توافق مباشر.",noteLiveBody:"القيم متوسط لـ {n} نماذج طقس وطنية (ECMWF وDWD وNOAA وMET Norway وMétéo-France وJMA وECCC) عبر Open-Meteo، تُحدَّث في كل مرة تفتح فيها موقعاً.",noteOffline:"لقطة دون اتصال.",noteOfflineBody:"عرض اللقطة المحفوظة لـ Gliwice — اتصل بالإنترنت وأعد الفتح للحصول على متوسط مباشر من 7 نماذج لأي مدينة.",
+    footLive:"بيانات مباشرة · متوسط متعدد النماذج من Open-Meteo",footOffline:"احتياطي دون اتصال",footTail:" · اسحب أو أعد الفتح للتحديث"
+  }
+};
+let LANG=(function(){try{var s=localStorage.getItem('cw_lang');if(s&&LANG_NAMES[s])return s;}catch(e){}var n=(navigator.language||'en').slice(0,2).toLowerCase();return LANG_NAMES[n]?n:'en';})();
+function t(k){var d=I18N[LANG]||I18N.en;var v=(d&&d[k]!=null)?d[k]:(I18N.en[k]!=null?I18N.en[k]:k);return v;}
+function tf(k,vars){var s=t(k);if(vars)for(var p in vars)s=s.split('{'+p+'}').join(vars[p]);return s;}
+function setLang(l){if(!LANG_NAMES[l])return;LANG=l;try{localStorage.setItem('cw_lang',l);}catch(e){}WD=(I18N[LANG]||I18N.en).days;document.documentElement.lang=l;document.documentElement.dir=RTL_LANGS.indexOf(l)>=0?'rtl':'ltr';applyStaticI18n();closeLangSheet();if(typeof LAST_DATA!=='undefined'&&LAST_DATA)render(LAST_DATA);}
+function applyStaticI18n(){
+  var set=function(id,txt){var el=document.getElementById(id);if(el)el.textContent=txt;};
+  set('locSheetTitle',t('yourLocations'));set('addHdr',t('addLocation'));set('searchGo',t('searchBtn'));set('partsSheetTitle',t('partsTitle'));set('langSheetTitle',t('langTitle'));
+  var q=document.getElementById('q');if(q)q.placeholder=t('searchPh');
+  var my=document.getElementById('myLocBtn');if(my)my.textContent=t('useMyLoc');
+}
+</script>
+<script>
 /* ============ CONFIG ============ */
 const MODELS=[
   {id:'ecmwf_ifs025',name:'ECMWF'},{id:'icon_seamless',name:'DWD ICON'},
@@ -352,7 +886,7 @@ const MODELS=[
   {id:'meteofrance_seamless',name:'Météo-France'},{id:'jma_seamless',name:'JMA'},
   {id:'gem_seamless',name:'ECCC GEM'}
 ];
-const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+let WD=(I18N[LANG]||I18N.en).days;
 const pad=n=>String(n).padStart(2,'0');
 const R=v=>(v==null||isNaN(v))?null:Math.round(v);
 function coalesce(arr){const o=arr.slice();let last=null;for(let i=0;i<o.length;i++){if(o[i]==null)o[i]=last;else last=o[i];}for(let i=o.length-1;i>=0;i--){if(o[i]==null)o[i]=(i+1<o.length?o[i+1]:0);}return o;}
@@ -484,19 +1018,20 @@ function aqiLabel(v,scale){if(v==null)return '—';
   if(scale==='us')return v<=50?'good':v<=100?'moderate':v<=150?'sensitive':v<=200?'unhealthy':v<=300?'v. unhealthy':'hazardous';
   return v<=20?'good':v<=40?'fair':v<=60?'moderate':v<=80?'poor':v<=100?'v. poor':'severe';}
 function moonPhaseInfo(p){const a=[['🌑','New moon'],['🌒','Waxing crescent'],['🌓','First quarter'],['🌔','Waxing gibbous'],['🌕','Full moon'],['🌖','Waning gibbous'],['🌗','Last quarter'],['🌘','Waning crescent']];return a[Math.round(p*8)%8];}
-function moonBlock(lat,lon,off){const now=new Date();const mt=SC.moonTimes(now,lat,lon),il=SC.moonIllum(now),ph=moonPhaseInfo(il.phase);
-  return {emoji:ph[0],name:ph[1],illum:Math.round(il.fraction*100),rise:fmtTZ(mt.rise,off),set:fmtTZ(mt.set,off)};}
-function daylightStr(sr,ss){if(!sr||!ss)return '';const a=sr.split(':'),b=ss.split(':');let m=(+b[0]*60+ +b[1])-(+a[0]*60+ +a[1]);if(m<0)m+=1440;return Math.floor(m/60)+' hrs '+(m%60)+' mins';}
+function moonBlock(lat,lon,off){const now=new Date();const mt=SC.moonTimes(now,lat,lon),il=SC.moonIllum(now);
+  const emojis=['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];const idx=Math.round(il.phase*8)%8;
+  return {emoji:emojis[idx],name:t('moon'+idx),illum:Math.round(il.fraction*100),rise:fmtTZ(mt.rise,off),set:fmtTZ(mt.set,off)};}
+function daylightStr(sr,ss){if(!sr||!ss)return '';const a=sr.split(':'),b=ss.split(':');let m=(+b[0]*60+ +b[1])-(+a[0]*60+ +a[1]);if(m<0)m+=1440;return Math.floor(m/60)+' '+t('hrs')+' '+(m%60)+' '+t('mins');}
 
 /* ============ POLLEN + LIFESTYLE ============ */
 const PTHRESH={grass:[5,20,100,200],birch:[10,50,200,500],alder:[10,50,200,500],olive:[10,50,200,500],mugwort:[5,12,25,50],ragweed:[5,12,25,50]};
 const POLLEN_META={alder:['Alder','🌳'],birch:['Birch','🌳'],grass:['Grass','🌾'],mugwort:['Mugwort','🌿'],olive:['Olive','🫒'],ragweed:['Ragweed','🌿']};
 function pollenLevel(type,val){
-  if(val==null||isNaN(val)) return {i:-1,txt:'No data',frac:0};
+  if(val==null||isNaN(val)) return {i:-1,txt:t('lvl_nodata'),frac:0};
   const b=PTHRESH[type]||PTHRESH.grass; let i=0; while(i<b.length && val>b[i]) i++;
-  if(val<0.5) return {i:0,txt:'None',frac:0.05};
-  const names=['None','Low','Moderate','High','Very high'];
-  return {i,txt:names[i]||'Very high',frac:Math.max(i/4,0.12)};
+  if(val<0.5) return {i:0,txt:t('lvl_none'),frac:0.05};
+  const names=[t('lvl_none'),t('lvl_low'),t('lvl_mod'),t('lvl_high'),t('lvl_vhigh')];
+  return {i,txt:names[i]||t('lvl_vhigh'),frac:Math.max(i/4,0.12)};
 }
 const POLLEN_COL=['#3FC6B7','#8FD14F','#F2C744','#F2913D','#E4574C'];
 function ring(frac,color){const R=26,C=2*Math.PI*R,off=C*(1-Math.max(0,Math.min(1,frac)));
@@ -504,47 +1039,47 @@ function ring(frac,color){const R=26,C=2*Math.PI*R,off=C*(1-Math.max(0,Math.min(
     (frac>0?`<circle cx="36" cy="36" r="26" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 36 36)"/>`:'')+`</svg>`;}
 function sunMoonCard(D){
   const c=D.current, m=moonBlock(D.place.lat,D.place.lon,D.tzOffset);
-  return `<h2>🌅 Sun &amp; Moon</h2><p class="sub">Rise, set and moon phase for ${D.place.name}.</p>
+  return `<h2>🌅 ${t('sunTitle')}</h2><p class="sub">${tf('sunSub',{place:D.place.name})}</p>
   <div class="card sunmoon">
     <div class="smrow"><div class="smicon">${pico('clear-day',44)}</div>
-      <div class="smdur"><div class="smlabel">Daylight</div><div class="smval">${daylightStr(c.sunrise,c.sunset)||'—'}</div></div>
-      <div class="smtimes"><div><span>Rise</span><b>${c.sunrise||'--:--'}</b></div><div><span>Set</span><b>${c.sunset||'--:--'}</b></div></div></div>
+      <div class="smdur"><div class="smlabel">${t('daylight')}</div><div class="smval">${daylightStr(c.sunrise,c.sunset)||'—'}</div></div>
+      <div class="smtimes"><div><span>${t('riseW')}</span><b>${c.sunrise||'--:--'}</b></div><div><span>${t('setW')}</span><b>${c.sunset||'--:--'}</b></div></div></div>
     <div class="smrow"><div class="smicon moon">${m.emoji}</div>
-      <div class="smdur"><div class="smlabel">${m.name}</div><div class="smval">${m.illum}% lit</div></div>
-      <div class="smtimes"><div><span>Rise</span><b>${m.rise}</b></div><div><span>Set</span><b>${m.set}</b></div></div></div>
+      <div class="smdur"><div class="smlabel">${m.name}</div><div class="smval">${m.illum}% ${t('lit')}</div></div>
+      <div class="smtimes"><div><span>${t('riseW')}</span><b>${m.rise}</b></div><div><span>${t('setW')}</span><b>${m.set}</b></div></div></div>
   </div>`;
 }
 function pollenCard(D){
   if(!D.pollen) return '';
-  const items=Object.keys(POLLEN_META).map(k=>{const v=D.pollen[k];return {k,v,L:pollenLevel(k,v),label:POLLEN_META[k][0],ic:POLLEN_META[k][1]};}).filter(x=>x.v!=null);
+  const items=Object.keys(POLLEN_META).map(k=>{const v=D.pollen[k];return {k,v,L:pollenLevel(k,v),label:t('p_'+k),ic:POLLEN_META[k][1]};}).filter(x=>x.v!=null);
   if(!items.length) return '';
   items.sort((a,b)=>(b.L.i-a.L.i)||(b.v-a.v));
   const top=items.slice(0,3);
-  return `<h2>🌸 Pollen count</h2><p class="sub">Most active pollens here right now, via Open-Meteo air quality.</p>
+  return `<h2>🌸 ${t('pollenTitle')}</h2><p class="sub">${t('pollenSub')}</p>
   <div class="card pollen">${top.map(x=>`<div class="pcell"><div class="plabel">${x.label}</div>
       <div class="pring">${ring(x.L.frac,POLLEN_COL[Math.max(0,x.L.i)])}<div class="pico2">${x.ic}</div></div>
       <div class="plvl" style="color:${x.L.i<=0?'var(--ink-soft)':POLLEN_COL[x.L.i]}">${x.L.txt}</div></div>`).join('')}</div>`;
 }
 function buildTips(D){
   const c=D.current, hrs=D.hourly.slice(0,24), pmax=Math.max(...hrs.map(x=>x.precip==null?0:x.precip));
-  const uv=+c.uv||0, hum=c.humidity||0, t=c.temp, aqi=D.aqi, us=D.aqiScale==='us';
+  const uv=+c.uv||0, hum=c.humidity||0, tp=c.temp, aqi=D.aqi, us=D.aqiScale==='us';
   const aqiGood = aqi==null || aqi<=(us?100:60);
-  const airTx = aqi==null?'Air data unavailable':(us?(aqi<=50?'Clean air':aqi<=100?'Fair air quality':'Poor air — limit exertion'):(aqi<=40?'Clean air':aqi<=80?'Fair air quality':'Poor air — limit exertion'));
+  const airTx = aqi==null?t('tip_air_na'):(us?(aqi<=50?t('tip_air_clean'):aqi<=100?t('tip_air_fair'):t('tip_air_poor')):(aqi<=40?t('tip_air_clean'):aqi<=80?t('tip_air_fair'):t('tip_air_poor')));
   const pol=D.pollen?Object.keys(D.pollen).reduce((m,k)=>Math.max(m,pollenLevel(k,D.pollen[k]).i),-1):-1;
   const tips=[
-    {ic:'🌸',tx:(pol<0?'Pollen: no data':pol<=1?'Low pollen count':pol===2?'Moderate pollen':'High pollen — take care')},
-    {ic:'☀️',tx:(uv>=8?'Very high UV — cover up':uv>=6?'High UV — sunscreen':uv>=3?'Moderate UV':'Low UV')},
-    {ic:'🚗',tx:(pmax>=40?'Not ideal for car washing':'Good day to wash the car')},
-    {ic:'🏃',tx:((pmax<30&&t!=null&&t>=8&&t<=26&&aqiGood)?'Good for outdoor workouts':'Better to train indoors')},
-    {ic:'🌴',tx:((pmax<40&&t!=null&&t>=12&&t<=28)?'Nice for a day out':'Keep plans flexible')},
-    {ic:'🦟',tx:((t!=null&&t>=18&&hum>=60)?'Some mosquitoes about':'Few mosquitoes')},
-    {ic:'👕',tx:(t==null?'Layers':t<8?'Dress warm':t>26?'Light clothing':'Comfortable layers')}
+    {ic:'🌸',tx:(pol<0?t('tip_pollen_nodata'):pol<=1?t('tip_pollen_low'):pol===2?t('tip_pollen_mod'):t('tip_pollen_high'))},
+    {ic:'☀️',tx:(uv>=8?t('tip_uv_vhigh'):uv>=6?t('tip_uv_high'):uv>=3?t('tip_uv_mod'):t('tip_uv_low'))},
+    {ic:'🚗',tx:(pmax>=40?t('tip_car_no'):t('tip_car_yes'))},
+    {ic:'🏃',tx:((pmax<30&&tp!=null&&tp>=8&&tp<=26&&aqiGood)?t('tip_run_yes'):t('tip_run_no'))},
+    {ic:'🌴',tx:((pmax<40&&tp!=null&&tp>=12&&tp<=28)?t('tip_out_yes'):t('tip_out_no'))},
+    {ic:'🦟',tx:((tp!=null&&tp>=18&&hum>=60)?t('tip_mosq_yes'):t('tip_mosq_no'))},
+    {ic:'👕',tx:(tp==null?t('tip_cloth_layers'):tp<8?t('tip_cloth_warm'):tp>26?t('tip_cloth_light'):t('tip_cloth_comfort'))}
   ];
   if(aqi!=null) tips.push({ic:'😷',tx:airTx});
   return tips;
 }
 function lifestyleCard(D){
-  return `<h2>🧭 Lifestyle tips</h2><p class="sub">Guidance derived from today's conditions.</p>
+  return `<h2>🧭 ${t('tipsTitle')}</h2><p class="sub">${t('tipsSub')}</p>
   <div class="card tips">${buildTips(D).map(t=>`<div class="tip"><div class="tipic">${t.ic}</div><div class="tiptx">${t.tx}</div></div>`).join('')}</div>`;
 }
 
@@ -552,12 +1087,12 @@ function lifestyleCard(D){
 let LAST_SEGS=[];
 function segCardsHTML(segs){return segs.map(s=>`<div class="seg"><div class="bar" style="background:${heroGrad(s.key)}"></div>
     <div class="seg-head"><div><div class="seg-name">${s.name}</div><div class="seg-time">${s.time}</div></div>${pico(s.key,40)}</div>
-    <div class="seg-body"><div class="seg-temp">${s.hi==null?'–':tC(s.hi)+'°'}<small> /${s.lo==null?'–':tC(s.lo)+'°'}</small></div><div class="seg-feels">${s.feels==null?'':'feels '+tC(s.feels)+'°'}</div></div>
+    <div class="seg-body"><div class="seg-temp">${s.hi==null?'–':tC(s.hi)+'°'}<small> /${s.lo==null?'–':tC(s.lo)+'°'}</small></div><div class="seg-feels">${s.feels==null?'':t('feels')+' '+tC(s.feels)+'°'}</div></div>
     <div class="seg-desc">${s.desc}</div></div>`).join('');}
 function setRefresh(en){try{if(window.AndroidBridge&&AndroidBridge.setRefreshEnabled)AndroidBridge.setRefreshEnabled(en);}catch(e){}}
 function openParts(){document.getElementById('partBody').innerHTML=segCardsHTML(LAST_SEGS);document.getElementById('partSheet').classList.add('open');setRefresh(false);}
 function closeParts(){document.getElementById('partSheet').classList.remove('open');setRefresh(true);}
-function toggleSrc(ev){const t=document.getElementById('srcTable');const open=t.classList.toggle('open');ev.currentTarget.textContent=open?'Hide models ▴':('Show all '+t.querySelectorAll('.srow').length+' models ▾');}
+function toggleSrc(ev){const tbl=document.getElementById('srcTable');const open=tbl.classList.toggle('open');ev.currentTarget.textContent=open?t('hideModels'):tf('showAll',{n:tbl.querySelectorAll('.srow').length});}
 
 /* ============ RENDER ============ */
 function render(D){
@@ -577,13 +1112,17 @@ function render(D){
   <div class="hero-wrap"><div class="hero">
     <div class="glow"></div>
     <div class="hero-head">
-      <div class="applogo"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
+      <div class="logo-row">
+        <button class="hhbtn" onclick="event.stopPropagation();openLangSheet()" aria-label="Language">${icoGlobe()}</button>
+        <div class="applogo"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
+        <button class="hhbtn${NOTIF?'':' off'}" id="notifBtn" onclick="event.stopPropagation();toggleNotif()" aria-label="Notifications">${icoBell(NOTIF)}</button>
+      </div>
       <div class="locbar" id="tiles"></div>
     </div>
     <div class="hero-divider"></div>
     <div class="hero-body" onclick="openParts()">
     <div class="hero-top">
-      <div class="live-pill"><span class="lp1">${D.live?'LIVE · 7-model avg':'OFFLINE'}</span><span class="lp2">${D.updated||'--:--'}</span></div>
+      <div class="live-pill"><span class="lp1">${D.live?t('liveAvg'):t('offline')}</span><span class="lp2">${D.updated||'--:--'}</span></div>
       <div class="loc"><small>${Math.abs(D.place.lat).toFixed(2)}°${D.place.lat>=0?'N':'S'}, ${Math.abs(D.place.lon).toFixed(2)}°${D.place.lon>=0?'E':'W'}</small><span class="locname">${D.place.name}${D.place.country?', '+D.place.country:''}</span></div>
       <div class="unit-toggle" onclick="event.stopPropagation()"><button class="${UNIT==='C'?'on':''}" onclick="setUnit('C')">°C</button><button class="${UNIT==='F'?'on':''}" onclick="setUnit('F')">°F</button></div>
     </div>
@@ -592,47 +1131,47 @@ function render(D){
       <div class="hero-now">
         <div class="now-temp">${tC(c.temp)==null?'–':tC(c.temp)}<span>°${UNIT}</span></div>
         <div class="now-cond">${LB(c.key)}</div>
-        <div class="now-feels">Feels like ${tC(c.feels)==null?'–':tC(c.feels)+'°'+UNIT}</div>
+        <div class="now-feels">${t('feelsLike')} ${tC(c.feels)==null?'–':tC(c.feels)+'°'+UNIT}</div>
       </div>
     </div>
     <div class="hero-panel">
       <div class="lohi-row">
-        <div class="lohi">▲ High ${hi==null?'–':tC(hi)+'°'}</div>
-        <div class="lohi">▼ Low ${lo==null?'–':tC(lo)+'°'}</div>
+        <div class="lohi">▲ ${t('high')} ${hi==null?'–':tC(hi)+'°'}</div>
+        <div class="lohi">▼ ${t('low')} ${lo==null?'–':tC(lo)+'°'}</div>
       </div>
       <div class="hero-stats">
         <div class="hs"><span>💨</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
-        <div class="hs"><span>💧</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>Humidity</i></div>
-        <div class="hs"><span>${(c.key||'').indexOf('snow')>=0?'❄️':'🌧️'}</span><b>${D.hourly[0]&&D.hourly[0].precip!=null?D.hourly[0].precip+'%':'–'}</b><i>${(c.key||'').indexOf('snow')>=0?'Snow':'Rain'}</i></div>
+        <div class="hs"><span>💧</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>${t('humidity')}</i></div>
+        <div class="hs"><span>${(c.key||'').indexOf('snow')>=0?'❄️':'🌧️'}</span><b>${D.hourly[0]&&D.hourly[0].precip!=null?D.hourly[0].precip+'%':'–'}</b><i>${(c.key||'').indexOf('snow')>=0?t('snow'):t('rain')}</i></div>
       </div>
       <div class="hero-stats">
         <div class="hs"><span>🌫️</span><b>${D.aqi!=null?D.aqi:'–'}</b><i>AQI ${D.aqi!=null?(D.aqiScale==='us'?'US':'EU'):''}</i></div>
         <div class="hs"><span>🧭</span><b>${c.pressure!=null?c.pressure:'–'}</b><i>hPa</i></div>
-        <div class="hs"><span>🔆</span><b>${c.uv==null?'–':c.uv}</b><i>UV now</i></div>
+        <div class="hs"><span>🔆</span><b>${c.uv==null?'–':c.uv}</b><i>${t('uvNow')}</i></div>
       </div>
     </div>
-    <div class="taphint">Tap for part-by-part →</div>
+    <div class="taphint">${t('tapParts')}</div>
     </div>
   </div></div>
 
-  <h2>⏱️ Hour by hour</h2><p class="sub">Averaged temperature, <b style="color:var(--feels)">feels-like</b>, rain chance and mm. Scroll for 36 h →</p>
+  <h2>⏱️ ${t('hourTitle')}</h2><p class="sub">${t('hourSub')}</p>
   <div class="strip-wrap"><div class="strip">${D.hourly.map((x,i)=>{
     const ds=i===0||x.h==='00';
     return `<div class="hcell${x.isDay?'':' night'}${i===0?' now':''}${ds?' daystart':''}">
-      <div class="hday">${WD[x.date.getDay()]}</div><div class="ht">${i===0?'Now':x.h+':00'}</div>${pico(x.key,32)}<div class="htemp">${x.temp==null?'–':tC(x.temp)+'°'}</div><div class="hfeels">${x.feels==null?'–':tC(x.feels)+'°'}</div>
+      <div class="hday">${WD[x.date.getDay()]}</div><div class="ht">${i===0?t('now'):x.h+':00'}</div>${pico(x.key,32)}<div class="htemp">${x.temp==null?'–':tC(x.temp)+'°'}</div><div class="hfeels">${x.feels==null?'–':tC(x.feels)+'°'}</div>
       <div class="hrain">${x.precip>=5?((x.key.indexOf('snow')>=0?'❄':'💧')+x.precip+'%'):''}</div><div class="hmm">${x.mm>0?x.mm+' mm':''}</div></div>`;}).join('')}</div></div>
 
-  <h2>📈 Temperature curve</h2><p class="sub">Consensus air temperature vs. feels-like — showing ~18 h, scroll for all 36 →</p>
+  <h2>📈 ${t('curveTitle')}</h2><p class="sub">${t('curveSub')}</p>
   <div class="card"><div class="legend">
-    <div class="lg"><span class="dot" style="background:var(--temp)"></span>Temperature</div>
-    <div class="lg"><span class="dot" style="background:var(--feels)"></span>Feels like</div>
-    <div class="lg"><span class="dot" style="background:var(--rain);opacity:.5"></span>Rain chance</div></div>
+    <div class="lg"><span class="dot" style="background:var(--temp)"></span>${t('legTemp')}</div>
+    <div class="lg"><span class="dot" style="background:var(--feels)"></span>${t('feelsLike')}</div>
+    <div class="lg"><span class="dot" style="background:var(--rain);opacity:.5"></span>${t('legRain')}</div></div>
     <div class="chart-box" id="chartBox"></div></div>
 
-  <h2>📅 7-day outlook</h2><p class="sub">Averaged daily highs and lows for ${D.place.name}.</p>
+  <h2>📅 ${t('weekTitle')}</h2><p class="sub">${tf('weekSub',{place:D.place.name})}</p>
   <div class="days">${(()=>{const all=D.daily;const vals=all.flatMap(d=>[d.lo,d.hi]).filter(v=>v!=null);const gmin=vals.length?Math.min(...vals):0,gmax=vals.length?Math.max(...vals):1;
     return all.map((d,i)=>{const ok=d.lo!=null&&d.hi!=null;const l=ok?((d.lo-gmin)/(gmax-gmin||1))*100:0,w=ok?((d.hi-d.lo)/(gmax-gmin||1))*100:0;
-    return `<div class="drow"><div class="dname">${i===0?'Today':WD[d.date.getDay()]}<small>${d.date.getDate()}/${d.date.getMonth()+1}</small></div>
+    return `<div class="drow"><div class="dname">${i===0?t('today'):WD[d.date.getDay()]}<small>${d.date.getDate()}/${d.date.getMonth()+1}</small></div>
       ${pico(d.key,34)}<div class="drain">${d.precip>=10?'💧'+d.precip+'%':''}</div>
       <div class="dlo">${d.lo==null?'–':tC(d.lo)+'°'}</div><div class="dtrack">${ok?`<div class="dfill" style="left:${l}%;width:${Math.max(w,6)}%"></div>`:''}</div><div class="dhi">${d.hi==null?'–':tC(d.hi)+'°'}</div></div>`;}).join('');})()}</div>
 
@@ -640,17 +1179,15 @@ function render(D){
   ${pollenCard(D)}
   ${lifestyleCard(D)}
 
-  <h2>🛰️ How the sources compare</h2><p class="sub">Consensus average shown — expand to see all ${D.sources.length} models' ranges over the next 36 h.</p>
-  <div class="src-table" id="srcTable"><table><thead><tr><th>Source / model</th><th>Window high</th><th>Window low</th></tr></thead><tbody>
-    <tr class="avg"><td>◆ Consensus average</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.hi,0)/D.sources.length))}°</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.lo,0)/D.sources.length))}°</td></tr>
+  <h2>🛰️ ${t('srcTitle')}</h2><p class="sub">${tf('srcSub',{n:D.sources.length})}</p>
+  <div class="src-table" id="srcTable"><table><thead><tr><th>${t('srcModel')}</th><th>${t('winHigh')}</th><th>${t('winLow')}</th></tr></thead><tbody>
+    <tr class="avg"><td>${t('consensusAvg')}</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.hi,0)/D.sources.length))}°</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.lo,0)/D.sources.length))}°</td></tr>
     ${D.sources.map(s=>`<tr class="srow"><td>${s.name}</td><td>${tC(s.hi)}°</td><td>${tC(s.lo)}°</td></tr>`).join('')}
   </tbody></table></div>
-  <button class="expander" onclick="toggleSrc(event)">Show all ${D.sources.length} models ▾</button>
+  <button class="expander" onclick="toggleSrc(event)">${tf('showAll',{n:D.sources.length})}</button>
 
-  <div class="note"><b>${D.live?'Live consensus.':'Offline snapshot.'}</b> ${D.live
-    ?'Numbers are averaged across '+D.sources.length+' national weather models (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, refreshed each time you open a location.'
-    :'Showing the saved Gliwice snapshot — connect to the internet and reopen to pull a live 7-model average for any city.'}</div>`;
-  document.getElementById('foot').textContent=(D.live?'Live data · Open-Meteo multi-model average':'Offline fallback')+' · pull-to-nothing, just reopen to refresh';
+  <div class="note"><b>${D.live?t('noteLive'):t('noteOffline')}</b> ${D.live?tf('noteLiveBody',{n:D.sources.length}):t('noteOfflineBody')}</div>`;
+  document.getElementById('foot').textContent=(D.live?t('footLive'):t('footOffline'))+t('footTail');
   renderTiles();
   drawChart(D.hourly);
 }
@@ -667,18 +1204,20 @@ function buildSegments(hourly){
     const cc={};let key=g.items[0].key,bn=0;g.items.forEach(x=>{cc[x.key]=(cc[x.key]||0)+1;if(cc[x.key]>bn){bn=cc[x.key];key=x.key;}});
     const pv=g.items.map(x=>x.precip).filter(v=>v!=null),wv=g.items.map(x=>x.wind).filter(v=>v!=null);
     const precip=pv.length?Math.max(...pv):0,wind=wv.length?Math.max(...wv):0;
-    let name=WD[g.date.getDay()]+' '+g.part.toLowerCase();
-    if(gi===0){name=g.part==='Evening'?'This evening':g.part==='Night'?'Overnight':g.part==='Morning'?'This morning':'This afternoon';}
-    if(gi>0&&g.part==='Night')name=WD[g.date.getDay()]+' night';
+    const pw={Morning:t('seg_morning'),Afternoon:t('seg_afternoon'),Evening:t('seg_evening'),Night:t('seg_night')};
+    let name=WD[g.date.getDay()]+' '+(pw[g.part]||g.part);
+    if(gi===0){name=g.part==='Evening'?t('seg_thisEvening'):g.part==='Night'?t('seg_overnight'):g.part==='Morning'?t('seg_thisMorning'):t('seg_thisAfternoon');}
+    if(gi>0&&g.part==='Night')name=WD[g.date.getDay()]+' '+t('seg_night');
     const h0=g.items[0].date.getHours(),h1=(g.items[g.items.length-1].date.getHours()+1)%24;
     return {name,time:pad(h0)+':00–'+pad(h1)+':00',hi,lo,feels:fav,key,desc:narr(key,hi,lo,precip,wind)};
   });
 }
 function narr(key,hi,lo,precip,wind){
-  if(hi==null) return (LB(key)||'Mixed')+'. Detailed data unavailable for this block.';
-  let s=(LB(key)||'Mixed')+'. Around '+tC(hi)+'°'+(lo!=null&&hi-lo>=3?', down to '+tC(lo)+'°':'')+'. ';
-  s+=precip>=40?'Good chance of rain ('+precip+'%). ':precip>=15?'Slight shower risk ('+precip+'%). ':'Staying dry. ';
-  s+=wind>=25?'Breezy.':'Light winds.';return s;
+  const cond=LB(key)||t('n_mixed');
+  if(hi==null) return cond+'. '+t('n_nodata');
+  let s=cond+'. '+t('n_around')+' '+tC(hi)+'°'+(lo!=null&&hi-lo>=3?', '+t('n_downto')+' '+tC(lo)+'°':'')+'. ';
+  s+=precip>=40?t('n_rainGood')+' ('+precip+'%). ':precip>=15?t('n_rainSlight')+' ('+precip+'%). ':t('n_dry')+' ';
+  s+=wind>=25?t('n_breezy'):t('n_light');return s;
 }
 
 /* ---- SVG line chart ---- */
@@ -733,15 +1272,15 @@ function renderTiles(){
 }
 function renderLocList(){
   const box=document.getElementById('locList'); if(!box)return;
-  box.innerHTML=LOCS.map((l,i)=>`<div class="locitem${i===ACTIVE?' on':''}" onclick="pickLoc(${i});closeSheet()"><span>${l.gps?'📍 ':''}${l.name}${l.country?', '+l.country:''}</span>${l.gps?'<em>current</em>':`<button class="lrem" onclick="event.stopPropagation();delLoc(${i});renderLocList()">Remove</button>`}</div>`).join('');
+  box.innerHTML=LOCS.map((l,i)=>`<div class="locitem${i===ACTIVE?' on':''}" onclick="pickLoc(${i});closeSheet()"><span>${l.gps?'📍 ':''}${l.name}${l.country?', '+l.country:''}</span>${l.gps?`<em>${t('current')}</em>`:`<button class="lrem" onclick="event.stopPropagation();delLoc(${i});renderLocList()">${t('remove')}</button>`}</div>`).join('');
 }
 function openManage(){renderLocList();document.getElementById('sheet').classList.add('open');setRefresh(false);}
 async function loadActive(silent){
   const loc=LOCS[ACTIVE]||LOCS[0]; if(!loc)return; renderTiles(); saveLocs();
-  if(!silent)document.getElementById('app').innerHTML='<div class="loading"><span class="spin"></span>Loading '+loc.name+'…</div>';
+  if(!silent)document.getElementById('app').innerHTML='<div class="loading"><span class="spin"></span>'+tf('loadingCity',{city:loc.name})+'</div>';
   try{const D=await fetchWeather(loc);render(D);}
   catch(e){ if(loc.name==='Gliwice'){render(buildFallback());}
-    else if(!silent){document.getElementById('app').innerHTML='<div class="loading">Couldn’t reach the weather service.<br><small style="font-weight:600">Check your connection and pull down to retry.</small></div>';} }
+    else if(!silent){document.getElementById('app').innerHTML='<div class="loading">'+t('cantReach')+'<br><small style="font-weight:600">'+t('cantReachSub')+'</small></div>';} }
 }
 window.refreshWeather=async function(){
   try{await loadActive(true);}catch(e){}
@@ -753,25 +1292,25 @@ function openPicker(){document.getElementById('sheet').classList.add('open');set
 function closeSheet(){document.getElementById('sheet').classList.remove('open');setRefresh(true);document.getElementById('results').innerHTML='';document.getElementById('q').value='';}
 async function doSearch(){
   const q=document.getElementById('q').value.trim();if(!q)return;
-  const box=document.getElementById('results');box.innerHTML='<div class="loading" style="padding:16px"><span class="spin"></span>Searching…</div>';
+  const box=document.getElementById('results');box.innerHTML='<div class="loading" style="padding:16px"><span class="spin"></span>'+t('searching')+'</div>';
   try{const r=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=en&format=json`);
     const j=await r.json();const res=j.results||[];
     box.innerHTML=res.length?res.map(x=>{const label=[x.admin1,x.country].filter(Boolean).join(', ');
       return `<div class="res" onclick='addLoc(${JSON.stringify({name:x.name,country:x.country||"",lat:x.latitude,lon:x.longitude}).replace(/'/g,"&#39;")})'><b>${x.name}</b><small>${label}</small></div>`;}).join('')
-      :'<div class="res"><small>No matches — try another spelling.</small></div>';
-  }catch(e){box.innerHTML='<div class="res"><small>Search needs an internet connection.</small></div>';}
+      :'<div class="res"><small>'+t('noMatches')+'</small></div>';
+  }catch(e){box.innerHTML='<div class="res"><small>'+t('searchNet')+'</small></div>';}
 }
 function addLoc(l){
   const ex=LOCS.findIndex(x=>x.lat===l.lat&&x.lon===l.lon);
   if(ex>=0){ACTIVE=ex;}
-  else if(LOCS.length>=MAX_LOC){document.getElementById('results').innerHTML='<div class="res"><small>You already have '+MAX_LOC+' locations — remove one first.</small></div>';return;}
+  else if(LOCS.length>=MAX_LOC){document.getElementById('results').innerHTML='<div class="res"><small>'+tf('maxLoc',{n:MAX_LOC})+'</small></div>';return;}
   else{LOCS.push(l);ACTIVE=LOCS.length-1;}
   saveLocs();document.getElementById('q').value='';document.getElementById('results').innerHTML='';renderLocList();loadActive(true);
 }
 /* ---- GPS "my location" (also the default on open) ---- */
 function useMyLocation(silent){
   LOC_SILENT=!!silent; closeSheet();
-  if(!silent)document.getElementById('app').innerHTML='<div class="loading"><span class="spin"></span>Finding your location…</div>';
+  if(!silent)document.getElementById('app').innerHTML='<div class="loading"><span class="spin"></span>'+t('findingLoc')+'</div>';
   try{ if(window.AndroidBridge && AndroidBridge.requestLocation){ AndroidBridge.requestLocation(); return; } }catch(e){}
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
@@ -813,12 +1352,36 @@ document.addEventListener('touchend',e=>{
   }
 },{passive:true});
 
+/* ============ NOTIFICATIONS TOGGLE + LANGUAGE PICKER ============ */
+let NOTIF=(function(){try{return localStorage.getItem('cw_notif_on')!=='0';}catch(e){return true;}})();
+function icoGlobe(){return '<svg class="hhi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.8 3.3 2.8 14.7 0 18c-2.8-3.3-2.8-14.7 0-18Z"/></svg>';}
+function icoBell(on){return '<svg class="hhi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5a6 6 0 0 1 12 0c0 4.6 1.7 5.7 1.7 5.7H4.3S6 14.1 6 9.5Z"/><path d="M10.3 19.5a1.8 1.8 0 0 0 3.4 0"/>'+(on?'':'<line x1="4.5" y1="3.5" x2="19.5" y2="20.5"/>')+'</svg>';}
+function toggleNotif(){
+  NOTIF=!NOTIF;
+  try{localStorage.setItem('cw_notif_on',NOTIF?'1':'0');}catch(e){}
+  try{if(window.AndroidBridge&&AndroidBridge.setNotifications)AndroidBridge.setNotifications(NOTIF);}catch(e){}
+  var b=document.getElementById('notifBtn');if(b){b.innerHTML=icoBell(NOTIF);b.classList.toggle('off',!NOTIF);}
+}
+function renderLangList(){
+  var box=document.getElementById('langList'); if(!box)return;
+  box.innerHTML=Object.keys(LANG_NAMES).map(function(code){
+    return '<div class="locitem'+(code===LANG?' on':'')+'" onclick="setLang(\''+code+'\')"><span>'+LANG_NAMES[code]+'</span>'+(code===LANG?'<em>✓</em>':'')+'</div>';
+  }).join('');
+}
+function openLangSheet(){renderLangList();document.getElementById('langSheet').classList.add('open');setRefresh(false);}
+function closeLangSheet(){var s=document.getElementById('langSheet');if(s)s.classList.remove('open');setRefresh(true);}
+document.getElementById('langSheet').addEventListener('click',e=>{if(e.target.id==='langSheet')closeLangSheet();});
+
 /* ============ INIT ============ */
+document.documentElement.lang=LANG;
+document.documentElement.dir=RTL_LANGS.indexOf(LANG)>=0?'rtl':'ltr';
+applyStaticI18n();
 renderTiles();
 (function(){
   const gi=gpsIndex();
   if(gi>=0)ACTIVE=gi; else {let a=0;try{a=parseInt(localStorage.getItem(AKEY)||'0',10);}catch(e){}ACTIVE=Math.min(Math.max(a||0,0),LOCS.length-1);}
   renderTiles(); loadActive();
+  try{if(window.AndroidBridge&&AndroidBridge.setNotifications)AndroidBridge.setNotifications(NOTIF);}catch(e){}
   if((window.AndroidBridge&&AndroidBridge.requestLocation)||navigator.geolocation) useMyLocation(true);
 })();
 </script>
