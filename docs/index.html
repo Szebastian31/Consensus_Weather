@@ -188,6 +188,13 @@
   @keyframes sp{to{transform:rotate(360deg)}}
 
   @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes appFromRight{from{opacity:.35;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes appFromLeft{from{opacity:.35;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes appFade{from{opacity:.4}to{opacity:1}}
+  #app.app-next{animation:appFromRight .3s cubic-bezier(.22,.61,.36,1)}
+  #app.app-prev{animation:appFromLeft .3s cubic-bezier(.22,.61,.36,1)}
+  #app.app-fade{animation:appFade .24s ease}
+  @media (prefers-reduced-motion:reduce){#app.app-next,#app.app-prev,#app.app-fade{animation:none}}
   @keyframes drift{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
   @keyframes fall{0%{transform:translateY(-3px);opacity:0}30%{opacity:1}100%{transform:translateY(6px);opacity:0}}
   @keyframes tw{0%,100%{opacity:.35}50%{opacity:1}}
@@ -2011,15 +2018,24 @@ function renderLocList(){
   box.innerHTML=LOCS.map((l,i)=>`<div class="locitem${i===ACTIVE?' on':''}" onclick="pickLoc(${i});closeSheet()"><span>${l.gps?'📍 ':''}${l.name}${l.country?', '+l.country:''}</span>${l.gps?`<em>${t('current')}</em>`:`<button class="lrem" onclick="event.stopPropagation();delLoc(${i});renderLocList()">${t('remove')}</button>`}</div>`).join('');
 }
 function openManage(){renderLocList();document.getElementById('sheet').classList.add('open');setRefresh(false);}
-async function loadActive(silent){
+async function loadActive(silent,dir){
   const loc=LOCS[ACTIVE]||LOCS[0]; if(!loc)return; renderTiles(); saveLocs();
+  const key=ckey(loc), cached=WCACHE[key];
+  if(cached){ render(cached.D); animateApp(dir); prefetchNeighbors();
+    if(Date.now()-cached.t>600000) refreshLoc(loc,key); return; }
   if(!silent)document.getElementById('app').innerHTML='<div class="loading"><span class="spin"></span>'+tf('loadingCity',{city:loc.name})+'</div>';
-  try{const D=await fetchWeather(loc);render(D);}
+  try{const D=await fetchWeather(loc);WCACHE[key]={D:D,t:Date.now()};if(!isActive(loc))return;render(D);animateApp(dir);prefetchNeighbors();}
   catch(e){ if(loc.name==='Gliwice'){render(buildFallback());}
     else if(!silent){document.getElementById('app').innerHTML='<div class="loading">'+t('cantReach')+'<br><small style="font-weight:600">'+t('cantReachSub')+'</small></div>';} }
 }
+const WCACHE={};
+function ckey(loc){return (+loc.lat).toFixed(3)+','+(+loc.lon).toFixed(3);}
+function isActive(loc){const cur=LOCS[ACTIVE]||LOCS[0];return cur&&ckey(cur)===ckey(loc);}
+function animateApp(dir){var a=document.getElementById('app');if(!a)return;a.classList.remove('app-next','app-prev','app-fade');void a.offsetWidth;a.classList.add(dir==='next'?'app-next':dir==='prev'?'app-prev':'app-fade');}
+function prefetchNeighbors(){var n=LOCS.length;if(n<2)return;[(ACTIVE+1)%n,(ACTIVE-1+n)%n].forEach(function(i){var loc=LOCS[i];if(!loc)return;var k=ckey(loc);if(WCACHE[k])return;fetchWeather(loc).then(function(D){WCACHE[k]={D:D,t:Date.now()};}).catch(function(){});});}
+function refreshLoc(loc,key){fetchWeather(loc).then(function(D){WCACHE[key]={D:D,t:Date.now()};if(isActive(loc))render(D);}).catch(function(){});}
 window.refreshWeather=async function(){
-  try{await loadActive(true);}catch(e){}
+  try{var loc=LOCS[ACTIVE]||LOCS[0];if(loc)delete WCACHE[ckey(loc)];await loadActive(true);}catch(e){}
   try{if(window.AndroidBridge&&AndroidBridge.onRefreshed)AndroidBridge.onRefreshed();}catch(e){}
 };
 function pickLoc(i){ACTIVE=i;saveLocs();loadActive();}
@@ -2084,7 +2100,7 @@ document.addEventListener('touchend',e=>{
   if(_st&&_st.closest&&_st.closest('.strip-wrap,.chart-box'))return; // let those scroll horizontally
   const t=e.changedTouches[0],dx=t.clientX-_sx,dy=t.clientY-_sy;
   if(LOCS.length>1&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6){
-    const n=LOCS.length; ACTIVE=dx<0?(ACTIVE+1)%n:(ACTIVE-1+n)%n; saveLocs(); loadActive();
+    const n=LOCS.length; ACTIVE=dx<0?(ACTIVE+1)%n:(ACTIVE-1+n)%n; saveLocs(); loadActive(false,dx<0?'next':'prev');
   }
 },{passive:true});
 
