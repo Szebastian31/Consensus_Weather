@@ -188,12 +188,13 @@
   @keyframes sp{to{transform:rotate(360deg)}}
 
   @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes appFromRight{from{opacity:.35;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
-  @keyframes appFromLeft{from{opacity:.35;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
-  @keyframes appFade{from{opacity:.4}to{opacity:1}}
-  #app.app-next{animation:appFromRight .3s cubic-bezier(.22,.61,.36,1)}
-  #app.app-prev{animation:appFromLeft .3s cubic-bezier(.22,.61,.36,1)}
-  #app.app-fade{animation:appFade .24s ease}
+  @keyframes appFromRight{from{transform:translate3d(38px,0,0)}to{transform:translate3d(0,0,0)}}
+  @keyframes appFromLeft{from{transform:translate3d(-38px,0,0)}to{transform:translate3d(0,0,0)}}
+  @keyframes appSettle{from{transform:translate3d(0,8px,0)}to{transform:translate3d(0,0,0)}}
+  #app{backface-visibility:hidden}
+  #app.app-next{animation:appFromRight .46s cubic-bezier(.16,.84,.3,1)}
+  #app.app-prev{animation:appFromLeft .46s cubic-bezier(.16,.84,.3,1)}
+  #app.app-fade{animation:appSettle .32s cubic-bezier(.16,.84,.3,1)}
   @media (prefers-reduced-motion:reduce){#app.app-next,#app.app-prev,#app.app-fade{animation:none}}
   @keyframes drift{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
   @keyframes fall{0%{transform:translateY(-3px);opacity:0}30%{opacity:1}100%{transform:translateY(6px);opacity:0}}
@@ -233,7 +234,8 @@
   .src-table .srow{display:none}
   .src-table.open .srow{display:table-row}
   .expander{display:block;width:100%;margin-top:8px;border:none;border-radius:14px;padding:11px;font-family:inherit;font-weight:800;font-size:13px;color:var(--feels);background:rgba(167,139,255,.14);cursor:pointer}
-  #partSheet .sheet-card{max-width:520px;max-height:82vh;overflow:auto}
+  #partSheet .sheet-card{max-width:520px;max-height:82vh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  #langSheet .sheet-card{max-height:82vh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #partSheet .segs{display:grid;grid-template-columns:1fr;gap:10px;margin-top:6px}
   .grab{width:42px;height:4px;border-radius:999px;background:rgba(255,255,255,.32);margin:0 auto 12px}
 </style>
