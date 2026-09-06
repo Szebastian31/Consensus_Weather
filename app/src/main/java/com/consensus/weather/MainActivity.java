@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class Bridge {
+        private class Bridge {
         @JavascriptInterface public void onRefreshed() {
             runOnUiThread(() -> { if (swipe != null) swipe.setRefreshing(false); });
         }
@@ -94,6 +94,9 @@ public class MainActivity extends Activity {
         }
         @JavascriptInterface public void setNotifications(final boolean on) {
             runOnUiThread(() -> WeatherNotifier.setEnabled(MainActivity.this, on));
+        }
+        @JavascriptInterface public void setNotifStrings(final String json) {
+            runOnUiThread(() -> WeatherNotifier.setNotifStrings(MainActivity.this, json));
         }
     }
 
