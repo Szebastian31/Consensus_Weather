@@ -244,6 +244,8 @@
   #langSheet .sheet-card{max-height:82vh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #partSheet .segs{display:grid;grid-template-columns:1fr;gap:10px;margin-top:6px}
   .cbadge{display:inline-flex;align-items:center;gap:5px;margin:7px 0 3px;font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:999px;cursor:pointer;border:1px solid transparent;white-space:nowrap}
+  .cbadge-row{display:flex;justify-content:center;margin:10px 0 2px}
+  .cbadge-row .cbadge{margin:0}
   .cb-high{background:rgba(74,201,124,.18);color:#9ff0be;border-color:rgba(74,201,124,.42)}
   .cb-med{background:rgba(255,178,64,.18);color:#ffd08a;border-color:rgba(255,178,64,.44)}
   .cb-low{background:rgba(255,110,90,.20);color:#ffa596;border-color:rgba(255,110,90,.44)}
@@ -1972,7 +1974,6 @@ function render(D,root,ai){
       <div class="hero-now">
         <div class="now-temp">${tC(c.temp)==null?'–':tC(c.temp)}<span>°${UNIT}</span></div>
         <div class="now-cond">${LB(c.key)}</div>
-        <div class="cbadge cb-${_lvl}" onclick="event.stopPropagation();openAgree()">◆ ${badgeTxt}</div>
         <div class="now-feels">${t('feelsLike')} ${tC(c.feels)==null?'–':tC(c.feels)+'°'+UNIT}</div>
       </div>
     </div>
@@ -1981,6 +1982,7 @@ function render(D,root,ai){
         <div class="lohi">▲ ${t('high')} ${hi==null?'–':tC(hi)+'°'}</div>
         <div class="lohi">▼ ${t('low')} ${lo==null?'–':tC(lo)+'°'}</div>
       </div>
+      <div class="cbadge-row"><div class="cbadge cb-${_lvl}" onclick="event.stopPropagation();openAgree()">◆ ${badgeTxt}</div></div>
       <div class="hero-stats">
         <div class="hs"><span>${IC3('wind',28)}</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
         <div class="hs"><span>${IC3('humidity',28)}</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>${t('humidity')}</i></div>
