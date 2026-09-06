@@ -30,6 +30,7 @@
   .hhbtn:active{background:rgba(255,255,255,.24)}
   .hhbtn.off{color:rgba(255,255,255,.5)}
   .hhi{width:20px;height:20px;display:block}
+  .ic{display:inline-block;vertical-align:middle;flex:0 0 auto}
   .logo-badge{width:46px;height:46px;border-radius:13px;object-fit:cover;box-shadow:0 8px 18px -8px rgba(0,0,0,.55)}
   .logo-word{display:flex;flex-direction:column;line-height:1.04}
   .lw1{font-size:21px;font-weight:800;letter-spacing:.2px;background:linear-gradient(90deg,#FFB020,#E4657F);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -109,6 +110,8 @@
   .hero-stats{display:flex;justify-content:center;gap:14px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
   .hs{flex:0 0 auto;text-align:center;min-width:48px}
   .hs span{font-size:16px;display:block}
+  .hs span .ic3{margin:0 auto 1px}
+  .ic3{display:block}
   .hs b{font-size:15px;font-weight:800;display:block;margin-top:2px}
   .hs i{font-size:10px;font-weight:700;opacity:.72;font-style:normal;text-transform:uppercase;letter-spacing:.4px}
   .hero-panel{width:62%;max-width:340px;margin:14px auto 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:4px 10px 12px;position:relative;z-index:2}
@@ -218,7 +221,7 @@
   .plvl{font-size:14px;font-weight:800}
   .tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
   .tip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:14px;padding:10px 12px}
-  .tipic{font-size:22px;line-height:1}
+  .tipic{font-size:22px;line-height:1;flex:0 0 auto}
   .tiptx{font-size:12.5px;font-weight:700;color:var(--ink-soft);line-height:1.3}
   .src-table .srow{display:none}
   .src-table.open .srow{display:table-row}
@@ -236,6 +239,12 @@
   <radialGradient id="gMoon" cx="38%" cy="32%" r="78%"><stop offset="0%" stop-color="#FFF8DD"/><stop offset="60%" stop-color="#FFE59E"/><stop offset="100%" stop-color="#E4C271"/></radialGradient>
   <linearGradient id="gBolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE879"/><stop offset="100%" stop-color="#FFAF1F"/></linearGradient>
   <radialGradient id="gDrop" cx="38%" cy="28%" r="85%"><stop offset="0%" stop-color="#CDE9FF"/><stop offset="100%" stop-color="#3B9BE6"/></radialGradient>
+  <radialGradient id="gGreen" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#CFF6A6"/><stop offset="55%" stop-color="#66C24A"/><stop offset="100%" stop-color="#2E8B3D"/></radialGradient>
+  <radialGradient id="gPink" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#FFD9EC"/><stop offset="55%" stop-color="#F573A9"/><stop offset="100%" stop-color="#D63C7E"/></radialGradient>
+  <radialGradient id="gRed" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#FFCDB6"/><stop offset="55%" stop-color="#FF7A59"/><stop offset="100%" stop-color="#E23B3B"/></radialGradient>
+  <radialGradient id="gViolet" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#E2D6FF"/><stop offset="55%" stop-color="#9C7BF0"/><stop offset="100%" stop-color="#6B4BC7"/></radialGradient>
+  <radialGradient id="gSteel" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#F1F5FF"/><stop offset="55%" stop-color="#B8C2DC"/><stop offset="100%" stop-color="#7E8AA8"/></radialGradient>
+  <radialGradient id="gWind" cx="36%" cy="28%" r="90%"><stop offset="0%" stop-color="#EAF7FF"/><stop offset="60%" stop-color="#BFE6FF"/><stop offset="100%" stop-color="#7FC4F0"/></radialGradient>
   <filter id="softsh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="3.2" flood-color="#0b1026" flood-opacity="0.30"/></filter>
 </defs></svg>
 <div class="wrap">
@@ -1025,7 +1034,7 @@ function daylightStr(sr,ss){if(!sr||!ss)return '';const a=sr.split(':'),b=ss.spl
 
 /* ============ POLLEN + LIFESTYLE ============ */
 const PTHRESH={grass:[5,20,100,200],birch:[10,50,200,500],alder:[10,50,200,500],olive:[10,50,200,500],mugwort:[5,12,25,50],ragweed:[5,12,25,50]};
-const POLLEN_META={alder:['Alder','🌳'],birch:['Birch','🌳'],grass:['Grass','🌾'],mugwort:['Mugwort','🌿'],olive:['Olive','🫒'],ragweed:['Ragweed','🌿']};
+const POLLEN_META={alder:['Alder','tree'],birch:['Birch','tree'],grass:['Grass','grass'],mugwort:['Mugwort','herb'],olive:['Olive','olive'],ragweed:['Ragweed','herb']};
 function pollenLevel(type,val){
   if(val==null||isNaN(val)) return {i:-1,txt:t('lvl_nodata'),frac:0};
   const b=PTHRESH[type]||PTHRESH.grass; let i=0; while(i<b.length && val>b[i]) i++;
@@ -1039,7 +1048,7 @@ function ring(frac,color){const R=26,C=2*Math.PI*R,off=C*(1-Math.max(0,Math.min(
     (frac>0?`<circle cx="36" cy="36" r="26" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 36 36)"/>`:'')+`</svg>`;}
 function sunMoonCard(D){
   const c=D.current, m=moonBlock(D.place.lat,D.place.lon,D.tzOffset);
-  return `<h2>🌅 ${t('sunTitle')}</h2><p class="sub">${tf('sunSub',{place:D.place.name})}</p>
+  return `<h2>${IC('sunrise')} ${t('sunTitle')}</h2><p class="sub">${tf('sunSub',{place:D.place.name})}</p>
   <div class="card sunmoon">
     <div class="smrow"><div class="smicon">${pico('clear-day',44)}</div>
       <div class="smdur"><div class="smlabel">${t('daylight')}</div><div class="smval">${daylightStr(c.sunrise,c.sunset)||'—'}</div></div>
@@ -1055,9 +1064,9 @@ function pollenCard(D){
   if(!items.length) return '';
   items.sort((a,b)=>(b.L.i-a.L.i)||(b.v-a.v));
   const top=items.slice(0,3);
-  return `<h2>🌸 ${t('pollenTitle')}</h2><p class="sub">${t('pollenSub')}</p>
+  return `<h2>${IC('flower')} ${t('pollenTitle')}</h2><p class="sub">${t('pollenSub')}</p>
   <div class="card pollen">${top.map(x=>`<div class="pcell"><div class="plabel">${x.label}</div>
-      <div class="pring">${ring(x.L.frac,POLLEN_COL[Math.max(0,x.L.i)])}<div class="pico2">${x.ic}</div></div>
+      <div class="pring">${ring(x.L.frac,POLLEN_COL[Math.max(0,x.L.i)])}<div class="pico2">${IC(x.ic,26)}</div></div>
       <div class="plvl" style="color:${x.L.i<=0?'var(--ink-soft)':POLLEN_COL[x.L.i]}">${x.L.txt}</div></div>`).join('')}</div>`;
 }
 function buildTips(D){
@@ -1067,20 +1076,20 @@ function buildTips(D){
   const airTx = aqi==null?t('tip_air_na'):(us?(aqi<=50?t('tip_air_clean'):aqi<=100?t('tip_air_fair'):t('tip_air_poor')):(aqi<=40?t('tip_air_clean'):aqi<=80?t('tip_air_fair'):t('tip_air_poor')));
   const pol=D.pollen?Object.keys(D.pollen).reduce((m,k)=>Math.max(m,pollenLevel(k,D.pollen[k]).i),-1):-1;
   const tips=[
-    {ic:'🌸',tx:(pol<0?t('tip_pollen_nodata'):pol<=1?t('tip_pollen_low'):pol===2?t('tip_pollen_mod'):t('tip_pollen_high'))},
-    {ic:'☀️',tx:(uv>=8?t('tip_uv_vhigh'):uv>=6?t('tip_uv_high'):uv>=3?t('tip_uv_mod'):t('tip_uv_low'))},
-    {ic:'🚗',tx:(pmax>=40?t('tip_car_no'):t('tip_car_yes'))},
-    {ic:'🏃',tx:((pmax<30&&tp!=null&&tp>=8&&tp<=26&&aqiGood)?t('tip_run_yes'):t('tip_run_no'))},
-    {ic:'🌴',tx:((pmax<40&&tp!=null&&tp>=12&&tp<=28)?t('tip_out_yes'):t('tip_out_no'))},
-    {ic:'🦟',tx:((tp!=null&&tp>=18&&hum>=60)?t('tip_mosq_yes'):t('tip_mosq_no'))},
-    {ic:'👕',tx:(tp==null?t('tip_cloth_layers'):tp<8?t('tip_cloth_warm'):tp>26?t('tip_cloth_light'):t('tip_cloth_comfort'))}
+    {ic:'flower',tx:(pol<0?t('tip_pollen_nodata'):pol<=1?t('tip_pollen_low'):pol===2?t('tip_pollen_mod'):t('tip_pollen_high'))},
+    {ic:'sun',tx:(uv>=8?t('tip_uv_vhigh'):uv>=6?t('tip_uv_high'):uv>=3?t('tip_uv_mod'):t('tip_uv_low'))},
+    {ic:'car',tx:(pmax>=40?t('tip_car_no'):t('tip_car_yes'))},
+    {ic:'run',tx:((pmax<30&&tp!=null&&tp>=8&&tp<=26&&aqiGood)?t('tip_run_yes'):t('tip_run_no'))},
+    {ic:'park',tx:((pmax<40&&tp!=null&&tp>=12&&tp<=28)?t('tip_out_yes'):t('tip_out_no'))},
+    {ic:'bug',tx:((tp!=null&&tp>=18&&hum>=60)?t('tip_mosq_yes'):t('tip_mosq_no'))},
+    {ic:'shirt',tx:(tp==null?t('tip_cloth_layers'):tp<8?t('tip_cloth_warm'):tp>26?t('tip_cloth_light'):t('tip_cloth_comfort'))}
   ];
-  if(aqi!=null) tips.push({ic:'😷',tx:airTx});
+  if(aqi!=null) tips.push({ic:'mask',tx:airTx});
   return tips;
 }
 function lifestyleCard(D){
-  return `<h2>🧭 ${t('tipsTitle')}</h2><p class="sub">${t('tipsSub')}</p>
-  <div class="card tips">${buildTips(D).map(t=>`<div class="tip"><div class="tipic">${t.ic}</div><div class="tiptx">${t.tx}</div></div>`).join('')}</div>`;
+  return `<h2>${IC('compass')} ${t('tipsTitle')}</h2><p class="sub">${t('tipsSub')}</p>
+  <div class="card tips">${buildTips(D).map(x=>`<div class="tip"><div class="tipic">${IC3(x.ic,30)}</div><div class="tiptx">${x.tx}</div></div>`).join('')}</div>`;
 }
 
 /* ============ PART-BY-PART POPUP ============ */
@@ -1140,35 +1149,35 @@ function render(D){
         <div class="lohi">▼ ${t('low')} ${lo==null?'–':tC(lo)+'°'}</div>
       </div>
       <div class="hero-stats">
-        <div class="hs"><span>💨</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
-        <div class="hs"><span>💧</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>${t('humidity')}</i></div>
-        <div class="hs"><span>${(c.key||'').indexOf('snow')>=0?'❄️':'🌧️'}</span><b>${D.hourly[0]&&D.hourly[0].precip!=null?D.hourly[0].precip+'%':'–'}</b><i>${(c.key||'').indexOf('snow')>=0?t('snow'):t('rain')}</i></div>
+        <div class="hs"><span>${IC3('wind',28)}</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
+        <div class="hs"><span>${IC3('humidity',28)}</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>${t('humidity')}</i></div>
+        <div class="hs"><span>${(c.key||'').indexOf('snow')>=0?IC3('snow',28):IC3('rain',28)}</span><b>${D.hourly[0]&&D.hourly[0].precip!=null?D.hourly[0].precip+'%':'–'}</b><i>${(c.key||'').indexOf('snow')>=0?t('snow'):t('rain')}</i></div>
       </div>
       <div class="hero-stats">
-        <div class="hs"><span>🌫️</span><b>${D.aqi!=null?D.aqi:'–'}</b><i>AQI ${D.aqi!=null?(D.aqiScale==='us'?'US':'EU'):''}</i></div>
-        <div class="hs"><span>🧭</span><b>${c.pressure!=null?c.pressure:'–'}</b><i>hPa</i></div>
-        <div class="hs"><span>🔆</span><b>${c.uv==null?'–':c.uv}</b><i>${t('uvNow')}</i></div>
+        <div class="hs"><span>${IC3('aqi',28)}</span><b>${D.aqi!=null?D.aqi:'–'}</b><i>AQI ${D.aqi!=null?(D.aqiScale==='us'?'US':'EU'):''}</i></div>
+        <div class="hs"><span>${IC3('pressure',28)}</span><b>${c.pressure!=null?c.pressure:'–'}</b><i>hPa</i></div>
+        <div class="hs"><span>${IC3('uv',28)}</span><b>${c.uv==null?'–':c.uv}</b><i>${t('uvNow')}</i></div>
       </div>
     </div>
     <div class="taphint">${t('tapParts')}</div>
     </div>
   </div></div>
 
-  <h2>⏱️ ${t('hourTitle')}</h2><p class="sub">${t('hourSub')}</p>
+  <h2>${IC('clock')} ${t('hourTitle')}</h2><p class="sub">${t('hourSub')}</p>
   <div class="strip-wrap"><div class="strip">${D.hourly.map((x,i)=>{
     const ds=i===0||x.h==='00';
     return `<div class="hcell${x.isDay?'':' night'}${i===0?' now':''}${ds?' daystart':''}">
       <div class="hday">${WD[x.date.getDay()]}</div><div class="ht">${i===0?t('now'):x.h+':00'}</div>${pico(x.key,32)}<div class="htemp">${x.temp==null?'–':tC(x.temp)+'°'}</div><div class="hfeels">${x.feels==null?'–':tC(x.feels)+'°'}</div>
       <div class="hrain">${x.precip>=5?((x.key.indexOf('snow')>=0?'❄':'💧')+x.precip+'%'):''}</div><div class="hmm">${x.mm>0?x.mm+' mm':''}</div></div>`;}).join('')}</div></div>
 
-  <h2>📈 ${t('curveTitle')}</h2><p class="sub">${t('curveSub')}</p>
+  <h2>${IC('chart')} ${t('curveTitle')}</h2><p class="sub">${t('curveSub')}</p>
   <div class="card"><div class="legend">
     <div class="lg"><span class="dot" style="background:var(--temp)"></span>${t('legTemp')}</div>
     <div class="lg"><span class="dot" style="background:var(--feels)"></span>${t('feelsLike')}</div>
     <div class="lg"><span class="dot" style="background:var(--rain);opacity:.5"></span>${t('legRain')}</div></div>
     <div class="chart-box" id="chartBox"></div></div>
 
-  <h2>📅 ${t('weekTitle')}</h2><p class="sub">${tf('weekSub',{place:D.place.name})}</p>
+  <h2>${IC('cal')} ${t('weekTitle')}</h2><p class="sub">${tf('weekSub',{place:D.place.name})}</p>
   <div class="days">${(()=>{const all=D.daily;const vals=all.flatMap(d=>[d.lo,d.hi]).filter(v=>v!=null);const gmin=vals.length?Math.min(...vals):0,gmax=vals.length?Math.max(...vals):1;
     return all.map((d,i)=>{const ok=d.lo!=null&&d.hi!=null;const l=ok?((d.lo-gmin)/(gmax-gmin||1))*100:0,w=ok?((d.hi-d.lo)/(gmax-gmin||1))*100:0;
     return `<div class="drow"><div class="dname">${i===0?t('today'):WD[d.date.getDay()]}<small>${d.date.getDate()}/${d.date.getMonth()+1}</small></div>
@@ -1179,7 +1188,7 @@ function render(D){
   ${pollenCard(D)}
   ${lifestyleCard(D)}
 
-  <h2>🛰️ ${t('srcTitle')}</h2><p class="sub">${tf('srcSub',{n:D.sources.length})}</p>
+  <h2>${IC('signal')} ${t('srcTitle')}</h2><p class="sub">${tf('srcSub',{n:D.sources.length})}</p>
   <div class="src-table" id="srcTable"><table><thead><tr><th>${t('srcModel')}</th><th>${t('winHigh')}</th><th>${t('winLow')}</th></tr></thead><tbody>
     <tr class="avg"><td>${t('consensusAvg')}</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.hi,0)/D.sources.length))}°</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.lo,0)/D.sources.length))}°</td></tr>
     ${D.sources.map(s=>`<tr class="srow"><td>${s.name}</td><td>${tC(s.hi)}°</td><td>${tC(s.lo)}°</td></tr>`).join('')}
@@ -1356,6 +1365,43 @@ document.addEventListener('touchend',e=>{
 let NOTIF=(function(){try{return localStorage.getItem('cw_notif_on')!=='0';}catch(e){return true;}})();
 function icoGlobe(){return '<svg class="hhi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.8 3.3 2.8 14.7 0 18c-2.8-3.3-2.8-14.7 0-18Z"/></svg>';}
 function icoBell(on){return '<svg class="hhi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5a6 6 0 0 1 12 0c0 4.6 1.7 5.7 1.7 5.7H4.3S6 14.1 6 9.5Z"/><path d="M10.3 19.5a1.8 1.8 0 0 0 3.4 0"/>'+(on?'':'<line x1="4.5" y1="3.5" x2="19.5" y2="20.5"/>')+'</svg>';}
+function IC(name,size){size=size||22;var P={
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  chart:'<path d="M3 16 Q8 6 12 11 T21 8"/><path d="M3 20h18"/>',
+  cal:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9.5h16M8 3v4M16 3v4"/>',
+  sunrise:'<path d="M3 18h18"/><path d="M8 18a4 4 0 0 1 8 0"/><path d="M12 5v3M5.5 10.5 7 12M18.5 10.5 17 12"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M6 6l1.4 1.4M16.6 16.6 18 18M18 6l-1.4 1.4M7.4 16.6 6 18"/>',
+  flower:'<circle cx="12" cy="7" r="2.3"/><circle cx="7" cy="11.5" r="2.3"/><circle cx="17" cy="11.5" r="2.3"/><circle cx="9" cy="17" r="2.3"/><circle cx="15" cy="17" r="2.3"/><circle cx="12" cy="12" r="1.9"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 11 11l-2.5 4.5L13 13z"/>',
+  signal:'<circle cx="12" cy="19" r="1.4"/><path d="M8.5 15.5a5 5 0 0 1 7 0M5.5 12.5a9 9 0 0 1 13 0"/>',
+  tree:'<path d="M12 22v-5"/><circle cx="12" cy="9" r="6"/>',
+  grass:'<path d="M12 21V11M12 21c0-5-3-8-3-8M12 21c0-5 3-8 3-8"/>',
+  herb:'<path d="M12 21V7"/><path d="M12 12c-3 0-4-2-4-2M12 12c3 0 4-2 4-2M12 16.5c-3 0-4-2-4-2M12 16.5c3 0 4-2 4-2"/>',
+  olive:'<ellipse cx="10.5" cy="11" rx="3" ry="6" transform="rotate(-32 10.5 11)"/><circle cx="15.5" cy="14.5" r="2.2"/>',
+  car:'<path d="M5 16v-3l2-4.5h10L19 13v3"/><path d="M3.5 16h17"/><circle cx="8" cy="17.5" r="1.4"/><circle cx="16" cy="17.5" r="1.4"/>',
+  run:'<path d="M3 13h4l2-5 4 10 2-5h4"/>',
+  park:'<path d="M3 20h18"/><path d="M4 20c3-7 6-7 8-7s5 0 8 7"/><circle cx="17" cy="7" r="2.4"/>',
+  bug:'<circle cx="12" cy="13" r="3.2"/><path d="M12 9.8V6M9 7 5.5 5M15 7l3.5-2M9.2 13H4.5M14.8 13h4.7M9.6 16 6.5 18M14.4 16 17.5 18"/>',
+  shirt:'<path d="M8.5 4 5 6.5 6.8 10 9 8.7V20h6V8.7l2.2 1.3L19 6.5 15.5 4a3.5 3.5 0 0 1-7 0z"/>',
+  mask:'<path d="M4 10c0-1 1-1.8 2-1.8h12c1 0 2 .8 2 1.8v2c0 3-3 5-8 5s-8-2-8-5z"/><path d="M4 11H2M22 11h-2"/>'
+};return '<svg class="ic" style="width:'+size+'px;height:'+size+'px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+(P[name]||'')+'</svg>';}
+function IC3(name,size){size=size||30;var S={
+  sun:'<g filter="url(#softsh)">'+[0,45,90,135,180,225,270,315].map(function(a){return '<rect x="18.4" y="1.5" width="3.2" height="6" rx="1.6" fill="#FFC24B" transform="rotate('+a+' 20 20)"/>';}).join('')+'<circle cx="20" cy="20" r="9" fill="url(#gSun)"/><ellipse cx="16.5" cy="16.5" rx="4" ry="2.6" fill="#FFF7D6" opacity=".55"/></g>',
+  humidity:'<g filter="url(#softsh)"><path d="M20 5 C13 16 10 20 10 25 a10 10 0 0 0 20 0 C30 20 27 16 20 5Z" fill="url(#gDrop)"/><ellipse cx="15.5" cy="22" rx="3" ry="5" fill="#fff" opacity=".45"/></g>',
+  rain:'<g filter="url(#softsh)"><g fill="url(#gCloud)"><circle cx="16" cy="16" r="6"/><circle cx="25" cy="15" r="7.5"/><rect x="11" y="14" width="19" height="9" rx="4.5"/></g><g stroke="url(#gDrop)" stroke-width="3.4" stroke-linecap="round"><line x1="15" y1="26" x2="13" y2="33"/><line x1="21" y1="26" x2="19" y2="33"/><line x1="27" y1="26" x2="25" y2="33"/></g></g>',
+  snow:'<g filter="url(#softsh)"><g fill="url(#gCloud)"><circle cx="16" cy="16" r="6"/><circle cx="25" cy="15" r="7.5"/><rect x="11" y="14" width="19" height="9" rx="4.5"/></g><g stroke="#eaf4ff" stroke-width="2.4" stroke-linecap="round"><line x1="14" y1="27" x2="14" y2="33"/><line x1="11.5" y1="30" x2="16.5" y2="30"/><line x1="25" y1="27" x2="25" y2="33"/><line x1="22.5" y1="30" x2="27.5" y2="30"/></g></g>',
+  aqi:'<g filter="url(#softsh)"><g fill="url(#gSteel)"><rect x="7" y="14" width="24" height="4.2" rx="2.1"/><rect x="7" y="21" width="20" height="4.2" rx="2.1"/><rect x="7" y="28" width="26" height="4.2" rx="2.1"/></g><rect x="9" y="14.6" width="10" height="1.4" rx=".7" fill="#fff" opacity=".55"/></g>',
+  pressure:'<g filter="url(#softsh)"><circle cx="20" cy="21" r="12" fill="url(#gSteel)"/><circle cx="20" cy="21" r="12" fill="none" stroke="#5f6b88" stroke-width="1.1" opacity=".45"/><path d="M20 21 L27 15" stroke="#3a2e6e" stroke-width="2.6" stroke-linecap="round"/><circle cx="20" cy="21" r="2.2" fill="#3a2e6e"/><ellipse cx="15.5" cy="15.5" rx="4" ry="2.4" fill="#fff" opacity=".5"/></g>',
+  wind:'<g filter="url(#softsh)" fill="none" stroke="url(#gWind)" stroke-width="4.4" stroke-linecap="round"><path d="M5 15h16a4.5 4.5 0 1 0-4.5-4.5"/><path d="M5 24h11a4 4 0 1 1-4 4"/></g>',
+  flower:'<g filter="url(#softsh)"><g fill="url(#gPink)"><circle cx="20" cy="10" r="4.4"/><circle cx="10" cy="17" r="4.4"/><circle cx="30" cy="17" r="4.4"/><circle cx="14" cy="29" r="4.4"/><circle cx="26" cy="29" r="4.4"/></g><circle cx="20" cy="20" r="4.6" fill="url(#gSun)"/></g>',
+  car:'<g filter="url(#softsh)"><path d="M11 20 l3.5-7 h11 l3.5 7 Z" fill="url(#gRed)"/><rect x="6" y="19" width="28" height="9" rx="3.5" fill="url(#gRed)"/><circle cx="13" cy="29" r="3.6" fill="#2b2b3a"/><circle cx="27" cy="29" r="3.6" fill="#2b2b3a"/><rect x="15.5" y="14.5" width="9" height="4.5" rx="1.4" fill="#dff0ff" opacity=".85"/><rect x="8" y="20.5" width="9" height="1.6" rx=".8" fill="#fff" opacity=".5"/></g>',
+  run:'<g filter="url(#softsh)"><circle cx="25" cy="9" r="4" fill="url(#gViolet)"/><g fill="none" stroke="url(#gViolet)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M25 14 l-5 7 l6 5"/><path d="M20 21 l-8 1"/><path d="M26 26 l-3 8"/><path d="M26 20 l7 3"/></g></g>',
+  park:'<g filter="url(#softsh)"><rect x="18" y="21" width="4" height="13" rx="1.5" fill="#8a5a3c"/><circle cx="20" cy="15" r="10" fill="url(#gGreen)"/><ellipse cx="16" cy="11" rx="4" ry="2.4" fill="#fff" opacity=".4"/></g>',
+  bug:'<g filter="url(#softsh)"><ellipse cx="20" cy="23" rx="4.4" ry="7.5" fill="url(#gSteel)"/><circle cx="20" cy="12.5" r="3.6" fill="url(#gSteel)"/><ellipse cx="11" cy="17" rx="6.2" ry="3.2" fill="#dff0ff" opacity=".8"/><ellipse cx="29" cy="17" rx="6.2" ry="3.2" fill="#dff0ff" opacity=".8"/><path d="M20 12 l-3-5M20 12 l3-5" stroke="url(#gSteel)" stroke-width="2" stroke-linecap="round" fill="none"/></g>',
+  shirt:'<g filter="url(#softsh)"><path d="M15 7 L9 11 L12 18 L15.5 16 V33 H24.5 V16 L28 18 L31 11 L25 7 A5.2 5.2 0 0 1 15 7 Z" fill="url(#gViolet)"/><path d="M16 10 a4 4 0 0 0 8 0" fill="none" stroke="#fff" stroke-width="1.4" opacity=".5"/></g>',
+  mask:'<g filter="url(#softsh)"><path d="M9 15 h22 a3 3 0 0 1 3 3 v3 c0 5-5.5 8.5-14 8.5 S6 26 6 21 v-3 a3 3 0 0 1 3-3 Z" fill="url(#gSteel)"/><path d="M9 17 H4M31 17 h5" stroke="url(#gSteel)" stroke-width="2.6" stroke-linecap="round"/><g stroke="#fff" stroke-width="1.4" opacity=".5"><line x1="11" y1="21" x2="29" y2="21"/><line x1="11" y1="25" x2="29" y2="25"/></g></g>'
+};S.uv=S.sun;
+return '<svg class="ic3" style="width:'+size+'px;height:'+size+'px" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">'+(S[name]||'')+'</svg>';}
 function toggleNotif(){
   NOTIF=!NOTIF;
   try{localStorage.setItem('cw_notif_on',NOTIF?'1':'0');}catch(e){}
