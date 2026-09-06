@@ -2114,7 +2114,7 @@ document.addEventListener('touchmove',e=>{
       const dir=dx<0?1:-1,n=LOCS.length,ni=dir>0?(ACTIVE+1)%n:(ACTIVE-1+n)%n,loc=LOCS[ni],cached=loc&&WCACHE[ckey(loc)];
       if(!cached)return; // neighbour not cached yet → let touchend do a plain flip
       const app=document.getElementById('app');
-      DRAG.active=true;DRAG.dir=dir;DRAG.w=app.offsetWidth||window.innerWidth;
+      DRAG.active=true;DRAG.dir=dir;DRAG.w=app.offsetWidth+28;
       app.classList.remove('app-next','app-prev','app-fade','snap');app.classList.add('dragging');
       DRAG.ghost=makeGhost(cached.D);DRAG.ghost.classList.remove('snap');DRAG.ghost.classList.add('dragging');
       setRefresh(false);
