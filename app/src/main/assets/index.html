@@ -192,6 +192,12 @@
   @keyframes appFromLeft{from{transform:translate3d(-38px,0,0)}to{transform:translate3d(0,0,0)}}
   @keyframes appSettle{from{transform:translate3d(0,8px,0)}to{transform:translate3d(0,0,0)}}
   #app{backface-visibility:hidden}
+  body{overflow-x:hidden}
+  #stage{position:relative}
+  #app{position:relative;z-index:1}
+  .appghost{position:absolute;top:0;left:0;right:0;z-index:2;backface-visibility:hidden}
+  #app.snap,.appghost.snap{transition:transform .34s cubic-bezier(.16,.84,.3,1)}
+  #app.dragging,.appghost.dragging{will-change:transform}
   #app.app-next{animation:appFromRight .46s cubic-bezier(.16,.84,.3,1)}
   #app.app-prev{animation:appFromLeft .46s cubic-bezier(.16,.84,.3,1)}
   #app.app-fade{animation:appSettle .32s cubic-bezier(.16,.84,.3,1)}
@@ -261,7 +267,7 @@
   <filter id="softsh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="3.2" flood-color="#0b1026" flood-opacity="0.30"/></filter>
 </defs></svg>
 <div class="wrap">
-  <div id="app"><div class="loading"><span class="spin"></span>Loading forecast…</div></div>
+  <div id="stage"><div id="app"><div class="loading"><span class="spin"></span>Loading forecast…</div></div></div>
   <div class="foot" id="foot"></div>
 </div>
 
@@ -1839,19 +1845,20 @@ function closeParts(){document.getElementById('partSheet').classList.remove('ope
 function toggleSrc(ev){const tbl=document.getElementById('srcTable');const open=tbl.classList.toggle('open');ev.currentTarget.textContent=open?t('hideModels'):tf('showAll',{n:tbl.querySelectorAll('.srow').length});}
 
 /* ============ RENDER ============ */
-function render(D){
-  LAST_DATA=D;
+function render(D,root,ai){
+  root=root||document.getElementById('app');
+  const isMain=(root.id==='app');
+  if(isMain)LAST_DATA=D;
   const c=D.current;
   const _t=D.hourly.map(x=>x.temp).filter(v=>v!=null);
   const hi=_t.length?Math.max(..._t):null, lo=_t.length?Math.min(..._t):null;
-  const segs=buildSegments(D.hourly);
-  LAST_SEGS=segs;
+  if(isMain){const segs=buildSegments(D.hourly);LAST_SEGS=segs;}
   const toMin=s=>{if(!s)return null;const p=s.split(':');return +p[0]*60+ +p[1];};
   const nowH=(D.hourly[0]&&D.hourly[0].date)?D.hourly[0].date.getHours()*60+D.hourly[0].date.getMinutes():720;
   const phase=skyPhase(c.key,nowH,toMin(c.sunrise),toMin(c.sunset));
-  document.body.style.background=skyGrad(c.key,phase);
-  document.body.style.backgroundAttachment='fixed';document.body.style.backgroundSize='cover';
-  const app=document.getElementById('app');
+  if(isMain){document.body.style.background=skyGrad(c.key,phase);
+  document.body.style.backgroundAttachment='fixed';document.body.style.backgroundSize='cover';}
+  const app=root;
   app.innerHTML=`
   <div class="hero-wrap"><div class="hero">
     <div class="glow"></div>
@@ -1931,9 +1938,9 @@ function render(D){
   <button class="expander" onclick="toggleSrc(event)">${tf('showAll',{n:D.sources.length})}</button>
 
   <div class="note"><b>${D.live?t('noteLive'):t('noteOffline')}</b> ${D.live?tf('noteLiveBody',{n:D.sources.length}):t('noteOfflineBody')}</div>`;
-  document.getElementById('foot').textContent=(D.live?t('footLive'):t('footOffline'))+t('footTail');
-  renderTiles();
-  drawChart(D.hourly);
+  if(isMain)document.getElementById('foot').textContent=(D.live?t('footLive'):t('footOffline'))+t('footTail');
+  renderTiles(root, ai);
+  drawChart(D.hourly, root.querySelector('#chartBox'), isMain);
 }
 
 /* ---- segments ---- */
@@ -1986,9 +1993,9 @@ function svgChart(items,viewW){
     ${xlab}</svg>`;
 }
 let LAST_HOURLY=null;
-function drawChart(items){
-  LAST_HOURLY=items;
-  const box=document.getElementById('chartBox'); if(!box)return;
+function drawChart(items, box, keep){
+  if(keep!==false)LAST_HOURLY=items;
+  box=box||document.getElementById('chartBox'); if(!box)return;
   box.innerHTML=svgChart(items, box.clientWidth||360);
 }
 window.addEventListener('resize',()=>{if(LAST_HOURLY)drawChart(LAST_HOURLY);});
@@ -2005,11 +2012,11 @@ function saveLocs(){try{localStorage.setItem(LKEY,JSON.stringify(LOCS));localSto
 let LOCS=loadLocs(), ACTIVE=0;
 function gpsIndex(){return LOCS.findIndex(l=>l&&l.gps);}
 
-function renderTiles(){
-  const el=document.getElementById('tiles'); if(!el)return; el.className='locbar';
-  const n=LOCS.length, cur=LOCS[ACTIVE]||LOCS[0];
+function renderTiles(scope,ai){
+  const el=(scope||document).querySelector('#tiles'); if(!el)return; el.className='locbar';
+  const n=LOCS.length, A=(ai==null?ACTIVE:ai), cur=LOCS[A]||LOCS[0];
   if(n<=1){ el.innerHTML=`<button class="locnow" onclick="openManage()">${cur&&cur.gps?'📍 ':''}${cur?cur.name:'—'} <span class="cev">▾</span></button>`; return; }
-  const pi=(ACTIVE-1+n)%n, ni=(ACTIVE+1)%n, prev=LOCS[pi], next=LOCS[ni];
+  const pi=(A-1+n)%n, ni=(A+1)%n, prev=LOCS[pi], next=LOCS[ni];
   el.innerHTML=
     `<button class="locside l" onclick="pickLoc(${pi})">‹ ${prev.gps?'📍':''}${prev.name}</button>`+
     `<button class="locnow" onclick="openManage()">${cur.gps?'📍 ':''}${cur.name} <span class="cev">▾</span></button>`+
@@ -2095,9 +2102,33 @@ document.getElementById('sheet').addEventListener('click',e=>{if(e.target.id==='
 document.getElementById('partSheet').addEventListener('click',e=>{if(e.target.id==='partSheet')closeParts();});
 /* while dragging a horizontal rail, disable pull-to-refresh so sideways scroll never triggers it */
 let _sx=0,_sy=0,_st=null;
-document.addEventListener('touchstart',e=>{const t=e.touches[0];_sx=t.clientX;_sy=t.clientY;_st=e.target;if(e.target&&e.target.closest&&e.target.closest('.locbar,.strip-wrap,.chart-box'))setRefresh(false);},{passive:true});
+let DRAG={active:false,dir:0,w:0,dx:0,ghost:null};
+document.addEventListener('touchstart',e=>{const t=e.touches[0];_sx=t.clientX;_sy=t.clientY;_st=e.target;DRAG.active=false;if(e.target&&e.target.closest&&e.target.closest('.locbar,.strip-wrap,.chart-box'))setRefresh(false);},{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(document.querySelector('.sheet.open'))return;
+  if(_st&&_st.closest&&_st.closest('.strip-wrap,.chart-box'))return; // let those scroll horizontally
+  if(LOCS.length<2)return;
+  const t=e.touches[0],dx=t.clientX-_sx,dy=t.clientY-_sy;
+  if(!DRAG.active){
+    if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.3){
+      const dir=dx<0?1:-1,n=LOCS.length,ni=dir>0?(ACTIVE+1)%n:(ACTIVE-1+n)%n,loc=LOCS[ni],cached=loc&&WCACHE[ckey(loc)];
+      if(!cached)return; // neighbour not cached yet → let touchend do a plain flip
+      const app=document.getElementById('app');
+      DRAG.active=true;DRAG.dir=dir;DRAG.w=app.offsetWidth||window.innerWidth;
+      app.classList.remove('app-next','app-prev','app-fade','snap');app.classList.add('dragging');
+      DRAG.ghost=makeGhost(cached.D);DRAG.ghost.classList.remove('snap');DRAG.ghost.classList.add('dragging');
+      setRefresh(false);
+    } else return;
+  }
+  e.preventDefault();
+  let d=dx; if(DRAG.dir>0)d=Math.min(0,d); else d=Math.max(0,d);
+  DRAG.dx=d;
+  document.getElementById('app').style.transform='translate3d('+d+'px,0,0)';
+  DRAG.ghost.style.transform='translate3d('+(DRAG.dir*DRAG.w+d)+'px,0,0)';
+},{passive:false});
 document.addEventListener('touchend',e=>{
   if(!document.querySelector('.sheet.open'))setRefresh(true);
+  if(DRAG.active){finishDrag();return;}
   if(document.querySelector('.sheet.open'))return;
   if(_st&&_st.closest&&_st.closest('.strip-wrap,.chart-box'))return; // let those scroll horizontally
   const t=e.changedTouches[0],dx=t.clientX-_sx,dy=t.clientY-_sy;
@@ -2105,6 +2136,47 @@ document.addEventListener('touchend',e=>{
     const n=LOCS.length; ACTIVE=dx<0?(ACTIVE+1)%n:(ACTIVE-1+n)%n; saveLocs(); loadActive(false,dx<0?'next':'prev');
   }
 },{passive:true});
+function makeGhost(D){
+  let g=document.getElementById('appGhost');
+  if(!g){g=document.createElement('div');g.id='appGhost';document.getElementById('stage').appendChild(g);}
+  g.className='appghost';g.style.transform='translate3d('+(DRAG.dir*DRAG.w)+'px,0,0)';
+  const n=LOCS.length,ni=DRAG.dir>0?(ACTIVE+1)%n:(ACTIVE-1+n)%n;
+  render(D,g,ni);
+  return g;
+}
+function cleanupGhost(){const g=document.getElementById('appGhost');if(g&&g.parentNode)g.parentNode.removeChild(g);DRAG.ghost=null;}
+function onceTransitionEnd(el,fn){let done=false;const h=function(){if(done)return;done=true;el.removeEventListener('transitionend',h);fn();};el.addEventListener('transitionend',h);setTimeout(h,440);}
+function finishDrag(){
+  const app=document.getElementById('app'),g=DRAG.ghost,w=DRAG.w,dir=DRAG.dir,d=DRAG.dx;
+  const pass=Math.abs(d)>w*0.2;
+  app.classList.add('snap');if(g)g.classList.add('snap');
+  if(pass){
+    app.style.transform='translate3d('+(-dir*w)+'px,0,0)';
+    if(g)g.style.transform='translate3d(0,0,0)';
+    const n=LOCS.length,ni=dir>0?(ACTIVE+1)%n:(ACTIVE-1+n)%n;
+    onceTransitionEnd(app,function(){ACTIVE=ni;saveLocs();commitAfterDrag();});
+  } else {
+    app.style.transform='translate3d(0,0,0)';
+    if(g)g.style.transform='translate3d('+(dir*w)+'px,0,0)';
+    onceTransitionEnd(app,cleanupDrag);
+  }
+}
+function commitAfterDrag(){
+  const app=document.getElementById('app');
+  const loc=LOCS[ACTIVE],cached=loc&&WCACHE[ckey(loc)];
+  if(cached)render(cached.D);else loadActive(true);
+  app.classList.remove('snap','dragging');app.style.transform='';
+  cleanupGhost();
+  prefetchNeighbors();
+  if(cached&&Date.now()-cached.t>600000)refreshLoc(loc,ckey(loc));
+  DRAG.active=false;
+}
+function cleanupDrag(){
+  const app=document.getElementById('app');
+  app.classList.remove('snap','dragging');app.style.transform='';
+  cleanupGhost(); DRAG.active=false; setRefresh(true);
+}
+
 
 /* ============ NOTIFICATIONS TOGGLE + LANGUAGE PICKER ============ */
 let NOTIF=(function(){try{return localStorage.getItem('cw_notif_on')!=='0';}catch(e){return true;}})();
