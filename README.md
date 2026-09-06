@@ -19,7 +19,7 @@ You never need Android Studio, Gradle, or a Mac/PC toolchain — **GitHub builds
     <td align="center"><img src="docs/screenshots/week.jpg" width="240"><br><sub>Temperature curve & 7-day outlook</sub></td>
     <td align="center"><img src="docs/screenshots/breakdown.jpg" width="240"><br><sub>Sun/Moon & Lifestyle Tips</sub></td>
     <td align="center"><img src="docs/screenshots/partbypart.jpg" width="240"><br><sub>Part-by-Part Pop-Up Breakdown</sub></td>
-    <td align="center"><img src="docs/screenshots/language.jpg" width="240"><br><sub>Language Selector</sub></td>
+    <td align="center"><img src="docs/screenshots/language.jpg" width="240"><br><sub>Language Selector (14 languages to choose from)</sub></td>
   </tr>
 </table>
 
