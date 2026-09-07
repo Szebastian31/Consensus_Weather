@@ -24,7 +24,9 @@
     background:linear-gradient(180deg,#0a0f26 0%,#161d47 55%,#282c5e 100%);background-attachment:fixed;background-size:cover;
     min-height:100vh;padding:0 14px 90px;-webkit-font-smoothing:antialiased;transition:background .8s ease}
   .wrap{max-width:600px;margin:0 auto}
-  .applogo{display:flex;align-items:center;justify-content:center;gap:12px;padding:0}
+  .applogo{display:flex;align-items:center;justify-content:center;gap:12px;padding:0;cursor:pointer}
+  .logo-badge.spin{animation:logospin .7s cubic-bezier(.4,0,.2,1)}
+  @keyframes logospin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
   .logo-row{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:8px;padding:0 0 8px}
   .hhbtn{width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff;font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
   .hhbtn:active{background:rgba(255,255,255,.24)}
@@ -152,7 +154,7 @@
   .chart-box svg{display:block}
 
   .segs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
-  .seg{background:var(--card);border-radius:24px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  #partSheet .seg{background:var(--card);border-radius:22px;padding:13px 16px 14px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
   .seg .bar{position:absolute;left:0;top:0;bottom:0;width:6px}
   .seg-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
   .seg-name{font-size:15px;font-weight:800}.seg-time{font-size:11px;font-weight:700;color:var(--ink-mute)}
@@ -406,14 +408,14 @@ function heroGrad(k){return HEROGRAD[k]||HEROGRAD[k.replace('-day','').replace('
 
 /* ---- living sky background: time-of-day × condition (from the Sky Gradient Library) ---- */
 const SKY={
-  clear:{dawn:'linear-gradient(180deg,#20265e 0%,#6a5c9e 45%,#f2b17a 100%)',day:'linear-gradient(180deg,#2f7fd0 0%,#5aa6e6 55%,#a9d6f5 100%)',dusk:'linear-gradient(180deg,#1f2a5c 0%,#834f8f 50%,#f0913d 100%)',night:'linear-gradient(180deg,#0a0f26 0%,#161d47 55%,#282c5e 100%)'},
-  pcloudy:{dawn:'linear-gradient(180deg,#39406f 0%,#7d7aa6 50%,#e6b58e 100%)',day:'linear-gradient(180deg,#4a86bf 0%,#77a6cf 55%,#b6d2e6 100%)',dusk:'linear-gradient(180deg,#26305e 0%,#6f5788 50%,#d98a52 100%)',night:'linear-gradient(180deg,#10152f 0%,#232a54 55%,#3a406c 100%)'},
-  cloudy:{day:'linear-gradient(180deg,#54607e 0%,#7c8aa4 55%,#a7b1c4 100%)',night:'linear-gradient(180deg,#20263c 0%,#3a4258 60%,#525b72 100%)'},
-  overcast:{day:'linear-gradient(180deg,#4a5266 0%,#6d7488 60%,#9098a8 100%)',night:'linear-gradient(180deg,#191d2c 0%,#333a4c 100%)'},
-  rain:{day:'linear-gradient(180deg,#39445e 0%,#5a6885 55%,#7f8ca6 100%)',night:'linear-gradient(180deg,#141a2e 0%,#2b344c 60%,#414c66 100%)'},
-  thunder:{day:'linear-gradient(180deg,#2b2f4c 0%,#4a4a70 55%,#6f6790 100%)',night:'linear-gradient(180deg,#0f1024 0%,#26264a 60%,#403c66 100%)'},
-  snow:{day:'linear-gradient(180deg,#6076a0 0%,#93aecd 55%,#cfe0f0 100%)',night:'linear-gradient(180deg,#2a3550 0%,#4a5a7a 100%)'},
-  fog:{day:'linear-gradient(180deg,#606a80 0%,#8f97a9 55%,#c2c7d2 100%)',night:'linear-gradient(180deg,#262b3a 0%,#474e60 100%)'}
+  clear:{dawn:'linear-gradient(180deg,#20265e 0%,#6a5c9e 45%,#f2b17a 100%)',midday:'linear-gradient(180deg,#1f6fc4 0%,#4f9be0 50%,#bfe0f7 100%)',day:'linear-gradient(180deg,#2f7fd0 0%,#5aa6e6 55%,#a9d6f5 100%)',dusk:'linear-gradient(180deg,#1f2a5c 0%,#834f8f 50%,#f0913d 100%)',night:'linear-gradient(180deg,#0a0f26 0%,#161d47 55%,#282c5e 100%)'},
+  pcloudy:{dawn:'linear-gradient(180deg,#39406f 0%,#7d7aa6 50%,#e6b58e 100%)',midday:'linear-gradient(180deg,#3d7cb0 0%,#6f9fc8 50%,#c2d8e8 100%)',day:'linear-gradient(180deg,#4a86bf 0%,#77a6cf 55%,#b6d2e6 100%)',dusk:'linear-gradient(180deg,#26305e 0%,#6f5788 50%,#d98a52 100%)',night:'linear-gradient(180deg,#10152f 0%,#232a54 55%,#3a406c 100%)'},
+  cloudy:{dawn:'linear-gradient(180deg,#3c4160 0%,#7b7590 50%,#d0a487 100%)',day:'linear-gradient(180deg,#54607e 0%,#7c8aa4 55%,#a7b1c4 100%)',dusk:'linear-gradient(180deg,#2b3048 0%,#5f5872 50%,#c07f5c 100%)',night:'linear-gradient(180deg,#20263c 0%,#3a4258 60%,#525b72 100%)'},
+  overcast:{dawn:'linear-gradient(180deg,#3a4054 0%,#6b6f82 55%,#b39079 100%)',day:'linear-gradient(180deg,#4a5266 0%,#6d7488 60%,#9098a8 100%)',dusk:'linear-gradient(180deg,#2c313f 0%,#585d6e 55%,#a67456 100%)',night:'linear-gradient(180deg,#191d2c 0%,#333a4c 100%)'},
+  rain:{dawn:'linear-gradient(180deg,#333b54 0%,#5c6784 55%,#9c8b86 100%)',day:'linear-gradient(180deg,#39445e 0%,#5a6885 55%,#7f8ca6 100%)',dusk:'linear-gradient(180deg,#262d44 0%,#4a5673 55%,#8f6e6a 100%)',night:'linear-gradient(180deg,#141a2e 0%,#2b344c 60%,#414c66 100%)'},
+  thunder:{dawn:'linear-gradient(180deg,#282b47 0%,#514f74 55%,#8a6f80 100%)',day:'linear-gradient(180deg,#2b2f4c 0%,#4a4a70 55%,#6f6790 100%)',dusk:'linear-gradient(180deg,#1c1d38 0%,#3f3c63 55%,#7a5566 100%)',night:'linear-gradient(180deg,#0f1024 0%,#26264a 60%,#403c66 100%)'},
+  snow:{dawn:'linear-gradient(180deg,#4a597e 0%,#8f9fc4 50%,#e9d3d8 100%)',midday:'linear-gradient(180deg,#6f8bb8 0%,#a6c2de 55%,#e6f1fb 100%)',day:'linear-gradient(180deg,#6076a0 0%,#93aecd 55%,#cfe0f0 100%)',dusk:'linear-gradient(180deg,#3a4468 0%,#71749c 50%,#d0a0aa 100%)',night:'linear-gradient(180deg,#2a3550 0%,#4a5a7a 100%)'},
+  fog:{dawn:'linear-gradient(180deg,#565e74 0%,#8f8f9e 55%,#cbb3a6 100%)',day:'linear-gradient(180deg,#606a80 0%,#8f97a9 55%,#c2c7d2 100%)',dusk:'linear-gradient(180deg,#42485a 0%,#77778a 55%,#b59180 100%)',night:'linear-gradient(180deg,#262b3a 0%,#474e60 100%)'}
 };
 function skyGrad(key,phase){const base=key.replace('-day','').replace('-night','');const set=SKY[base]||SKY.cloudy;return set[phase]||set.day||set.night||set[Object.keys(set)[0]];}
 function skyPhase(key,hourMin,srMin,ssMin){
@@ -421,7 +423,10 @@ function skyPhase(key,hourMin,srMin,ssMin){
   if(srMin==null||ssMin==null) return night?'night':'day';
   if(hourMin>=srMin-30&&hourMin<=srMin+60) return 'dawn';
   if(hourMin>=ssMin-60&&hourMin<=ssMin+30) return 'dusk';
-  return night?'night':'day';
+  if(night) return 'night';
+  const span=ssMin-srMin;
+  if(span>0&&hourMin>=srMin+span*0.32&&hourMin<=ssMin-span*0.32) return 'midday';
+  return 'day';
 }
 
 /* WMO code -> key (always carries -day/-night so night clouds can show a moon) */
@@ -2039,7 +2044,7 @@ function render(D,root,ai){
     <div class="hero-head">
       <div class="logo-row">
         <button class="hhbtn" onclick="event.stopPropagation();openLangSheet()" aria-label="Language">${icoGlobe()}</button>
-        <div class="applogo"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
+        <div class="applogo" onclick="event.stopPropagation();spinLogo(this);refreshWeather()" role="button" aria-label="Refresh"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
         <button class="hhbtn${NOTIF?'':' off'}" id="notifBtn" onclick="event.stopPropagation();openNotifSheet()" aria-label="Notifications">${icoBell(NOTIF)}</button>
       </div>
       <div class="locbar" id="tiles"></div>
@@ -2133,9 +2138,11 @@ function buildSegments(hourly){
     const pv=g.items.map(x=>x.precip).filter(v=>v!=null),wv=g.items.map(x=>x.wind).filter(v=>v!=null);
     const precip=pv.length?Math.max(...pv):0,wind=wv.length?Math.max(...wv):0;
     const pw={Morning:t('seg_morning'),Afternoon:t('seg_afternoon'),Evening:t('seg_evening'),Night:t('seg_night')};
-    let name=WD[g.date.getDay()]+' '+(pw[g.part]||g.part);
+    const cap1=w=>w?w.charAt(0).toUpperCase()+w.slice(1):w;
+    let dayLong=cap1(g.date.toLocaleDateString(LANG,{weekday:'long'}));
+    let name=dayLong+' '+cap1(pw[g.part]||g.part);
     if(gi===0){name=g.part==='Evening'?t('seg_thisEvening'):g.part==='Night'?t('seg_overnight'):g.part==='Morning'?t('seg_thisMorning'):t('seg_thisAfternoon');}
-    if(gi>0&&g.part==='Night')name=WD[g.date.getDay()]+' '+t('seg_night');
+    if(gi>0&&g.part==='Night')name=dayLong+' '+cap1(t('seg_night'));
     const h0=g.items[0].date.getHours(),h1=(g.items[g.items.length-1].date.getHours()+1)%24;
     return {name,time:pad(h0)+':00–'+pad(h1)+':00',hi,lo,feels:fav,key,desc:narr(key,hi,lo,precip,wind)};
   });
@@ -2220,6 +2227,7 @@ function isActive(loc){const cur=LOCS[ACTIVE]||LOCS[0];return cur&&ckey(cur)===c
 function animateApp(dir){var a=document.getElementById('app');if(!a)return;a.classList.remove('app-next','app-prev','app-fade');void a.offsetWidth;a.classList.add(dir==='next'?'app-next':dir==='prev'?'app-prev':'app-fade');}
 function prefetchNeighbors(){var n=LOCS.length;if(n<2)return;[(ACTIVE+1)%n,(ACTIVE-1+n)%n].forEach(function(i){var loc=LOCS[i];if(!loc)return;var k=ckey(loc);if(WCACHE[k])return;fetchWeather(loc).then(function(D){WCACHE[k]={D:D,t:Date.now()};}).catch(function(){});});}
 function refreshLoc(loc,key){fetchWeather(loc).then(function(D){WCACHE[key]={D:D,t:Date.now()};if(isActive(loc))render(D);}).catch(function(){});}
+function spinLogo(el){var b=el&&el.querySelector('.logo-badge');if(!b)return;b.classList.remove('spin');void b.offsetWidth;b.classList.add('spin');setTimeout(function(){b.classList.remove('spin');},720);}
 window.refreshWeather=async function(){
   try{var loc=LOCS[ACTIVE]||LOCS[0];if(loc)delete WCACHE[ckey(loc)];await loadActive(true);}catch(e){}
   try{if(window.AndroidBridge&&AndroidBridge.onRefreshed)AndroidBridge.onRefreshed();}catch(e){}
