@@ -198,8 +198,10 @@
   #stage{position:relative}
   #app{position:relative;z-index:1}
   .appghost{position:absolute;top:0;left:0;right:0;z-index:2;backface-visibility:hidden}
-  #app.snap,.appghost.snap{transition:transform .34s cubic-bezier(.16,.84,.3,1)}
+  #app.snap,.appghost.snap{transition:transform .34s cubic-bezier(.22,.7,.25,1)}
   #app.dragging,.appghost.dragging{will-change:transform}
+  /* suspend expensive backdrop-blur while panels are in motion — keeps the swipe buttery */
+  .nb .hero,.nb .card,.nb .strip-wrap,.nb .days,.nb .src-table,.nb .seg,.nb .stat,.nb .note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
   #app.app-next{animation:appFromRight .46s cubic-bezier(.16,.84,.3,1)}
   #app.app-prev{animation:appFromLeft .46s cubic-bezier(.16,.84,.3,1)}
   #app.app-fade{animation:appSettle .32s cubic-bezier(.16,.84,.3,1)}
@@ -596,14 +598,19 @@ const I18N={
     seg_morning:"morning",seg_afternoon:"afternoon",seg_evening:"evening",seg_night:"night",
     seg_thisMorning:"This morning",seg_thisAfternoon:"This afternoon",seg_thisEvening:"This evening",seg_overnight:"Overnight",
     n_around:"Around",n_downto:"down to",n_rainGood:"Good chance of rain",n_rainSlight:"Slight shower risk",n_snowGood:"Good chance of snow",n_snowSlight:"Slight snow risk",n_dry:"Staying dry.",n_breezy:"Breezy.",n_light:"Light winds.",n_mixed:"Mixed",n_nodata:"Detailed data unavailable for this block.",feels:"feels",
-    tip_pollen_nodata:"Pollen: no data",tip_pollen_low:"Low pollen count",tip_pollen_mod:"Moderate pollen",tip_pollen_high:"High pollen — take care",
-    tip_uv_vhigh:"Very high UV — cover up",tip_uv_high:"High UV — sunscreen",tip_uv_mod:"Moderate UV",tip_uv_low:"Low UV",
-    tip_car_no:"Not ideal for car washing",tip_car_yes:"Good day to wash the car",
-    tip_run_yes:"Good for outdoor workouts",tip_run_no:"Better to train indoors",
+    tip_pollen_nodata:"Pollen: no data",tip_pollen_low:"Low pollen — breathe easy",tip_pollen_mod:"{name} moderate — mild allergy risk",tip_pollen_high:"{name} high — antihistamines before you head out",tip_pollen_vhigh:"{name} very high — limit time outdoors",
+    tip_uv_vhigh:"Very high UV — cover up, avoid midday sun",tip_uv_high:"High UV — SPF 30+, seek shade midday",tip_uv_mod:"Moderate UV — sunscreen if out over an hour",tip_uv_low:"Low UV — no protection needed",
+    tip_car_no:"Rain coming — hold off on the car wash",tip_car_yes:"Dry spell — good day to wash the car",
+    tip_run_yes:"Good conditions for an outdoor workout",tip_run_no:"Tough for outdoor training — go indoors",
     tip_out_yes:"Nice for a day out",tip_out_no:"Keep plans flexible",
-    tip_mosq_yes:"Some mosquitoes about",tip_mosq_no:"Few mosquitoes",
-    tip_cloth_layers:"Layers",tip_cloth_warm:"Dress warm",tip_cloth_light:"Light clothing",tip_cloth_comfort:"Comfortable layers",
-    tip_air_na:"Air data unavailable",tip_air_clean:"Clean air",tip_air_fair:"Fair air quality",tip_air_poor:"Poor air — limit exertion",
+    tip_mosq_yes:"Warm and still — watch for mosquitoes",tip_mosq_no:"Few mosquitoes about",
+    tip_cloth_layers:"Cool out — layer up",tip_cloth_warm:"Cold — bundle up warm",tip_cloth_light:"Hot — light clothing, stay cool",tip_cloth_comfort:"Comfortable — light layers, no jacket",tip_cloth_wind:"Breezy — a windbreaker helps, gusts feel cooler",
+    tip_air_na:"Air data unavailable",tip_air_clean:"Clean air — great for a run",tip_air_fair:"Fair air — fine for most activity",tip_air_poor:"Poor air — sensitive groups limit exertion",
+    tip_dew_muggy:"Muggy — it'll feel sticky out",tip_dew_dry:"Dry air — hydrate and moisturize",
+    tip_window_warm:"Warmest {a}–{b} ({t}) — plan outdoor time then",tip_window_cool:"Cools sharply after {h} — bring a layer",
+    tip_rain_soon:"Rain likely around {h} — take an umbrella",tip_rain_dry:"Dry through the evening",
+    tip_garden_yes:"Great drying weather — laundry or gardening",tip_star_yes:"Clear tonight, {n}% moon — good for stargazing",tip_star_no:"Cloudy tonight — not one for stargazing",tip_golden:"Golden hour ~{h} — lovely light for photos",
+    tip_cons_diverge:"Models diverge on the days ahead — keep plans flexible",tip_cons_rain:"Models split on rain {day} — keep an umbrella handy",tip_cons_snow:"Models split on snow {day} — keep layers handy",
     yourLocations:"Your locations",addLocation:"Add a location",searchPh:"Search city, e.g. Kraków",searchBtn:"Search",useMyLoc:"📍 Use my current location",current:"current",remove:"Remove",noMatches:"No matches — try another spelling.",searching:"Searching…",searchNet:"Search needs an internet connection.",maxLoc:"You already have {n} locations — remove one first.",
     loading:"Loading forecast…",loadingCity:"Loading {city}…",findingLoc:"Finding your location…",cantReach:"Couldn't reach the weather service.",cantReachSub:"Check your connection and pull down to retry.",
     srcModel:"Source / model",winHigh:"Window high",winLow:"Window low",consensusAvg:"◆ Consensus average",showAll:"Show all {n} models ▾",hideModels:"Hide models ▴",
@@ -1763,6 +1770,42 @@ const I18N={
     footLive:"Данни на живо · средно от няколко модела Open-Meteo",footOffline:"Офлайн резерва",footTail:" · дръпнете или отворете отново за обновяване"
   }
 };
+/* New/culprit-naming lifestyle-tip lines, all 33 languages — merged into I18N below */
+const TIPX={
+  pl:{tip_pollen_mod:"{name} umiarkowany — lekkie ryzyko alergii",tip_pollen_high:"{name} wysoki — weź lek przeciwhistaminowy przed wyjściem",tip_pollen_vhigh:"{name} bardzo wysoki — ogranicz czas na zewnątrz",tip_cloth_wind:"Wietrznie — przyda się wiatrówka, porywy chłodzą",tip_dew_muggy:"Parno — będzie lepko",tip_dew_dry:"Suche powietrze — nawadniaj się i nawilżaj",tip_window_warm:"Najcieplej {a}–{b} ({t}) — zaplanuj wtedy wyjście",tip_window_cool:"Gwałtowne ochłodzenie po {h} — weź warstwę",tip_rain_soon:"Deszcz prawdopodobny ok. {h} — weź parasol",tip_rain_dry:"Sucho do wieczora",tip_garden_yes:"Świetna pogoda na suszenie — pranie lub ogród",tip_star_yes:"Bezchmurna noc, księżyc {n}% — dobra na obserwację gwiazd",tip_star_no:"Pochmurna noc — słaba na oglądanie gwiazd",tip_golden:"Złota godzina ~{h} — piękne światło do zdjęć",tip_cons_diverge:"Modele różnią się na kolejne dni — zachowaj elastyczność",tip_cons_rain:"Modele niezgodne co do deszczu {day} — miej parasol pod ręką",tip_cons_snow:"Modele niezgodne co do śniegu {day} — miej ciepłe warstwy"},
+  de:{tip_pollen_mod:"{name} mäßig — leichtes Allergierisiko",tip_pollen_high:"{name} hoch — Antihistaminikum vor dem Rausgehen",tip_pollen_vhigh:"{name} sehr hoch — Zeit im Freien begrenzen",tip_cloth_wind:"Windig — eine Windjacke hilft, Böen kühlen",tip_dew_muggy:"Schwül — es fühlt sich klebrig an",tip_dew_dry:"Trockene Luft — trinken und eincremen",tip_window_warm:"Am wärmsten {a}–{b} ({t}) — dann rausgehen",tip_window_cool:"Starke Abkühlung nach {h} — Schicht mitnehmen",tip_rain_soon:"Regen wahrscheinlich um {h} — Schirm mitnehmen",tip_rain_dry:"Trocken bis zum Abend",tip_garden_yes:"Ideales Trockenwetter — Wäsche oder Garten",tip_star_yes:"Klar heute Nacht, Mond {n}% — gut für Sterne",tip_star_no:"Bewölkte Nacht — nichts für Sternebeobachtung",tip_golden:"Goldene Stunde ~{h} — schönes Licht für Fotos",tip_cons_diverge:"Modelle uneinig über die nächsten Tage — flexibel bleiben",tip_cons_rain:"Modelle uneinig über Regen am {day} — Schirm bereithalten",tip_cons_snow:"Modelle uneinig über Schnee am {day} — warme Schichten bereithalten"},
+  uk:{tip_pollen_mod:"{name} помірний — легкий ризик алергії",tip_pollen_high:"{name} високий — прийміть антигістамінне перед виходом",tip_pollen_vhigh:"{name} дуже високий — обмежте час надворі",tip_cloth_wind:"Вітряно — вітрівка допоможе, пориви холодять",tip_dew_muggy:"Задушливо — буде липко",tip_dew_dry:"Сухе повітря — пийте воду й зволожуйте шкіру",tip_window_warm:"Найтепліше {a}–{b} ({t}) — плануйте вихід тоді",tip_window_cool:"Різке похолодання після {h} — візьміть шар одягу",tip_rain_soon:"Дощ імовірний близько {h} — візьміть парасольку",tip_rain_dry:"Сухо до вечора",tip_garden_yes:"Чудова погода для сушіння — прання чи сад",tip_star_yes:"Ясна ніч, місяць {n}% — гарно для спостереження зірок",tip_star_no:"Хмарна ніч — не для спостереження зірок",tip_golden:"Золота година ~{h} — гарне світло для фото",tip_cons_diverge:"Моделі розходяться щодо найближчих днів — будьте гнучкі",tip_cons_rain:"Моделі не згодні щодо дощу в {day} — тримайте парасольку напоготові",tip_cons_snow:"Моделі не згодні щодо снігу в {day} — тримайте теплі речі напоготові"},
+  es:{tip_pollen_mod:"{name} moderado — leve riesgo de alergia",tip_pollen_high:"{name} alto — antihistamínico antes de salir",tip_pollen_vhigh:"{name} muy alto — limita el tiempo al aire libre",tip_cloth_wind:"Ventoso — un cortavientos ayuda, las rachas enfrían",tip_dew_muggy:"Bochorno — se sentirá pegajoso",tip_dew_dry:"Aire seco — hidrátate y usa crema",tip_window_warm:"Lo más cálido {a}–{b} ({t}) — sal entonces",tip_window_cool:"Baja rápido tras las {h} — lleva una capa",tip_rain_soon:"Lluvia probable hacia las {h} — lleva paraguas",tip_rain_dry:"Seco hasta la noche",tip_garden_yes:"Buen día para secar — ropa o jardín",tip_star_yes:"Noche despejada, luna {n}% — buena para ver estrellas",tip_star_no:"Noche nublada — no es para ver estrellas",tip_golden:"Hora dorada ~{h} — buena luz para fotos",tip_cons_diverge:"Los modelos difieren en los próximos días — sé flexible",tip_cons_rain:"Modelos divididos sobre la lluvia del {day} — ten paraguas a mano",tip_cons_snow:"Modelos divididos sobre la nieve del {day} — ten ropa de abrigo a mano"},
+  fr:{tip_pollen_mod:"{name} modéré — léger risque d'allergie",tip_pollen_high:"{name} élevé — antihistaminique avant de sortir",tip_pollen_vhigh:"{name} très élevé — limitez le temps dehors",tip_cloth_wind:"Venteux — un coupe-vent aide, les rafales rafraîchissent",tip_dew_muggy:"Lourd — ça va coller",tip_dew_dry:"Air sec — hydratez-vous et hydratez la peau",tip_window_warm:"Plus chaud {a}–{b} ({t}) — sortez à ce moment",tip_window_cool:"Chute rapide après {h} — prenez une couche",tip_rain_soon:"Pluie probable vers {h} — prenez un parapluie",tip_rain_dry:"Sec jusqu'au soir",tip_garden_yes:"Beau temps pour sécher — linge ou jardin",tip_star_yes:"Ciel dégagé ce soir, lune {n}% — bien pour les étoiles",tip_star_no:"Nuit nuageuse — pas pour observer les étoiles",tip_golden:"Heure dorée ~{h} — belle lumière pour les photos",tip_cons_diverge:"Les modèles divergent pour les jours à venir — restez flexible",tip_cons_rain:"Modèles partagés sur la pluie {day} — gardez un parapluie",tip_cons_snow:"Modèles partagés sur la neige {day} — gardez des couches chaudes"},
+  ru:{tip_pollen_mod:"{name} умеренный — лёгкий риск аллергии",tip_pollen_high:"{name} высокий — примите антигистаминное перед выходом",tip_pollen_vhigh:"{name} очень высокий — ограничьте время на улице",tip_cloth_wind:"Ветрено — пригодится ветровка, порывы холодят",tip_dew_muggy:"Душно — будет липко",tip_dew_dry:"Сухой воздух — пейте воду и увлажняйте кожу",tip_window_warm:"Теплее всего {a}–{b} ({t}) — выходите тогда",tip_window_cool:"Резкое похолодание после {h} — возьмите слой одежды",tip_rain_soon:"Дождь вероятен около {h} — возьмите зонт",tip_rain_dry:"Сухо до вечера",tip_garden_yes:"Отличная погода для сушки — стирка или сад",tip_star_yes:"Ясная ночь, луна {n}% — хорошо для наблюдения звёзд",tip_star_no:"Облачная ночь — не для наблюдения звёзд",tip_golden:"Золотой час ~{h} — красивый свет для фото",tip_cons_diverge:"Модели расходятся на ближайшие дни — будьте гибче",tip_cons_rain:"Модели расходятся по дождю в {day} — держите зонт под рукой",tip_cons_snow:"Модели расходятся по снегу в {day} — держите тёплые вещи под рукой"},
+  zh:{tip_pollen_mod:"{name}中等 — 轻微过敏风险",tip_pollen_high:"{name}偏高 — 出门前服用抗过敏药",tip_pollen_vhigh:"{name}很高 — 减少户外时间",tip_cloth_wind:"有风 — 防风外套更合适，阵风更凉",tip_dew_muggy:"闷热 — 会感觉黏腻",tip_dew_dry:"空气干燥 — 多补水、勤保湿",tip_window_warm:"最暖 {a}–{b}（{t}）— 安排此时外出",tip_window_cool:"{h}后骤降 — 带件外套",tip_rain_soon:"约 {h} 可能下雨 — 带伞",tip_rain_dry:"入夜前干燥",tip_garden_yes:"晾晒好天气 — 洗衣或园艺",tip_star_yes:"今夜晴朗，月亮{n}% — 适合观星",tip_star_no:"今夜多云 — 不宜观星",tip_golden:"黄金时刻约 {h} — 拍照光线极佳",tip_cons_diverge:"模型对未来几天有分歧 — 计划留些弹性",tip_cons_rain:"模型对{day}是否下雨有分歧 — 备好雨伞",tip_cons_snow:"模型对{day}是否下雪有分歧 — 备好保暖衣物"},
+  ja:{tip_pollen_mod:"{name}やや多い — 軽い花粉症リスク",tip_pollen_high:"{name}多い — 外出前に抗ヒスタミン薬を",tip_pollen_vhigh:"{name}非常に多い — 外出は控えめに",tip_cloth_wind:"風が強め — ウィンドブレーカーが役立つ、突風で肌寒い",tip_dew_muggy:"蒸し暑い — べたつきそう",tip_dew_dry:"乾燥 — 水分と保湿を",tip_window_warm:"最も暖かい {a}–{b}（{t}）— この時間に外出を",tip_window_cool:"{h}以降に急に冷える — 一枚持って",tip_rain_soon:"{h}頃に雨の可能性 — 傘を",tip_rain_dry:"夜まで乾燥",tip_garden_yes:"洗濯・庭仕事に最適な乾燥日和",tip_star_yes:"今夜は快晴、月{n}% — 星空観察に good",tip_star_no:"今夜は曇り — 星空観察には不向き",tip_golden:"ゴールデンアワー約{h} — 写真に映える光",tip_cons_diverge:"モデルは今後数日で不一致 — 予定は柔軟に",tip_cons_rain:"{day}の雨でモデルが割れる — 傘を用意",tip_cons_snow:"{day}の雪でモデルが割れる — 防寒を用意"},
+  pt:{tip_pollen_mod:"{name} moderado — leve risco de alergia",tip_pollen_high:"{name} alto — anti-histamínico antes de sair",tip_pollen_vhigh:"{name} muito alto — limite o tempo ao ar livre",tip_cloth_wind:"Ventoso — um corta-vento ajuda, as rajadas refrescam",tip_dew_muggy:"Abafado — vai parecer pegajoso",tip_dew_dry:"Ar seco — hidrate-se e passe creme",tip_window_warm:"Mais quente {a}–{b} ({t}) — saia nesse horário",tip_window_cool:"Cai rápido após as {h} — leve um agasalho",tip_rain_soon:"Chuva provável por volta das {h} — leve guarda-chuva",tip_rain_dry:"Seco até a noite",tip_garden_yes:"Ótimo tempo para secar — roupas ou jardim",tip_star_yes:"Céu limpo hoje, lua {n}% — bom para ver estrelas",tip_star_no:"Noite nublada — não é para observar estrelas",tip_golden:"Hora dourada ~{h} — bela luz para fotos",tip_cons_diverge:"Modelos divergem nos próximos dias — mantenha planos flexíveis",tip_cons_rain:"Modelos divididos sobre chuva em {day} — tenha guarda-chuva à mão",tip_cons_snow:"Modelos divididos sobre neve em {day} — tenha agasalho à mão"},
+  nl:{tip_pollen_mod:"{name} matig — licht allergierisico",tip_pollen_high:"{name} hoog — antihistaminicum voor je naar buiten gaat",tip_pollen_vhigh:"{name} zeer hoog — beperk tijd buiten",tip_cloth_wind:"Winderig — een windjack helpt, vlagen voelen koeler",tip_dew_muggy:"Benauwd — het voelt plakkerig",tip_dew_dry:"Droge lucht — drink en verzorg je huid",tip_window_warm:"Warmst {a}–{b} ({t}) — ga dan naar buiten",tip_window_cool:"Sterke afkoeling na {h} — neem een laag mee",tip_rain_soon:"Regen waarschijnlijk rond {h} — neem een paraplu",tip_rain_dry:"Droog tot de avond",tip_garden_yes:"Prima droogweer — was of tuin",tip_star_yes:"Helder vanavond, maan {n}% — goed voor sterrenkijken",tip_star_no:"Bewolkte nacht — niet voor sterrenkijken",tip_golden:"Gouden uur ~{h} — mooi licht voor foto's",tip_cons_diverge:"Modellen verschillen over de komende dagen — blijf flexibel",tip_cons_rain:"Modellen oneens over regen op {day} — houd een paraplu bij de hand",tip_cons_snow:"Modellen oneens over sneeuw op {day} — houd warme lagen bij de hand"},
+  it:{tip_pollen_mod:"{name} moderato — lieve rischio allergie",tip_pollen_high:"{name} alto — antistaminico prima di uscire",tip_pollen_vhigh:"{name} molto alto — limita il tempo all'aperto",tip_cloth_wind:"Ventoso — una giacca a vento aiuta, le raffiche raffreddano",tip_dew_muggy:"Afoso — sarà appiccicoso",tip_dew_dry:"Aria secca — idratati e usa la crema",tip_window_warm:"Più caldo {a}–{b} ({t}) — esci in quel momento",tip_window_cool:"Cala bruscamente dopo le {h} — porta uno strato",tip_rain_soon:"Pioggia probabile verso le {h} — prendi l'ombrello",tip_rain_dry:"Asciutto fino a sera",tip_garden_yes:"Ottimo per asciugare — bucato o giardino",tip_star_yes:"Sereno stanotte, luna {n}% — buono per le stelle",tip_star_no:"Notte nuvolosa — non è serata da stelle",tip_golden:"Ora d'oro ~{h} — bella luce per le foto",tip_cons_diverge:"I modelli divergono sui prossimi giorni — resta flessibile",tip_cons_rain:"Modelli discordi sulla pioggia di {day} — tieni l'ombrello a portata",tip_cons_snow:"Modelli discordi sulla neve di {day} — tieni abiti caldi a portata"},
+  hi:{tip_pollen_mod:"{name} मध्यम — हल्का एलर्जी जोखिम",tip_pollen_high:"{name} अधिक — बाहर निकलने से पहले एंटीहिस्टामिन लें",tip_pollen_vhigh:"{name} बहुत अधिक — बाहर कम समय बिताएं",tip_cloth_wind:"हवादार — विंडब्रेकर मददगार, झोंके ठंडक देते हैं",tip_dew_muggy:"उमस — चिपचिपा महसूस होगा",tip_dew_dry:"सूखी हवा — पानी पिएं और त्वचा नम रखें",tip_window_warm:"सबसे गर्म {a}–{b} ({t}) — तभी बाहर जाएं",tip_window_cool:"{h} के बाद तेज़ गिरावट — एक परत साथ रखें",tip_rain_soon:"लगभग {h} बजे बारिश संभव — छाता रखें",tip_rain_dry:"शाम तक सूखा",tip_garden_yes:"सुखाने के लिए बढ़िया मौसम — कपड़े या बागवानी",tip_star_yes:"आज रात साफ, चाँद {n}% — तारे देखने के लिए अच्छा",tip_star_no:"आज रात बादल — तारे देखने लायक नहीं",tip_golden:"गोल्डन आवर ~{h} — फोटो के लिए सुंदर रोशनी",tip_cons_diverge:"आने वाले दिनों पर मॉडल असहमत — योजनाएं लचीली रखें",tip_cons_rain:"{day} की बारिश पर मॉडल बंटे — छाता पास रखें",tip_cons_snow:"{day} की बर्फ पर मॉडल बंटे — गर्म कपड़े पास रखें"},
+  ar:{tip_pollen_mod:"{name} متوسط — خطر حساسية خفيف",tip_pollen_high:"{name} مرتفع — تناول مضاد الهيستامين قبل الخروج",tip_pollen_vhigh:"{name} مرتفع جداً — قلّل الوقت في الخارج",tip_cloth_wind:"عاصف — سترة واقية من الريح مفيدة، الهبات تبرّد",tip_dew_muggy:"رطب وخانق — سيبدو لزجاً",tip_dew_dry:"هواء جاف — اشرب الماء ورطّب بشرتك",tip_window_warm:"الأدفأ {a}–{b} ({t}) — اخرج حينها",tip_window_cool:"انخفاض حاد بعد {h} — خذ طبقة إضافية",tip_rain_soon:"مطر محتمل حوالي {h} — خذ مظلة",tip_rain_dry:"جاف حتى المساء",tip_garden_yes:"طقس ممتاز للتجفيف — غسيل أو حديقة",tip_star_yes:"صافٍ الليلة، القمر {n}% — مناسب لرصد النجوم",tip_star_no:"ليلة غائمة — غير مناسبة لرصد النجوم",tip_golden:"الساعة الذهبية ~{h} — إضاءة جميلة للصور",tip_cons_diverge:"النماذج تختلف حول الأيام القادمة — أبقِ خططك مرنة",tip_cons_rain:"النماذج منقسمة حول مطر {day} — احتفظ بمظلة",tip_cons_snow:"النماذج منقسمة حول ثلوج {day} — احتفظ بملابس دافئة"},
+  el:{tip_pollen_mod:"{name} μέτρια — ήπιος κίνδυνος αλλεργίας",tip_pollen_high:"{name} υψηλή — αντιισταμινικό πριν βγείτε",tip_pollen_vhigh:"{name} πολύ υψηλή — περιορίστε τον χρόνο έξω",tip_cloth_wind:"Άνεμος — ένα αντιανεμικό βοηθά, οι ριπές δροσίζουν",tip_dew_muggy:"Αποπνικτικά — θα κολλάει",tip_dew_dry:"Ξηρός αέρας — ενυδατωθείτε και ενυδατώστε το δέρμα",tip_window_warm:"Πιο ζεστά {a}–{b} ({t}) — βγείτε τότε",tip_window_cool:"Απότομη πτώση μετά τις {h} — πάρτε μια στρώση",tip_rain_soon:"Πιθανή βροχή γύρω στις {h} — πάρτε ομπρέλα",tip_rain_dry:"Στεγνά ως το βράδυ",tip_garden_yes:"Ιδανικός καιρός για στέγνωμα — μπουγάδα ή κήπος",tip_star_yes:"Καθαρός ουρανός απόψε, φεγγάρι {n}% — καλό για αστέρια",tip_star_no:"Συννεφιά απόψε — όχι για παρατήρηση άστρων",tip_golden:"Χρυσή ώρα ~{h} — όμορφο φως για φωτογραφίες",tip_cons_diverge:"Τα μοντέλα διαφωνούν για τις επόμενες μέρες — μείνετε ευέλικτοι",tip_cons_rain:"Τα μοντέλα διχάζονται για βροχή την {day} — έχετε ομπρέλα πρόχειρη",tip_cons_snow:"Τα μοντέλα διχάζονται για χιόνι την {day} — έχετε ζεστά ρούχα πρόχειρα"},
+  cs:{tip_pollen_mod:"{name} střední — mírné riziko alergie",tip_pollen_high:"{name} vysoký — před odchodem si vezměte antihistaminikum",tip_pollen_vhigh:"{name} velmi vysoký — omezte pobyt venku",tip_cloth_wind:"Větrno — hodí se větrovka, poryvy chladí",tip_dew_muggy:"Dusno — bude to lepkavé",tip_dew_dry:"Suchý vzduch — pijte a hydratujte pokožku",tip_window_warm:"Nejtepleji {a}–{b} ({t}) — vyrazte ven tehdy",tip_window_cool:"Prudké ochlazení po {h} — vezměte vrstvu",tip_rain_soon:"Déšť pravděpodobný kolem {h} — vezměte deštník",tip_rain_dry:"Sucho až do večera",tip_garden_yes:"Skvělé počasí na sušení — prádlo nebo zahrada",tip_star_yes:"Dnes jasno, měsíc {n}% — dobré na pozorování hvězd",tip_star_no:"Zataženo — hvězdy dnes neuvidíte",tip_golden:"Zlatá hodina ~{h} — krásné světlo na fotky",tip_cons_diverge:"Modely se v dalších dnech rozcházejí — buďte flexibilní",tip_cons_rain:"Modely se neshodnou na dešti v {day} — mějte deštník po ruce",tip_cons_snow:"Modely se neshodnou na sněhu v {day} — mějte teplé oblečení po ruce"},
+  sv:{tip_pollen_mod:"{name} måttlig — lätt allergirisk",tip_pollen_high:"{name} hög — ta antihistamin innan du går ut",tip_pollen_vhigh:"{name} mycket hög — begränsa tiden ute",tip_cloth_wind:"Blåsigt — en vindjacka hjälper, byar känns svalare",tip_dew_muggy:"Kvavt — det känns klibbigt",tip_dew_dry:"Torr luft — drick vatten och smörj huden",tip_window_warm:"Varmast {a}–{b} ({t}) — gå ut då",tip_window_cool:"Sjunker snabbt efter {h} — ta med ett lager",tip_rain_soon:"Regn troligt runt {h} — ta paraply",tip_rain_dry:"Torrt till kvällen",tip_garden_yes:"Fint torkväder — tvätt eller trädgård",tip_star_yes:"Klart i natt, måne {n}% — bra för stjärnskådning",tip_star_no:"Molnigt i natt — inget för stjärnskådning",tip_golden:"Gyllene timme ~{h} — fint ljus för foton",tip_cons_diverge:"Modellerna är oense om dagarna framöver — var flexibel",tip_cons_rain:"Modellerna oense om regn {day} — ha paraply nära",tip_cons_snow:"Modellerna oense om snö {day} — ha varma kläder nära"},
+  ko:{tip_pollen_mod:"{name} 보통 — 약한 알레르기 위험",tip_pollen_high:"{name} 높음 — 외출 전 항히스타민제 복용",tip_pollen_vhigh:"{name} 매우 높음 — 외출 시간 줄이기",tip_cloth_wind:"바람 — 바람막이가 도움, 돌풍이 더 서늘",tip_dew_muggy:"후텁지근 — 끈적하게 느껴짐",tip_dew_dry:"건조 — 수분 섭취와 보습",tip_window_warm:"가장 따뜻 {a}–{b} ({t}) — 그때 외출하세요",tip_window_cool:"{h} 이후 급강하 — 겉옷 챙기기",tip_rain_soon:"{h}경 비 가능 — 우산 챙기기",tip_rain_dry:"저녁까지 건조",tip_garden_yes:"빨래·정원 말리기 좋은 날씨",tip_star_yes:"오늘 밤 맑음, 달 {n}% — 별 보기 좋음",tip_star_no:"오늘 밤 흐림 — 별 보기 어려움",tip_golden:"골든아워 ~{h} — 사진 찍기 좋은 빛",tip_cons_diverge:"향후 며칠 모델 의견 갈림 — 유연하게 계획",tip_cons_rain:"{day} 비 여부 모델 엇갈림 — 우산 준비",tip_cons_snow:"{day} 눈 여부 모델 엇갈림 — 방한 준비"},
+  id:{tip_pollen_mod:"{name} sedang — risiko alergi ringan",tip_pollen_high:"{name} tinggi — minum antihistamin sebelum keluar",tip_pollen_vhigh:"{name} sangat tinggi — batasi waktu di luar",tip_cloth_wind:"Berangin — jaket angin membantu, embusan terasa sejuk",tip_dew_muggy:"Gerah — akan terasa lengket",tip_dew_dry:"Udara kering — minum air dan lembapkan kulit",tip_window_warm:"Terhangat {a}–{b} ({t}) — keluar saat itu",tip_window_cool:"Turun tajam setelah {h} — bawa lapisan",tip_rain_soon:"Hujan mungkin sekitar {h} — bawa payung",tip_rain_dry:"Kering sampai malam",tip_garden_yes:"Cuaca bagus untuk menjemur — cucian atau kebun",tip_star_yes:"Cerah malam ini, bulan {n}% — bagus untuk melihat bintang",tip_star_no:"Berawan malam ini — kurang cocok melihat bintang",tip_golden:"Golden hour ~{h} — cahaya indah untuk foto",tip_cons_diverge:"Model berbeda soal hari-hari mendatang — tetap fleksibel",tip_cons_rain:"Model terbelah soal hujan {day} — siapkan payung",tip_cons_snow:"Model terbelah soal salju {day} — siapkan pakaian hangat"},
+  bn:{tip_pollen_mod:"{name} মাঝারি — হালকা অ্যালার্জির ঝুঁকি",tip_pollen_high:"{name} বেশি — বেরোনোর আগে অ্যান্টিহিস্টামিন নিন",tip_pollen_vhigh:"{name} খুব বেশি — বাইরে কম সময় থাকুন",tip_cloth_wind:"হাওয়া — উইন্ডব্রেকার সহায়ক, দমকা ঠান্ডা লাগায়",tip_dew_muggy:"ভ্যাপসা — আঠালো লাগবে",tip_dew_dry:"শুষ্ক বাতাস — পানি পান করুন ও ত্বক আর্দ্র রাখুন",tip_window_warm:"সবচেয়ে গরম {a}–{b} ({t}) — তখনই বেরোন",tip_window_cool:"{h}-এর পর দ্রুত ঠান্ডা — একটি স্তর সঙ্গে নিন",tip_rain_soon:"প্রায় {h}-এ বৃষ্টির সম্ভাবনা — ছাতা নিন",tip_rain_dry:"সন্ধ্যা পর্যন্ত শুকনো",tip_garden_yes:"শুকানোর দারুণ আবহাওয়া — কাপড় বা বাগান",tip_star_yes:"আজ রাতে পরিষ্কার, চাঁদ {n}% — তারা দেখার জন্য ভালো",tip_star_no:"আজ রাতে মেঘলা — তারা দেখার মতো নয়",tip_golden:"গোল্ডেন আওয়ার ~{h} — ছবির জন্য সুন্দর আলো",tip_cons_diverge:"আগামী দিনগুলো নিয়ে মডেল ভিন্নমত — পরিকল্পনা নমনীয় রাখুন",tip_cons_rain:"{day}-এর বৃষ্টি নিয়ে মডেল বিভক্ত — ছাতা হাতে রাখুন",tip_cons_snow:"{day}-এর তুষার নিয়ে মডেল বিভক্ত — গরম কাপড় হাতে রাখুন"},
+  tr:{tip_pollen_mod:"{name} orta — hafif alerji riski",tip_pollen_high:"{name} yüksek — çıkmadan önce antihistamin alın",tip_pollen_vhigh:"{name} çok yüksek — dışarıda kalma süresini kısıtlayın",tip_cloth_wind:"Rüzgarlı — rüzgarlık işe yarar, esintiler serinletir",tip_dew_muggy:"Bunaltıcı — yapış yapış hissettirecek",tip_dew_dry:"Kuru hava — su için ve nemlendirin",tip_window_warm:"En sıcak {a}–{b} ({t}) — o saatte dışarı çıkın",tip_window_cool:"{h}'dan sonra hızla düşüyor — bir kat alın",tip_rain_soon:"Yaklaşık {h}'da yağmur olası — şemsiye alın",tip_rain_dry:"Akşama kadar kuru",tip_garden_yes:"Kurutmak için harika hava — çamaşır veya bahçe",tip_star_yes:"Bu gece açık, ay {n}% — yıldız gözlemi için iyi",tip_star_no:"Bu gece bulutlu — yıldız gözlemi için uygun değil",tip_golden:"Altın saat ~{h} — fotoğraf için güzel ışık",tip_cons_diverge:"Modeller önümüzdeki günlerde ayrışıyor — planları esnek tutun",tip_cons_rain:"Modeller {day} yağmurunda ayrışıyor — şemsiye bulundurun",tip_cons_snow:"Modeller {day} karında ayrışıyor — kalın giysi bulundurun"},
+  te:{tip_pollen_mod:"{name} మధ్యస్థం — తేలికపాటి అలర్జీ ప్రమాదం",tip_pollen_high:"{name} అధికం — బయటకు వెళ్లే ముందు యాంటిహిస్టమిన్ తీసుకోండి",tip_pollen_vhigh:"{name} చాలా అధికం — బయట సమయం తగ్గించండి",tip_cloth_wind:"గాలులు — విండ్‌బ్రేకర్ ఉపయోగం, గాలులు చల్లగా అనిపిస్తాయి",tip_dew_muggy:"ఉక్కపోత — జిగటగా అనిపిస్తుంది",tip_dew_dry:"పొడి గాలి — నీరు తాగండి, చర్మం తేమగా ఉంచండి",tip_window_warm:"అత్యంత వెచ్చగా {a}–{b} ({t}) — అప్పుడే బయటకు",tip_window_cool:"{h} తర్వాత తీవ్రంగా చల్లబడుతుంది — ఒక పొర తీసుకెళ్లండి",tip_rain_soon:"సుమారు {h}కి వర్షం అవకాశం — గొడుగు తీసుకెళ్లండి",tip_rain_dry:"సాయంత్రం వరకు పొడిగా",tip_garden_yes:"ఆరబెట్టడానికి మంచి వాతావరణం — బట్టలు లేదా తోట",tip_star_yes:"ఈ రాత్రి నిర్మలం, చంద్రుడు {n}% — నక్షత్రాలు చూడటానికి బాగుంది",tip_star_no:"ఈ రాత్రి మేఘావృతం — నక్షత్రాలు చూడటానికి కాదు",tip_golden:"గోల్డెన్ అవర్ ~{h} — ఫోటోలకు అందమైన వెలుతురు",tip_cons_diverge:"రాబోయే రోజులపై మోడల్స్ విభేదిస్తున్నాయి — ప్రణాళికలు సరళంగా ఉంచండి",tip_cons_rain:"{day} వర్షంపై మోడల్స్ విభజన — గొడుగు దగ్గర ఉంచుకోండి",tip_cons_snow:"{day} మంచుపై మోడల్స్ విభజన — వెచ్చని దుస్తులు దగ్గర ఉంచుకోండి"},
+  ro:{tip_pollen_mod:"{name} moderat — risc ușor de alergie",tip_pollen_high:"{name} ridicat — ia un antihistaminic înainte să ieși",tip_pollen_vhigh:"{name} foarte ridicat — limitează timpul afară",tip_cloth_wind:"Vânt — o jachetă de vânt ajută, rafalele răcoresc",tip_dew_muggy:"Umed și apăsător — se va simți lipicios",tip_dew_dry:"Aer uscat — hidratează-te și dă cu cremă",tip_window_warm:"Cel mai cald {a}–{b} ({t}) — ieși atunci",tip_window_cool:"Scade brusc după {h} — ia un strat",tip_rain_soon:"Ploaie probabilă în jur de {h} — ia umbrela",tip_rain_dry:"Uscat până seara",tip_garden_yes:"Vreme bună de uscat — rufe sau grădină",tip_star_yes:"Senin la noapte, lună {n}% — bun pentru privit stelele",tip_star_no:"Înnorat la noapte — nu e de privit stelele",tip_golden:"Ora de aur ~{h} — lumină frumoasă pentru poze",tip_cons_diverge:"Modelele diferă pentru zilele următoare — fii flexibil",tip_cons_rain:"Modelele nu cad de acord pe ploaia din {day} — ține umbrela la îndemână",tip_cons_snow:"Modelele nu cad de acord pe zăpada din {day} — ține haine groase la îndemână"},
+  hu:{tip_pollen_mod:"{name} közepes — enyhe allergiakockázat",tip_pollen_high:"{name} magas — vegyél be antihisztamint indulás előtt",tip_pollen_vhigh:"{name} nagyon magas — korlátozd a kint töltött időt",tip_cloth_wind:"Szeles — jól jön egy széldzseki, a lökések hűvösek",tip_dew_muggy:"Fülledt — ragadósnak fog tűnni",tip_dew_dry:"Száraz levegő — igyál és hidratáld a bőröd",tip_window_warm:"Legmelegebb {a}–{b} ({t}) — akkor menj ki",tip_window_cool:"{h} után gyorsan hűl — vigyél egy réteget",tip_rain_soon:"Eső valószínű {h} körül — vigyél esernyőt",tip_rain_dry:"Estig száraz",tip_garden_yes:"Remek szárítóidő — mosás vagy kertészkedés",tip_star_yes:"Ma este derült, hold {n}% — jó csillagnézéshez",tip_star_no:"Ma este felhős — nem csillagnézős",tip_golden:"Aranyóra ~{h} — szép fény a fotókhoz",tip_cons_diverge:"A modellek eltérnek a következő napokra — maradj rugalmas",tip_cons_rain:"A modellek megoszlanak a(z) {day} esőről — legyen kéznél esernyő",tip_cons_snow:"A modellek megoszlanak a(z) {day} hóról — legyen kéznél meleg ruha"},
+  fi:{tip_pollen_mod:"{name} kohtalainen — lievä allergiariski",tip_pollen_high:"{name} korkea — ota antihistamiini ennen ulos lähtöä",tip_pollen_vhigh:"{name} erittäin korkea — rajoita ulkoiluaikaa",tip_cloth_wind:"Tuulista — tuulitakki auttaa, puuskat viilentävät",tip_dew_muggy:"Painostava — tuntuu tahmealta",tip_dew_dry:"Kuiva ilma — juo vettä ja rasvaa iho",tip_window_warm:"Lämpimintä {a}–{b} ({t}) — mene silloin ulos",tip_window_cool:"Viilenee jyrkästi klo {h} jälkeen — ota kerros mukaan",tip_rain_soon:"Sade todennäköinen noin klo {h} — ota sateenvarjo",tip_rain_dry:"Poutaa iltaan asti",tip_garden_yes:"Hyvä kuivaussää — pyykki tai puutarha",tip_star_yes:"Selkeää tänä yönä, kuu {n}% — hyvä tähtien katseluun",tip_star_no:"Pilvistä yöllä — ei tähtien katseluun",tip_golden:"Kultainen hetki ~{h} — kaunis valo kuviin",tip_cons_diverge:"Mallit eroavat tulevista päivistä — pidä suunnitelmat joustavina",tip_cons_rain:"Mallit erimielisiä {day} sateesta — pidä sateenvarjo lähellä",tip_cons_snow:"Mallit erimielisiä {day} lumesta — pidä lämpimät vaatteet lähellä"},
+  no:{tip_pollen_mod:"{name} moderat — lett allergirisiko",tip_pollen_high:"{name} høy — ta antihistamin før du går ut",tip_pollen_vhigh:"{name} svært høy — begrens tiden ute",tip_cloth_wind:"Vindfullt — en vindjakke hjelper, kast føles kjøligere",tip_dew_muggy:"Lummert — det vil føles klissete",tip_dew_dry:"Tørr luft — drikk vann og fukt huden",tip_window_warm:"Varmest {a}–{b} ({t}) — gå ut da",tip_window_cool:"Faller raskt etter {h} — ta med et lag",tip_rain_soon:"Regn sannsynlig rundt {h} — ta med paraply",tip_rain_dry:"Tørt til kvelden",tip_garden_yes:"Fint tørkevær — klesvask eller hage",tip_star_yes:"Klart i natt, måne {n}% — bra for stjernekikking",tip_star_no:"Skyet i natt — ikke for stjernekikking",tip_golden:"Gyllen time ~{h} — fint lys for bilder",tip_cons_diverge:"Modellene er uenige om dagene fremover — vær fleksibel",tip_cons_rain:"Modellene er delt om regn {day} — ha paraply for hånden",tip_cons_snow:"Modellene er delt om snø {day} — ha varme klær for hånden"},
+  sk:{tip_pollen_mod:"{name} stredný — mierne riziko alergie",tip_pollen_high:"{name} vysoký — pred odchodom si vezmite antihistaminikum",tip_pollen_vhigh:"{name} veľmi vysoký — obmedzte pobyt vonku",tip_cloth_wind:"Veterno — zíde sa vetrovka, nárazy chladia",tip_dew_muggy:"Dusno — bude to lepkavé",tip_dew_dry:"Suchý vzduch — pite a hydratujte pokožku",tip_window_warm:"Najteplejšie {a}–{b} ({t}) — vyjdite vtedy",tip_window_cool:"Prudké ochladenie po {h} — vezmite si vrstvu",tip_rain_soon:"Dážď pravdepodobný okolo {h} — vezmite dáždnik",tip_rain_dry:"Sucho až do večera",tip_garden_yes:"Skvelé počasie na sušenie — bielizeň alebo záhrada",tip_star_yes:"Dnes jasno, mesiac {n}% — dobré na pozorovanie hviezd",tip_star_no:"Zamračené — hviezdy dnes neuvidíte",tip_golden:"Zlatá hodina ~{h} — krásne svetlo na fotky",tip_cons_diverge:"Modely sa v ďalších dňoch rozchádzajú — buďte flexibilní",tip_cons_rain:"Modely sa nezhodujú na daždi v {day} — majte dáždnik poruke",tip_cons_snow:"Modely sa nezhodujú na snehu v {day} — majte teplé oblečenie poruke"},
+  sw:{tip_pollen_mod:"{name} wastani — hatari ndogo ya mzio",tip_pollen_high:"{name} juu — meza dawa ya mzio kabla ya kutoka",tip_pollen_vhigh:"{name} juu sana — punguza muda wa nje",tip_cloth_wind:"Upepo — koti la upepo litasaidia, mvumo hupoza",tip_dew_muggy:"Unyevu mwingi — kutakuwa na unata",tip_dew_dry:"Hewa kavu — kunywa maji na lainisha ngozi",tip_window_warm:"Joto zaidi {a}–{b} ({t}) — toka nje wakati huo",tip_window_cool:"Hushuka kwa kasi baada ya {h} — beba tabaka",tip_rain_soon:"Mvua yawezekana karibu {h} — beba mwavuli",tip_rain_dry:"Kavu hadi jioni",tip_garden_yes:"Hali nzuri ya kukausha — nguo au bustani",tip_star_yes:"Anga wazi usiku huu, mwezi {n}% — vizuri kutazama nyota",tip_star_no:"Mawingu usiku huu — si wa kutazama nyota",tip_golden:"Saa ya dhahabu ~{h} — mwanga mzuri wa picha",tip_cons_diverge:"Modeli zinatofautiana kuhusu siku zijazo — kuwa na mipango rahisi",tip_cons_rain:"Modeli zinatofautiana kuhusu mvua {day} — weka mwavuli karibu",tip_cons_snow:"Modeli zinatofautiana kuhusu theluji {day} — weka mavazi ya joto karibu"},
+  fa:{tip_pollen_mod:"{name} متوسط — خطر خفیف آلرژی",tip_pollen_high:"{name} زیاد — پیش از بیرون رفتن آنتی‌هیستامین بخورید",tip_pollen_vhigh:"{name} خیلی زیاد — زمان بیرون بودن را کم کنید",tip_cloth_wind:"بادخیز — بادگیر کمک می‌کند، وزش‌ها خنک‌تر است",tip_dew_muggy:"شرجی — چسبنده حس می‌شود",tip_dew_dry:"هوای خشک — آب بنوشید و پوست را مرطوب کنید",tip_window_warm:"گرم‌ترین {a}–{b} ({t}) — همان موقع بیرون بروید",tip_window_cool:"افت شدید بعد از {h} — یک لایه همراه ببرید",tip_rain_soon:"احتمال باران حدود {h} — چتر بردارید",tip_rain_dry:"تا شب خشک",tip_garden_yes:"هوای عالی برای خشک کردن — لباس یا باغبانی",tip_star_yes:"امشب صاف، ماه {n}% — مناسب رصد ستارگان",tip_star_no:"امشب ابری — مناسب رصد ستارگان نیست",tip_golden:"ساعت طلایی حدود {h} — نور زیبا برای عکس",tip_cons_diverge:"مدل‌ها درباره روزهای آینده اختلاف دارند — برنامه‌ها را انعطاف‌پذیر نگه دارید",tip_cons_rain:"مدل‌ها درباره باران {day} اختلاف دارند — چتر همراه داشته باشید",tip_cons_snow:"مدل‌ها درباره برف {day} اختلاف دارند — لباس گرم همراه داشته باشید"},
+  da:{tip_pollen_mod:"{name} moderat — let allergirisiko",tip_pollen_high:"{name} høj — tag antihistamin før du går ud",tip_pollen_vhigh:"{name} meget høj — begræns tiden udenfor",tip_cloth_wind:"Blæsende — en vindjakke hjælper, vindstød føles køligere",tip_dew_muggy:"Lummert — det føles klistret",tip_dew_dry:"Tør luft — drik vand og smør huden",tip_window_warm:"Varmest {a}–{b} ({t}) — gå ud da",tip_window_cool:"Falder hurtigt efter {h} — tag et lag med",tip_rain_soon:"Regn sandsynlig omkring {h} — tag paraply med",tip_rain_dry:"Tørt til aften",tip_garden_yes:"Fint tørrevejr — vasketøj eller have",tip_star_yes:"Klart i nat, måne {n}% — godt til stjernekiggeri",tip_star_no:"Skyet i nat — ikke til stjernekiggeri",tip_golden:"Gylden time ~{h} — fint lys til fotos",tip_cons_diverge:"Modellerne er uenige om de kommende dage — vær fleksibel",tip_cons_rain:"Modellerne er uenige om regn {day} — hav en paraply klar",tip_cons_snow:"Modellerne er uenige om sne {day} — hav varmt tøj klar"},
+  th:{tip_pollen_mod:"{name} ปานกลาง — เสี่ยงภูมิแพ้เล็กน้อย",tip_pollen_high:"{name} สูง — กินยาแก้แพ้ก่อนออกไป",tip_pollen_vhigh:"{name} สูงมาก — จำกัดเวลาอยู่กลางแจ้ง",tip_cloth_wind:"ลมแรง — เสื้อกันลมช่วยได้ ลมกระโชกทำให้เย็นลง",tip_dew_muggy:"อบอ้าว — จะรู้สึกเหนียวตัว",tip_dew_dry:"อากาศแห้ง — ดื่มน้ำและบำรุงผิว",tip_window_warm:"อุ่นสุด {a}–{b} ({t}) — ออกไปช่วงนั้น",tip_window_cool:"ลดลงเร็วหลัง {h} — พกเสื้อสักตัว",tip_rain_soon:"ฝนน่าจะตกราว {h} — พกร่ม",tip_rain_dry:"แห้งจนถึงค่ำ",tip_garden_yes:"อากาศดีสำหรับตาก — ซักผ้าหรือทำสวน",tip_star_yes:"คืนนี้ฟ้าใส พระจันทร์ {n}% — เหมาะดูดาว",tip_star_no:"คืนนี้มีเมฆ — ไม่เหมาะดูดาว",tip_golden:"โกลเดนอาวร์ราว {h} — แสงสวยสำหรับถ่ายรูป",tip_cons_diverge:"โมเดลเห็นต่างเรื่องวันข้างหน้า — วางแผนแบบยืดหยุ่น",tip_cons_rain:"โมเดลเห็นต่างเรื่องฝนวัน {day} — พกร่มไว้",tip_cons_snow:"โมเดลเห็นต่างเรื่องหิมะวัน {day} — เตรียมเสื้อกันหนาว"},
+  vi:{tip_pollen_mod:"{name} trung bình — nguy cơ dị ứng nhẹ",tip_pollen_high:"{name} cao — uống thuốc kháng histamine trước khi ra ngoài",tip_pollen_vhigh:"{name} rất cao — hạn chế thời gian ngoài trời",tip_cloth_wind:"Gió — áo chắn gió sẽ hữu ích, gió giật mát hơn",tip_dew_muggy:"Oi bức — sẽ thấy dính nhớp",tip_dew_dry:"Không khí khô — uống nước và dưỡng ẩm da",tip_window_warm:"Ấm nhất {a}–{b} ({t}) — ra ngoài lúc đó",tip_window_cool:"Giảm mạnh sau {h} — mang theo một lớp áo",tip_rain_soon:"Có thể mưa khoảng {h} — mang ô",tip_rain_dry:"Khô ráo đến tối",tip_garden_yes:"Thời tiết phơi đồ tuyệt — giặt giũ hoặc làm vườn",tip_star_yes:"Đêm nay quang, trăng {n}% — hợp ngắm sao",tip_star_no:"Đêm nay nhiều mây — không hợp ngắm sao",tip_golden:"Giờ vàng ~{h} — ánh sáng đẹp để chụp ảnh",tip_cons_diverge:"Các mô hình khác nhau về những ngày tới — giữ kế hoạch linh hoạt",tip_cons_rain:"Các mô hình chia rẽ về mưa {day} — mang sẵn ô",tip_cons_snow:"Các mô hình chia rẽ về tuyết {day} — chuẩn bị áo ấm"},
+  bg:{tip_pollen_mod:"{name} умерен — лек риск от алергия",tip_pollen_high:"{name} висок — вземете антихистамин преди да излезете",tip_pollen_vhigh:"{name} много висок — ограничете времето навън",tip_cloth_wind:"Ветровито — яке против вятър помага, поривите разхлаждат",tip_dew_muggy:"Задушно — ще е лепкаво",tip_dew_dry:"Сух въздух — пийте вода и хидратирайте кожата",tip_window_warm:"Най-топло {a}–{b} ({t}) — излезте тогава",tip_window_cool:"Рязко захлаждане след {h} — вземете пласт дрехи",tip_rain_soon:"Вероятен дъжд около {h} — вземете чадър",tip_rain_dry:"Сухо до вечерта",tip_garden_yes:"Чудесно време за сушене — пране или градина",tip_star_yes:"Ясно тази нощ, луна {n}% — добро за наблюдение на звезди",tip_star_no:"Облачно тази нощ — не е за звезди",tip_golden:"Златен час ~{h} — красива светлина за снимки",tip_cons_diverge:"Моделите се разминават за следващите дни — бъдете гъвкави",tip_cons_rain:"Моделите се разминават за дъжд на {day} — дръжте чадър подръка",tip_cons_snow:"Моделите се разминават за сняг на {day} — дръжте топли дрехи подръка"}
+};
+(function(){for(var _l in TIPX){if(I18N[_l])for(var _k in TIPX[_l])I18N[_l][_k]=TIPX[_l][_k];}})();
 let LANG=(function(){try{var s=localStorage.getItem('cw_lang');if(s&&LANG_NAMES[s])return s;}catch(e){}var n=(navigator.language||'en').slice(0,2).toLowerCase();return LANG_NAMES[n]?n:'en';})();
 function t(k){var d=I18N[LANG]||I18N.en;var v=(d&&d[k]!=null)?d[k]:(I18N.en[k]!=null?I18N.en[k]:k);return v;}
 function tf(k,vars){var s=t(k);if(vars)for(var p in vars)s=s.split('{'+p+'}').join(vars[p]);return s;}
@@ -1853,6 +1896,17 @@ async function fetchWeather(loc){
   }
   // per-model window hi/lo for source table
   const sources=MODELS.map(m=>{const arr=[];for(let i=si;i<Math.min(si+37,n);i++){const v=hh['temperature_2m_'+m.id]&&hh['temperature_2m_'+m.id][i];if(v!=null)arr.push(v);}return arr.length?{name:m.name,hi:Math.round(Math.max(...arr)),lo:Math.round(Math.min(...arr))}:null;}).filter(Boolean);
+  // per-model precip disagreement over the next few days (the consensus edge)
+  let rainSplit=null;
+  for(let i=1;i<Math.min(4,dd.time.length);i++){
+    const probs=MODELS.map(m=>dd['precipitation_probability_max_'+m.id]&&dd['precipitation_probability_max_'+m.id][i]).filter(x=>x!=null&&!isNaN(x));
+    if(probs.length<3) continue;
+    const spread=Math.max(...probs)-Math.min(...probs);
+    const codes=MODELS.map(m=>dd['weather_code_'+m.id]&&dd['weather_code_'+m.id][i]).filter(x=>x!=null);
+    const snowVotes=codes.filter(c=>(c>=71&&c<=77)||c===85||c===86).length;
+    const snow=codes.length>0&&snowVotes*2>=codes.length;
+    if(!rainSplit||spread>rainSplit.spread) rainSplit={dayIdx:i,spread:Math.round(spread),snow:snow};
+  }
   const cur=C.current||{};
   const sr=C.daily&&C.daily.sunrise?C.daily.sunrise[0].slice(11,16):'';
   const ss=C.daily&&C.daily.sunset?C.daily.sunset[0].slice(11,16):'';
@@ -1872,7 +1926,7 @@ async function fetchWeather(loc){
       humidity:R(cur.relative_humidity_2m), wind: now0.wind!=null?now0.wind:R(cur.wind_speed_10m),
       uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null,
       dew: now0.dew!=null?now0.dew:null, cloud: now0.cloud!=null?now0.cloud:null},
-    hourly,daily,sources,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
+    hourly,daily,sources,rainSplit,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
 }
 
 /* ============ SUN & MOON (trimmed SunCalc — MIT, V. Agafonkin) ============ */
@@ -1961,22 +2015,121 @@ function pollenCard(D){
       <div class="plvl" style="color:${x.L.i<=0?'var(--ink-soft)':POLLEN_COL[x.L.i]}">${x.L.txt}</div></div>`).join('')}</div>`;
 }
 function buildTips(D){
-  const c=D.current, hrs=D.hourly.slice(0,24), pmax=Math.max(...hrs.map(x=>x.precip==null?0:x.precip));
-  const uv=+c.uv||0, hum=c.humidity||0, tp=c.temp, aqi=D.aqi, us=D.aqiScale==='us';
-  const aqiGood = aqi==null || aqi<=(us?100:60);
-  const airTx = aqi==null?t('tip_air_na'):(us?(aqi<=50?t('tip_air_clean'):aqi<=100?t('tip_air_fair'):t('tip_air_poor')):(aqi<=40?t('tip_air_clean'):aqi<=80?t('tip_air_fair'):t('tip_air_poor')));
-  const pol=D.pollen?Object.keys(D.pollen).reduce((m,k)=>Math.max(m,pollenLevel(k,D.pollen[k]).i),-1):-1;
-  const tips=[
-    {ic:'flower',tx:(pol<0?t('tip_pollen_nodata'):pol<=1?t('tip_pollen_low'):pol===2?t('tip_pollen_mod'):t('tip_pollen_high'))},
-    {ic:'sun',tx:(uv>=8?t('tip_uv_vhigh'):uv>=6?t('tip_uv_high'):uv>=3?t('tip_uv_mod'):t('tip_uv_low'))},
-    {ic:'car',tx:(pmax>=40?t('tip_car_no'):t('tip_car_yes'))},
-    {ic:'run',tx:((pmax<30&&tp!=null&&tp>=8&&tp<=26&&aqiGood)?t('tip_run_yes'):t('tip_run_no'))},
-    {ic:'park',tx:((pmax<40&&tp!=null&&tp>=12&&tp<=28)?t('tip_out_yes'):t('tip_out_no'))},
-    {ic:'bug',tx:((tp!=null&&tp>=18&&hum>=60)?t('tip_mosq_yes'):t('tip_mosq_no'))},
-    (function(){var ci,ck;if(tp==null){ci='tshirt';ck='layers';}else if(tp>=27){ci='undershirt';ck='light';}else if(tp>=18){ci='tshirt';ck='comfort';}else if(tp>=10){ci='hoodie';ck='layers';}else if(tp>=2){ci='jacket';ck='warm';}else{ci='glove';ck='warm';}return {ic:ci,tx:t('tip_cloth_'+ck)};})()
-  ];
-  if(aqi!=null) tips.push({ic:'mask',tx:airTx});
-  return tips;
+  const c=D.current, hrs=D.hourly||[];
+  const next24=hrs.slice(0,24);
+  const pmax=Math.max(0,...next24.map(x=>x.precip==null?0:x.precip));
+  const uv=+c.uv||0, hum=c.humidity||0;
+  const tp=(c.temp==null?null:c.temp), fl=(c.feels==null?tp:c.feels), wind=c.wind||0;
+  const dew=(c.dew==null?null:c.dew), cloud=(c.cloud==null?null:c.cloud);
+  const aqi=D.aqi, us=D.aqiScale==='us';
+  const night=(c.key||'').indexOf('-night')>=0;
+  const nowH=new Date().getHours();
+  const T=[];
+
+  // — Pollen: name the culprit —
+  if(D.pollen){
+    let bk=null,bi=-1;
+    Object.keys(D.pollen).forEach(k=>{const lv=pollenLevel(k,D.pollen[k]).i; if(lv>bi){bi=lv;bk=k;}});
+    const name=bk?t('p_'+bk):'';
+    if(bi>=4) T.push({ic:'flower',tx:tf('tip_pollen_vhigh',{name}),pri:100});
+    else if(bi===3) T.push({ic:'flower',tx:tf('tip_pollen_high',{name}),pri:90});
+    else if(bi===2) T.push({ic:'flower',tx:tf('tip_pollen_mod',{name}),pri:45});
+    else if(bi>=0) T.push({ic:'flower',tx:t('tip_pollen_low'),pri:12});
+  }
+
+  // — UV: tie advice to the number —
+  if(uv>=8) T.push({ic:'sun',tx:t('tip_uv_vhigh'),pri:95});
+  else if(uv>=6) T.push({ic:'sun',tx:t('tip_uv_high'),pri:80});
+  else if(uv>=3) T.push({ic:'sun',tx:t('tip_uv_mod'),pri:42});
+  else if(uv>=1) T.push({ic:'sun',tx:t('tip_uv_low'),pri:14});
+
+  // — Air quality —
+  if(aqi!=null){
+    if(us?aqi>100:aqi>80) T.push({ic:'mask',tx:t('tip_air_poor'),pri:88});
+    else if(us?aqi>50:aqi>40) T.push({ic:'mask',tx:t('tip_air_fair'),pri:30});
+    else T.push({ic:'mask',tx:t('tip_air_clean'),pri:26});
+  }
+
+  // — Dew point / humidity —
+  if(dew!=null){
+    if(dew>=18) T.push({ic:'dew',tx:t('tip_dew_muggy'),pri:58});
+    else if(dew<=2||hum<=35) T.push({ic:'dew',tx:t('tip_dew_dry'),pri:38});
+  }
+
+  // — What to wear: feels-like + wind —
+  (function(){
+    if(fl==null){T.push({ic:'tshirt',tx:t('tip_cloth_comfort'),pri:22});return;}
+    if(wind>=22&&fl<20){T.push({ic:'wind',tx:t('tip_cloth_wind'),pri:56});return;}
+    if(fl>=27) T.push({ic:'undershirt',tx:t('tip_cloth_light'),pri:fl>=32?70:26});
+    else if(fl>=18) T.push({ic:'tshirt',tx:t('tip_cloth_comfort'),pri:22});
+    else if(fl>=10) T.push({ic:'hoodie',tx:t('tip_cloth_layers'),pri:28});
+    else if(fl>=2) T.push({ic:'jacket',tx:t('tip_cloth_warm'),pri:48});
+    else T.push({ic:'glove',tx:t('tip_cloth_warm'),pri:75});
+  })();
+
+  // — Best window today / evening cool-off —
+  (function(){
+    const win=hrs.slice(0,14).filter(x=>x.temp!=null);
+    if(!win.length) return;
+    let warm=win[0]; win.forEach(x=>{if(x.temp>warm.temp)warm=x;});
+    let coolH=null;
+    for(let i=1;i<win.length;i++){ if(win[i].date.getHours()>=18&&(warm.temp-win[i].temp)>=5){coolH=win[i].date.getHours();break;} }
+    if(coolH!=null){ T.push({ic:'hoodie',tx:tf('tip_window_cool',{h:pad(coolH)+':00'}),pri:60}); }
+    else { const wh=warm.date.getHours(); T.push({ic:'sun',tx:tf('tip_window_warm',{a:pad(wh)+':00',b:pad((wh+2)%24)+':00',t:tC(Math.round(warm.temp))+'°'}),pri:50}); }
+  })();
+
+  // — Rain timing —
+  (function(){
+    const soon=hrs.slice(0,12).find(x=>x.precip!=null&&x.precip>=50);
+    if(soon) T.push({ic:'rain',tx:tf('tip_rain_soon',{h:pad(soon.date.getHours())+':00'}),pri:85});
+    else if(pmax<15) T.push({ic:'sun',tx:t('tip_rain_dry'),pri:20});
+  })();
+
+  // — Car wash: gate on rain —
+  T.push(pmax>=40?{ic:'car',tx:t('tip_car_no'),pri:62}:{ic:'car',tx:t('tip_car_yes'),pri:28});
+
+  // — Outdoor workout: combined call —
+  (function(){
+    const airOk=aqi==null||(us?aqi<=100:aqi<=80);
+    const good=pmax<30&&tp!=null&&tp>=8&&tp<=26&&airOk&&uv<9&&wind<35;
+    T.push(good?{ic:'run',tx:t('tip_run_yes'),pri:50}:{ic:'run',tx:t('tip_run_no'),pri:44});
+  })();
+
+  // — Gardening / laundry line —
+  if(hum<=55&&pmax<15&&wind>=5&&wind<=30&&tp!=null&&tp>=10) T.push({ic:'shirt',tx:t('tip_garden_yes'),pri:40});
+
+  // — Stargazing: tonight's cloud + moon —
+  if(night||nowH>=18){
+    let cc=cloud;
+    if(cc==null){const ev=hrs.slice(0,6).map(x=>x.cloud).filter(v=>v!=null); if(ev.length) cc=ev.reduce((a,b)=>a+b,0)/ev.length;}
+    let illum=null; try{illum=moonBlock(D.place.lat,D.place.lon,D.tzOffset).illum;}catch(e){}
+    if(cc!=null&&cc<=30) T.push({ic:'star',tx:tf('tip_star_yes',{n:(illum==null?'—':illum)}),pri:46});
+    else if(cc!=null&&cc>=70) T.push({ic:'cloud',tx:t('tip_star_no'),pri:24});
+  }
+
+  // — Golden hour / photography —
+  if(c.sunset){ const p=c.sunset.split(':'); let m=(+p[0])*60+(+p[1])-40; if(m<0)m+=1440; T.push({ic:'sun',tx:tf('tip_golden',{h:pad(Math.floor(m/60))+':'+pad(m%60)}),pri:30}); }
+
+  // — Mosquitoes —
+  if(tp!=null&&tp>=18&&hum>=60&&wind<12) T.push({ic:'bug',tx:t('tip_mosq_yes'),pri:52});
+  else T.push({ic:'bug',tx:t('tip_mosq_no'),pri:16});
+
+  // — Consensus edge: honest uncertainty —
+  const cap1=w=>w?w.charAt(0).toUpperCase()+w.slice(1):w;
+  if(D.rainSplit&&D.rainSplit.spread>=40){
+    const rs=D.rainSplit, dd2=D.daily&&D.daily[rs.dayIdx];
+    const day=(dd2&&dd2.date)?cap1(dd2.date.toLocaleDateString(LANG,{weekday:'long'})):'';
+    T.push({ic:'aqi',tx:tf(rs.snow?'tip_cons_snow':'tip_cons_rain',{day}),pri:78});
+  } else if(D.sources&&D.sources.length>=3){
+    const his=D.sources.map(s=>s.hi), los=D.sources.map(s=>s.lo);
+    const spread=Math.max(Math.max(...his)-Math.min(...his), Math.max(...los)-Math.min(...los));
+    if(spread>5) T.push({ic:'aqi',tx:t('tip_cons_diverge'),pri:72});
+  }
+
+  // rank by relevance, keep an even 8–12
+  T.sort((a,b)=>b.pri-a.pri);
+  let n=Math.min(12,T.length); if(n<8) n=T.length; n=n-(n%2);
+  return T.slice(0,n);
 }
 function lifestyleCard(D){
   return `<h2>${IC('compass')} ${t('tipsTitle')}</h2><p class="sub">${t('tipsSub')}</p>
@@ -2290,6 +2443,8 @@ document.getElementById('notifSheet').addEventListener('click',e=>{if(e.target.i
 /* while dragging a horizontal rail, disable pull-to-refresh so sideways scroll never triggers it */
 let _sx=0,_sy=0,_st=null;
 let DRAG={active:false,dir:0,w:0,dx:0,ghost:null};
+let _raf=0,_pdx=0,_vx=0,_vt=0,_pvx=0,_pvt=0;
+function _applyDrag(){_raf=0;if(!DRAG.active)return;const app=document.getElementById('app');const d=_pdx;app.style.transform='translate3d('+d+'px,0,0)';if(DRAG.ghost)DRAG.ghost.style.transform='translate3d('+(DRAG.dir*DRAG.w+d)+'px,0,0)';}
 document.addEventListener('touchstart',e=>{const t=e.touches[0];_sx=t.clientX;_sy=t.clientY;_st=e.target;DRAG.active=false;if(e.target&&e.target.closest&&e.target.closest('.locbar,.strip-wrap,.chart-box'))setRefresh(false);},{passive:true});
 document.addEventListener('touchmove',e=>{
   if(document.querySelector('.sheet.open'))return;
@@ -2302,16 +2457,18 @@ document.addEventListener('touchmove',e=>{
       if(!cached)return; // neighbour not cached yet → let touchend do a plain flip
       const app=document.getElementById('app');
       DRAG.active=true;DRAG.dir=dir;DRAG.w=app.offsetWidth+28;
-      app.classList.remove('app-next','app-prev','app-fade','snap');app.classList.add('dragging');
-      DRAG.ghost=makeGhost(cached.D);DRAG.ghost.classList.remove('snap');DRAG.ghost.classList.add('dragging');
+      _vx=dx;_vt=e.timeStamp||performance.now();_pvx=_vx;_pvt=_vt;
+      app.classList.remove('app-next','app-prev','app-fade','snap');app.classList.add('dragging');app.style.transitionDuration='';
+      DRAG.ghost=makeGhost(cached.D);DRAG.ghost.classList.remove('snap');DRAG.ghost.classList.add('dragging');DRAG.ghost.style.transitionDuration='';
+      document.getElementById('stage').classList.add('nb');
       setRefresh(false);
     } else return;
   }
   e.preventDefault();
   let d=dx; if(DRAG.dir>0)d=Math.min(0,d); else d=Math.max(0,d);
-  DRAG.dx=d;
-  document.getElementById('app').style.transform='translate3d('+d+'px,0,0)';
-  DRAG.ghost.style.transform='translate3d('+(DRAG.dir*DRAG.w+d)+'px,0,0)';
+  DRAG.dx=d;_pdx=d;
+  _pvx=_vx;_pvt=_vt;_vx=d;_vt=e.timeStamp||performance.now();
+  if(!_raf)_raf=requestAnimationFrame(_applyDrag);
 },{passive:false});
 document.addEventListener('touchend',e=>{
   if(!document.querySelector('.sheet.open'))setRefresh(true);
@@ -2334,8 +2491,15 @@ function makeGhost(D){
 function cleanupGhost(){const g=document.getElementById('appGhost');if(g&&g.parentNode)g.parentNode.removeChild(g);DRAG.ghost=null;}
 function onceTransitionEnd(el,fn){let done=false;const h=function(){if(done)return;done=true;el.removeEventListener('transitionend',h);fn();};el.addEventListener('transitionend',h);setTimeout(h,440);}
 function finishDrag(){
+  if(_raf){cancelAnimationFrame(_raf);_raf=0;}
   const app=document.getElementById('app'),g=DRAG.ghost,w=DRAG.w,dir=DRAG.dir,d=DRAG.dx;
-  const pass=Math.abs(d)>w*0.2;
+  const vel=(_vx-_pvx)/Math.max(1,(_vt-_pvt));           // px/ms, sign follows the finger
+  const flick=(dir>0&&vel<-0.3)||(dir<0&&vel>0.3);        // a quick throw commits even if short
+  const pass=Math.abs(d)>w*0.2||flick;
+  const remain=pass?(w-Math.abs(d)):Math.abs(d);
+  const speed=Math.max(Math.abs(vel),0.4);
+  const dur=Math.min(0.42,Math.max(0.16, remain/(speed*1000+900)+0.12)); // decel scaled to throw speed
+  app.style.transitionDuration=dur+'s'; if(g)g.style.transitionDuration=dur+'s';
   app.classList.add('snap');if(g)g.classList.add('snap');
   if(pass){
     app.style.transform='translate3d('+(-dir*w)+'px,0,0)';
@@ -2352,7 +2516,8 @@ function commitAfterDrag(){
   const app=document.getElementById('app');
   const loc=LOCS[ACTIVE],cached=loc&&WCACHE[ckey(loc)];
   if(cached)render(cached.D);else loadActive(true);
-  app.classList.remove('snap','dragging');app.style.transform='';
+  app.classList.remove('snap','dragging');app.style.transform='';app.style.transitionDuration='';
+  document.getElementById('stage').classList.remove('nb');
   cleanupGhost();
   prefetchNeighbors();
   if(cached&&Date.now()-cached.t>600000)refreshLoc(loc,ckey(loc));
@@ -2360,7 +2525,8 @@ function commitAfterDrag(){
 }
 function cleanupDrag(){
   const app=document.getElementById('app');
-  app.classList.remove('snap','dragging');app.style.transform='';
+  app.classList.remove('snap','dragging');app.style.transform='';app.style.transitionDuration='';
+  document.getElementById('stage').classList.remove('nb');
   cleanupGhost(); DRAG.active=false; setRefresh(true);
 }
 
@@ -2417,7 +2583,8 @@ function IC3(name,size){size=size||30;var S={
   jacket:'<g filter="url(#softsh)"><path d="M14 9 L9 13 L11 20 L13.5 18.5 L12 34 H28 L26.5 18.5 L29 20 L31 13 L26 9 Z" fill="url(#gNavy)"/><line x1="20" y1="11" x2="20" y2="34" stroke="#dfe8ff" stroke-width="1.4" opacity=".55"/><circle cx="20" cy="16" r="1" fill="#eef2fc"/><circle cx="20" cy="21" r="1" fill="#eef2fc"/><circle cx="20" cy="26" r="1" fill="#eef2fc"/><circle cx="10.5" cy="19.5" r="1.9" fill="#efe6d2"/><circle cx="29.5" cy="19.5" r="1.9" fill="#efe6d2"/><g fill="#efe6d2"><circle cx="15" cy="9.5" r="2.3"/><circle cx="18" cy="8.4" r="2.6"/><circle cx="22" cy="8.4" r="2.6"/><circle cx="25" cy="9.5" r="2.3"/></g></g>',
   glove:'<g filter="url(#softsh)"><path d="M11 20 a3.5 3.5 0 0 0 -3.5 3.5 a3.5 3.5 0 0 0 3.5 3.5" fill="none" stroke="url(#gWind)" stroke-width="4" stroke-linecap="round"/><path d="M11 17 h13 a4 4 0 0 1 4 4 v4 a8 8 0 0 1 -8 8 h-5 a4 4 0 0 1 -4-4 Z" fill="url(#gWind)"/><g fill="url(#gWind)"><rect x="11" y="12" width="4" height="8" rx="2"/><rect x="16" y="10" width="4" height="10" rx="2"/><rect x="21" y="11" width="4" height="9" rx="2"/><rect x="25" y="14" width="4" height="7" rx="2"/></g><rect x="14" y="30" width="15" height="4" rx="2" fill="#eaf4ff" opacity=".85"/></g>',
   shirt:'<g filter="url(#softsh)"><path d="M15 7 L9 11 L12 18 L15.5 16 V33 H24.5 V16 L28 18 L31 11 L25 7 A5.2 5.2 0 0 1 15 7 Z" fill="url(#gTeal)"/><path d="M16 10 a4 4 0 0 0 8 0" fill="none" stroke="#fff" stroke-width="1.4" opacity=".5"/></g>',
-  mask:'<g filter="url(#softsh)"><path d="M9 15 h22 a3 3 0 0 1 3 3 v3 c0 5-5.5 8.5-14 8.5 S6 26 6 21 v-3 a3 3 0 0 1 3-3 Z" fill="url(#gSteel)"/><path d="M9 17 H4M31 17 h5" stroke="url(#gSteel)" stroke-width="2.6" stroke-linecap="round"/><g stroke="#fff" stroke-width="1.4" opacity=".5"><line x1="11" y1="21" x2="29" y2="21"/><line x1="11" y1="25" x2="29" y2="25"/></g></g>'
+  mask:'<g filter="url(#softsh)"><path d="M9 15 h22 a3 3 0 0 1 3 3 v3 c0 5-5.5 8.5-14 8.5 S6 26 6 21 v-3 a3 3 0 0 1 3-3 Z" fill="url(#gSteel)"/><path d="M9 17 H4M31 17 h5" stroke="url(#gSteel)" stroke-width="2.6" stroke-linecap="round"/><g stroke="#fff" stroke-width="1.4" opacity=".5"><line x1="11" y1="21" x2="29" y2="21"/><line x1="11" y1="25" x2="29" y2="25"/></g></g>',
+  star:'<g filter="url(#softsh)"><path d="M20 4 l4.4 9.3 10.2 1.3 -7.5 7 1.9 10.1 -9-4.9 -9 4.9 1.9-10.1 -7.5-7 10.2-1.3 Z" fill="url(#gSun)"/><ellipse cx="16.5" cy="13" rx="3" ry="1.8" fill="#FFF7D6" opacity=".55"/></g>'
 };S.uv=S.sun;
 return '<svg class="ic3" style="width:'+size+'px;height:'+size+'px" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">'+(S[name]||'')+'</svg>';}
 function saveNotifCfg(){
