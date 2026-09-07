@@ -86,7 +86,7 @@
 
   /* hero — glass panel that runs to the very top of the screen */
   .hero-wrap{position:relative;margin:0 -14px}
-  .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:linear-gradient(180deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0}
+  .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:linear-gradient(180deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0;transition:opacity .45s ease,transform .45s cubic-bezier(.22,.7,.25,1)}
   .hero{position:relative;z-index:1;border-radius:0 0 66px 66px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 22px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
   .hero .glow{position:absolute;inset:0;background:radial-gradient(520px 260px at 80% 10%,rgba(255,255,255,.22),rgba(255,255,255,0) 60%);pointer-events:none}
   .hero-head{position:relative;z-index:2}
@@ -202,6 +202,8 @@
   #app.dragging,.appghost.dragging{will-change:transform}
   /* suspend expensive backdrop-blur while panels are in motion — keeps the swipe buttery */
   .nb .hero,.nb .card,.nb .strip-wrap,.nb .days,.nb .src-table,.nb .seg,.nb .stat,.nb .note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  /* hide the hero's faux drop-shadow during a swipe, then roll it back down once settled */
+  .ns .hero-wrap::before{opacity:0;transform:translateY(-8px)}
   #app.app-next{animation:appFromRight .46s cubic-bezier(.16,.84,.3,1)}
   #app.app-prev{animation:appFromLeft .46s cubic-bezier(.16,.84,.3,1)}
   #app.app-fade{animation:appSettle .32s cubic-bezier(.16,.84,.3,1)}
@@ -2460,7 +2462,7 @@ document.addEventListener('touchmove',e=>{
       _vx=dx;_vt=e.timeStamp||performance.now();_pvx=_vx;_pvt=_vt;
       app.classList.remove('app-next','app-prev','app-fade','snap');app.classList.add('dragging');app.style.transitionDuration='';
       DRAG.ghost=makeGhost(cached.D);DRAG.ghost.classList.remove('snap');DRAG.ghost.classList.add('dragging');DRAG.ghost.style.transitionDuration='';
-      document.getElementById('stage').classList.add('nb');
+      document.getElementById('stage').classList.add('nb','ns');
       setRefresh(false);
     } else return;
   }
@@ -2517,7 +2519,7 @@ function commitAfterDrag(){
   const loc=LOCS[ACTIVE],cached=loc&&WCACHE[ckey(loc)];
   if(cached)render(cached.D);else loadActive(true);
   app.classList.remove('snap','dragging');app.style.transform='';app.style.transitionDuration='';
-  document.getElementById('stage').classList.remove('nb');
+  var stg=document.getElementById('stage');stg.classList.remove('nb');setTimeout(function(){stg.classList.remove('ns');},500);
   cleanupGhost();
   prefetchNeighbors();
   if(cached&&Date.now()-cached.t>600000)refreshLoc(loc,ckey(loc));
@@ -2526,7 +2528,7 @@ function commitAfterDrag(){
 function cleanupDrag(){
   const app=document.getElementById('app');
   app.classList.remove('snap','dragging');app.style.transform='';app.style.transitionDuration='';
-  document.getElementById('stage').classList.remove('nb');
+  var stg=document.getElementById('stage');stg.classList.remove('nb');setTimeout(function(){stg.classList.remove('ns');},500);
   cleanupGhost(); DRAG.active=false; setRefresh(true);
 }
 
