@@ -87,7 +87,7 @@
   /* hero — glass panel that runs to the very top of the screen */
   .hero-wrap{position:relative;margin:0 -14px}
   .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:linear-gradient(180deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0;transition:opacity .45s ease,transform .45s cubic-bezier(.22,.7,.25,1)}
-  .hero{position:relative;z-index:1;border-radius:0 0 66px 66px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 22px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .hero{position:relative;z-index:1;border-radius:0 0 66px 66px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 18px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
   .hero .glow{position:absolute;inset:0;background:radial-gradient(520px 260px at 80% 10%,rgba(255,255,255,.22),rgba(255,255,255,0) 60%);pointer-events:none}
   .hero-head{position:relative;z-index:2}
   .hero-divider{height:1px;background:var(--line);margin:8px 0 2px;position:relative;z-index:2}
@@ -109,14 +109,14 @@
   .now-feels{font-size:13px;font-weight:700;opacity:.9;margin-top:1px}
   .lohi-row{display:flex;justify-content:center;gap:8px;margin-top:12px;position:relative;z-index:2}
   .lohi{flex:0 0 auto;background:rgba(255,255,255,.13);border-radius:12px;padding:5px 12px;font-size:12px;font-weight:800;text-align:center}
-  .hero-stats{display:flex;justify-content:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
+  .hero-stats{display:flex;justify-content:center;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
   .hs{flex:1 1 0;text-align:center;min-width:0}
   .hs span{font-size:16px;display:block}
   .hs span .ic3{margin:0 auto 1px}
   .ic3{display:block}
   .hs b{font-size:15px;font-weight:800;display:block;margin-top:2px}
   .hs i{font-size:10px;font-weight:700;opacity:.72;font-style:normal;text-transform:uppercase;letter-spacing:.4px}
-  .hero-panel{width:62%;max-width:340px;margin:14px auto 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:4px 10px 12px;position:relative;z-index:2}
+  .hero-panel{width:auto;max-width:none;margin:14px 26px 0;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.08)) padding-box,linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.14)) border-box;border:1px solid transparent;border-radius:8px 8px 26px 26px;padding:4px 12px 12px;position:relative;z-index:2}
   .hero-panel .lohi-row{margin-top:10px}
 
   .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
@@ -125,10 +125,11 @@
   .stat .v{font-size:19px;font-weight:800;margin-top:4px}.stat .u{font-size:10px;font-weight:700;color:var(--ink-soft)}
 
   h2{font-size:20px;font-weight:800;margin:28px 0 4px;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center}
-  .sub{font-size:13px;font-weight:400;color:var(--ink-soft);margin:0 0 12px;text-align:center}
+  .sub{font-size:12px;font-weight:400;color:var(--ink-soft);margin:0 0 12px;text-align:center}
 
-  .strip-wrap{background:var(--card);border-radius:28px;padding:6px 4px 12px;box-shadow:var(--shadow);overflow-x:auto}
-  .strip{display:flex;gap:2px;min-width:min-content;padding:8px}
+  .strip-wrap{background:var(--card);border-radius:28px;padding:6px 4px 12px;box-shadow:var(--shadow);overflow-x:auto;margin-top:22px}
+  .strip{display:flex;gap:2px;min-width:min-content;padding:8px 0;margin:28px -14px 0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .hcell.past{opacity:.5}
   .hcell{flex:0 0 auto;width:64px;text-align:center;padding:10px 3px;border-radius:20px}
   .hcell.night{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02))}
   .hcell.newday{position:relative}
@@ -147,7 +148,7 @@
 
   .card{background:var(--card);border-radius:28px;padding:16px;box-shadow:var(--shadow)}
   .hero,.card,.strip-wrap,.days,.src-table,.seg,.stat,.note{backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(255,255,255,.16)}
-  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:4px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:4px}
   .lg{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800}
   .dot{width:13px;height:13px;border-radius:5px}
   .chart-box{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -1887,6 +1888,15 @@ async function fetchWeather(loc){
       precip:R(avg('precipitation_probability',i)),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),key:codeKey(code,isDay),isDay,
       dew:R(avg('dew_point_2m',i)),cloud:R(avg('cloud_cover',i))});
   }
+  // two hours before now, for a premium left lead-in on the hourly strip
+  const past=[];
+  for(let i=Math.max(0,si-2);i<si;i++){
+    const d=new Date(times[i]);const isDay=(avg('is_day',i)||0)>=0.5;const code=Math.round(mode('weather_code',i));
+    const mmv=avg('precipitation',i);
+    past.push({date:d,h:pad(d.getHours()),temp:R(avg('temperature_2m',i)),feels:R(avg('apparent_temperature',i)),
+      precip:R(avg('precipitation_probability',i)),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),key:codeKey(code,isDay),isDay,
+      dew:R(avg('dew_point_2m',i)),cloud:R(avg('cloud_cover',i)),past:true});
+  }
   // daily averaged across models
   const davg=(v,i)=>{const a=MODELS.map(m=>dd[v+'_'+m.id]&&dd[v+'_'+m.id][i]).filter(x=>x!=null&&!isNaN(x));return a.length?a.reduce((s,x)=>s+x,0)/a.length:null;};
   const dmode=(v,i)=>{const a=MODELS.map(m=>dd[v+'_'+m.id]&&dd[v+'_'+m.id][i]).filter(x=>x!=null);if(!a.length)return 0;const c={};let b=a[0],bn=0;a.forEach(x=>{c[x]=(c[x]||0)+1;if(c[x]>bn){bn=c[x];b=x;}});return b;};
@@ -1928,7 +1938,7 @@ async function fetchWeather(loc){
       humidity:R(cur.relative_humidity_2m), wind: now0.wind!=null?now0.wind:R(cur.wind_speed_10m),
       uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null,
       dew: now0.dew!=null?now0.dew:null, cloud: now0.cloud!=null?now0.cloud:null},
-    hourly,daily,sources,rainSplit,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
+    hourly,daily,sources,rainSplit,past,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
 }
 
 /* ============ SUN & MOON (trimmed SunCalc — MIT, V. Agafonkin) ============ */
@@ -2040,10 +2050,10 @@ function buildTips(D){
   }
 
   // — UV: tie advice to the number —
-  if(uv>=8) T.push({ic:'sun',tx:t('tip_uv_vhigh'),pri:95});
-  else if(uv>=6) T.push({ic:'sun',tx:t('tip_uv_high'),pri:80});
-  else if(uv>=3) T.push({ic:'sun',tx:t('tip_uv_mod'),pri:42});
-  else if(uv>=1) T.push({ic:'sun',tx:t('tip_uv_low'),pri:14});
+  if(uv>=8) T.push({ic:'lotion',tx:t('tip_uv_vhigh'),pri:95});
+  else if(uv>=6) T.push({ic:'lotion',tx:t('tip_uv_high'),pri:80});
+  else if(uv>=3) T.push({ic:'lotion',tx:t('tip_uv_mod'),pri:42});
+  else if(uv>=1) T.push({ic:'lotion',tx:t('tip_uv_low'),pri:14});
 
   // — Air quality —
   if(aqi!=null){
@@ -2054,8 +2064,8 @@ function buildTips(D){
 
   // — Dew point / humidity —
   if(dew!=null){
-    if(dew>=18) T.push({ic:'dew',tx:t('tip_dew_muggy'),pri:58});
-    else if(dew<=2||hum<=35) T.push({ic:'dew',tx:t('tip_dew_dry'),pri:38});
+    if(dew>=18) T.push({ic:'muggy',tx:t('tip_dew_muggy'),pri:58});
+    else if(dew<=2||hum<=35) T.push({ic:'dryair',tx:t('tip_dew_dry'),pri:38});
   }
 
   // — What to wear: feels-like + wind —
@@ -2077,14 +2087,14 @@ function buildTips(D){
     let coolH=null;
     for(let i=1;i<win.length;i++){ if(win[i].date.getHours()>=18&&(warm.temp-win[i].temp)>=5){coolH=win[i].date.getHours();break;} }
     if(coolH!=null){ T.push({ic:'hoodie',tx:tf('tip_window_cool',{h:pad(coolH)+':00'}),pri:60}); }
-    else { const wh=warm.date.getHours(); T.push({ic:'sun',tx:tf('tip_window_warm',{a:pad(wh)+':00',b:pad((wh+2)%24)+':00',t:tC(Math.round(warm.temp))+'°'}),pri:50}); }
+    else { const wh=warm.date.getHours(); T.push({ic:'warmtime',tx:tf('tip_window_warm',{a:pad(wh)+':00',b:pad((wh+2)%24)+':00',t:tC(Math.round(warm.temp))+'°'}),pri:50}); }
   })();
 
   // — Rain timing —
   (function(){
     const soon=hrs.slice(0,12).find(x=>x.precip!=null&&x.precip>=50);
     if(soon) T.push({ic:'rain',tx:tf('tip_rain_soon',{h:pad(soon.date.getHours())+':00'}),pri:85});
-    else if(pmax<15) T.push({ic:'sun',tx:t('tip_rain_dry'),pri:20});
+    else if(pmax<15) T.push({ic:'dryeve',tx:t('tip_rain_dry'),pri:20});
   })();
 
   // — Car wash: gate on rain —
@@ -2098,19 +2108,19 @@ function buildTips(D){
   })();
 
   // — Gardening / laundry line —
-  if(hum<=55&&pmax<15&&wind>=5&&wind<=30&&tp!=null&&tp>=10) T.push({ic:'shirt',tx:t('tip_garden_yes'),pri:40});
+  if(hum<=55&&pmax<15&&wind>=5&&wind<=30&&tp!=null&&tp>=10) T.push({ic:'can',tx:t('tip_garden_yes'),pri:40});
 
   // — Stargazing: tonight's cloud + moon —
   if(night||nowH>=18){
     let cc=cloud;
     if(cc==null){const ev=hrs.slice(0,6).map(x=>x.cloud).filter(v=>v!=null); if(ev.length) cc=ev.reduce((a,b)=>a+b,0)/ev.length;}
     let illum=null; try{illum=moonBlock(D.place.lat,D.place.lon,D.tzOffset).illum;}catch(e){}
-    if(cc!=null&&cc<=30) T.push({ic:'star',tx:tf('tip_star_yes',{n:(illum==null?'—':illum)}),pri:46});
+    if(cc!=null&&cc<=30) T.push({ic:'stars',tx:tf('tip_star_yes',{n:(illum==null?'—':illum)}),pri:46});
     else if(cc!=null&&cc>=70) T.push({ic:'cloud',tx:t('tip_star_no'),pri:24});
   }
 
   // — Golden hour / photography —
-  if(c.sunset){ const p=c.sunset.split(':'); let m=(+p[0])*60+(+p[1])-40; if(m<0)m+=1440; T.push({ic:'sun',tx:tf('tip_golden',{h:pad(Math.floor(m/60))+':'+pad(m%60)}),pri:30}); }
+  if(c.sunset){ const p=c.sunset.split(':'); let m=(+p[0])*60+(+p[1])-40; if(m<0)m+=1440; T.push({ic:'goldenhour',tx:tf('tip_golden',{h:pad(Math.floor(m/60))+':'+pad(m%60)}),pri:30}); }
 
   // — Mosquitoes —
   if(tp!=null&&tp>=18&&hum>=60&&wind<12) T.push({ic:'bug',tx:t('tip_mosq_yes'),pri:52});
@@ -2121,11 +2131,11 @@ function buildTips(D){
   if(D.rainSplit&&D.rainSplit.spread>=40){
     const rs=D.rainSplit, dd2=D.daily&&D.daily[rs.dayIdx];
     const day=(dd2&&dd2.date)?cap1(dd2.date.toLocaleDateString(LANG,{weekday:'long'})):'';
-    T.push({ic:'aqi',tx:tf(rs.snow?'tip_cons_snow':'tip_cons_rain',{day}),pri:78});
+    T.push({ic:'alert',tx:tf(rs.snow?'tip_cons_snow':'tip_cons_rain',{day}),pri:78});
   } else if(D.sources&&D.sources.length>=3){
     const his=D.sources.map(s=>s.hi), los=D.sources.map(s=>s.lo);
     const spread=Math.max(Math.max(...his)-Math.min(...his), Math.max(...los)-Math.min(...los));
-    if(spread>5) T.push({ic:'aqi',tx:t('tip_cons_diverge'),pri:72});
+    if(spread>5) T.push({ic:'alert',tx:t('tip_cons_diverge'),pri:72});
   }
 
   // rank by relevance, keep an even 8–12
@@ -2242,19 +2252,20 @@ function render(D,root,ai){
     </div>
   </div></div>
 
-  <h2>${IC('clock')} ${t('hourTitle')}</h2><p class="sub">${t('hourSub')}</p>
-  <div class="strip-wrap"><div class="strip">${D.hourly.map((x,i)=>{
-    const ds=i===0||x.h==='00';
-    return `<div class="hcell${x.isDay?'':' night'}${i===0?' now':''}${ds?' daystart':''}">
-      <div class="hday">${WD[x.date.getDay()]}</div><div class="ht">${i===0?t('now'):x.h+':00'}</div>${pico(x.key,32)}<div class="htemp">${x.temp==null?'–':tC(x.temp)+'°'}</div><div class="hfeels">${x.feels==null?'–':tC(x.feels)+'°'}</div>
-      <div class="hrain">${x.precip>=5?((x.key.indexOf('snow')>=0?'❄':'💧')+x.precip+'%'):''}</div><div class="hmm">${x.mm>0?x.mm+' mm':''}</div></div>`;}).join('')}</div></div>
+  <div class="strip">${(()=>{const past=D.past||[];const strip=past.concat(D.hourly);const nowIdx=past.length;return strip.map((x,i)=>{
+    const isNow=i===nowIdx, ds=(x.h==='00');
+    return `<div class="hcell${x.isDay?'':' night'}${isNow?' now':''}${x.past?' past':''}${ds?' daystart':''}">
+      <div class="hday">${WD[x.date.getDay()]}</div><div class="ht">${isNow?t('now'):x.h+':00'}</div>${pico(x.key,32)}<div class="htemp">${x.temp==null?'–':tC(x.temp)+'°'}</div><div class="hfeels">${x.feels==null?'–':tC(x.feels)+'°'}</div>
+      <div class="hrain">${x.precip>=5?((x.key.indexOf('snow')>=0?'❄':'💧')+x.precip+'%'):''}</div><div class="hmm">${x.mm>0?x.mm+' mm':''}</div></div>`;}).join('');})()}</div>
 
-  <h2>${IC('chart')} ${t('curveTitle')}</h2><p class="sub">${t('curveSub')}</p>
-  <div class="card"><div class="legend">
+  <div class="card" style="margin-top:28px">
+    <h2 style="margin:0 0 10px">${IC('chart')} ${t('curveTitle')}</h2>
+    <div class="legend">
     <div class="lg"><span class="dot" style="background:var(--temp)"></span>${t('legTemp')}</div>
     <div class="lg"><span class="dot" style="background:var(--feels)"></span>${t('feelsLike')}</div>
     <div class="lg"><span class="dot" style="background:var(--rain);opacity:.5"></span>${t('legRain')}</div></div>
-    <div class="chart-box" id="chartBox"></div></div>
+    <div class="chart-box" id="chartBox"></div>
+    <p class="sub" style="margin:12px 0 0">${t('curveSub')}</p></div>
 
   <h2>${IC('cal')} ${t('weekTitle')}</h2><p class="sub">${tf('weekSub',{place:D.place.name})}</p>
   <div class="days">${(()=>{const all=D.daily;const vals=all.flatMap(d=>[d.lo,d.hi]).filter(v=>v!=null);const gmin=vals.length?Math.min(...vals):0,gmax=vals.length?Math.max(...vals):1;
@@ -2447,10 +2458,10 @@ let _sx=0,_sy=0,_st=null;
 let DRAG={active:false,dir:0,w:0,dx:0,ghost:null};
 let _raf=0,_pdx=0,_vx=0,_vt=0,_pvx=0,_pvt=0;
 function _applyDrag(){_raf=0;if(!DRAG.active)return;const app=document.getElementById('app');const d=_pdx;app.style.transform='translate3d('+d+'px,0,0)';if(DRAG.ghost)DRAG.ghost.style.transform='translate3d('+(DRAG.dir*DRAG.w+d)+'px,0,0)';}
-document.addEventListener('touchstart',e=>{const t=e.touches[0];_sx=t.clientX;_sy=t.clientY;_st=e.target;DRAG.active=false;if(e.target&&e.target.closest&&e.target.closest('.locbar,.strip-wrap,.chart-box'))setRefresh(false);},{passive:true});
+document.addEventListener('touchstart',e=>{const t=e.touches[0];_sx=t.clientX;_sy=t.clientY;_st=e.target;DRAG.active=false;if(e.target&&e.target.closest&&e.target.closest('.locbar,.strip,.chart-box'))setRefresh(false);},{passive:true});
 document.addEventListener('touchmove',e=>{
   if(document.querySelector('.sheet.open'))return;
-  if(_st&&_st.closest&&_st.closest('.strip-wrap,.chart-box'))return; // let those scroll horizontally
+  if(_st&&_st.closest&&_st.closest('.strip,.chart-box'))return; // let those scroll horizontally
   if(LOCS.length<2)return;
   const t=e.touches[0],dx=t.clientX-_sx,dy=t.clientY-_sy;
   if(!DRAG.active){
@@ -2476,7 +2487,7 @@ document.addEventListener('touchend',e=>{
   if(!document.querySelector('.sheet.open'))setRefresh(true);
   if(DRAG.active){finishDrag();return;}
   if(document.querySelector('.sheet.open'))return;
-  if(_st&&_st.closest&&_st.closest('.strip-wrap,.chart-box'))return; // let those scroll horizontally
+  if(_st&&_st.closest&&_st.closest('.strip,.chart-box'))return; // let those scroll horizontally
   const t=e.changedTouches[0],dx=t.clientX-_sx,dy=t.clientY-_sy;
   if(LOCS.length>1&&Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6){
     const n=LOCS.length; ACTIVE=dx<0?(ACTIVE+1)%n:(ACTIVE-1+n)%n; saveLocs(); loadActive(false,dx<0?'next':'prev');
@@ -2586,7 +2597,16 @@ function IC3(name,size){size=size||30;var S={
   glove:'<g filter="url(#softsh)"><path d="M11 20 a3.5 3.5 0 0 0 -3.5 3.5 a3.5 3.5 0 0 0 3.5 3.5" fill="none" stroke="url(#gWind)" stroke-width="4" stroke-linecap="round"/><path d="M11 17 h13 a4 4 0 0 1 4 4 v4 a8 8 0 0 1 -8 8 h-5 a4 4 0 0 1 -4-4 Z" fill="url(#gWind)"/><g fill="url(#gWind)"><rect x="11" y="12" width="4" height="8" rx="2"/><rect x="16" y="10" width="4" height="10" rx="2"/><rect x="21" y="11" width="4" height="9" rx="2"/><rect x="25" y="14" width="4" height="7" rx="2"/></g><rect x="14" y="30" width="15" height="4" rx="2" fill="#eaf4ff" opacity=".85"/></g>',
   shirt:'<g filter="url(#softsh)"><path d="M15 7 L9 11 L12 18 L15.5 16 V33 H24.5 V16 L28 18 L31 11 L25 7 A5.2 5.2 0 0 1 15 7 Z" fill="url(#gTeal)"/><path d="M16 10 a4 4 0 0 0 8 0" fill="none" stroke="#fff" stroke-width="1.4" opacity=".5"/></g>',
   mask:'<g filter="url(#softsh)"><path d="M9 15 h22 a3 3 0 0 1 3 3 v3 c0 5-5.5 8.5-14 8.5 S6 26 6 21 v-3 a3 3 0 0 1 3-3 Z" fill="url(#gSteel)"/><path d="M9 17 H4M31 17 h5" stroke="url(#gSteel)" stroke-width="2.6" stroke-linecap="round"/><g stroke="#fff" stroke-width="1.4" opacity=".5"><line x1="11" y1="21" x2="29" y2="21"/><line x1="11" y1="25" x2="29" y2="25"/></g></g>',
-  star:'<g filter="url(#softsh)"><path d="M20 4 l4.4 9.3 10.2 1.3 -7.5 7 1.9 10.1 -9-4.9 -9 4.9 1.9-10.1 -7.5-7 10.2-1.3 Z" fill="url(#gSun)"/><ellipse cx="16.5" cy="13" rx="3" ry="1.8" fill="#FFF7D6" opacity=".55"/></g>'
+  star:'<g filter="url(#softsh)"><path d="M20 4 l4.4 9.3 10.2 1.3 -7.5 7 1.9 10.1 -9-4.9 -9 4.9 1.9-10.1 -7.5-7 10.2-1.3 Z" fill="url(#gSun)"/><ellipse cx="16.5" cy="13" rx="3" ry="1.8" fill="#FFF7D6" opacity=".55"/></g>',
+  lotion:'<g filter="url(#softsh)"><rect x="15.5" y="4" width="9" height="4.5" rx="1.6" fill="url(#gSteel)"/><rect x="17" y="8" width="6" height="3" fill="url(#gSteel)"/><rect x="10.5" y="10.5" width="19" height="24" rx="5.5" fill="url(#gOrange)"/><rect x="12.5" y="18" width="15" height="10" rx="2.4" fill="#fff" opacity=".92"/><circle cx="17" cy="23" r="2.4" fill="url(#gOrange)"/><g stroke="url(#gOrange)" stroke-width="1.3" stroke-linecap="round"><line x1="21.5" y1="21" x2="26" y2="21"/><line x1="21.5" y1="24" x2="26" y2="24"/><line x1="21.5" y1="27" x2="24.5" y2="27"/></g><ellipse cx="14" cy="14" rx="3" ry="1.6" fill="#fff" opacity=".4"/></g>',
+  warmtime:'<defs><linearGradient id="gWarm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD23F"/><stop offset="1" stop-color="#E4433A"/></linearGradient></defs><g filter="url(#softsh)"><rect x="16.3" y="4" width="7.4" height="23" rx="3.7" fill="url(#gSteel)"/><circle cx="20" cy="30" r="6.6" fill="url(#gWarm)"/><rect x="18.4" y="8" width="3.2" height="20" rx="1.6" fill="url(#gWarm)"/><ellipse cx="18.2" cy="9" rx="1.5" ry="3.4" fill="#fff" opacity=".5"/></g>',
+  goldenhour:'<defs><linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8A3D"/><stop offset="1" stop-color="#E4433A"/></linearGradient></defs><g filter="url(#softsh)"><path d="M8.5 26 a11.5 11.5 0 0 1 23 0 Z" fill="url(#gGold)"/><g stroke="url(#gGold)" stroke-width="2.4" stroke-linecap="round"><line x1="20" y1="6" x2="20" y2="10"/><line x1="8" y1="12.5" x2="10.4" y2="14.9"/><line x1="32" y1="12.5" x2="29.6" y2="14.9"/></g><line x1="5" y1="26" x2="35" y2="26" stroke="#E4433A" stroke-width="2.6" stroke-linecap="round"/></g>',
+  dryair:'<g filter="url(#softsh)" fill="none" stroke="#D9B67C" stroke-width="3.4" stroke-linecap="round" transform="rotate(-30 20 20)"><path d="M6 16h14a4 4 0 1 0-4-4"/><path d="M6 24h9a3.6 3.6 0 1 1-3.6 3.6"/></g>',
+  muggy:'<g filter="url(#softsh)" fill="none" stroke="#6FB7E6" stroke-width="3.4" stroke-linecap="round" transform="rotate(30 20 20)"><path d="M6 16h14a4 4 0 1 0-4-4"/><path d="M6 24h9a3.6 3.6 0 1 1-3.6 3.6"/></g>',
+  alert:'<g filter="url(#softsh)"><path d="M20 6 L34 30 a2.5 2.5 0 0 1-2.2 3.6 H8.2 A2.5 2.5 0 0 1 6 30 Z" fill="url(#gAmber)"/><rect x="18.4" y="15" width="3.2" height="9" rx="1.6" fill="#3a2e10"/><circle cx="20" cy="28" r="1.9" fill="#3a2e10"/></g>',
+  stars:'<g filter="url(#softsh)" fill="url(#gSun)"><path d="M15 6 l1.6 3.4 3.7 .5 -2.7 2.5 .7 3.7 -3.3-1.8 -3.3 1.8 .7-3.7 -2.7-2.5 3.7-.5 Z"/><path d="M28 16 l1.1 2.3 2.5 .35 -1.8 1.7 .45 2.5 -2.25-1.2 -2.25 1.2 .45-2.5 -1.8-1.7 2.5-.35 Z"/><path d="M13 24 l.9 1.9 2.1 .3 -1.5 1.4 .36 2.1 -1.86-1 -1.86 1 .36-2.1 -1.5-1.4 2.1-.3 Z"/></g>',
+  can:'<g filter="url(#softsh)"><path d="M12 16 h13 a3 3 0 0 1 3 3 v9 a4 4 0 0 1-4 4 h-9 a3 3 0 0 1-3-3 Z" fill="url(#gGreen)"/><path d="M25 18.5 l7-5 2 2 -6 6 Z" fill="url(#gGreen)"/><path d="M14 16 q2-5 6-5" fill="none" stroke="url(#gGreen)" stroke-width="3" stroke-linecap="round"/><rect x="15" y="12.5" width="8" height="3.5" rx="1.5" fill="url(#gGreen)"/><g fill="#bfe0f7"><circle cx="33" cy="11.5" r="1.3"/><circle cx="35" cy="14.5" r="1.1"/><circle cx="31" cy="14.5" r="1"/></g><ellipse cx="16" cy="21" rx="3" ry="1.6" fill="#fff" opacity=".35"/></g>',
+  dryeve:'<g filter="url(#softsh)"><path d="M20 6 C14 15 11 19 11 23 a9 9 0 0 0 18 0 C29 19 26 15 20 6Z" fill="url(#gSteel)"/><ellipse cx="16" cy="21" rx="2.6" ry="4.4" fill="#fff" opacity=".4"/><line x1="8" y1="9" x2="32" y2="33" stroke="#E4574C" stroke-width="3.2" stroke-linecap="round"/></g>'
 };S.uv=S.sun;
 return '<svg class="ic3" style="width:'+size+'px;height:'+size+'px" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">'+(S[name]||'')+'</svg>';}
 function saveNotifCfg(){
