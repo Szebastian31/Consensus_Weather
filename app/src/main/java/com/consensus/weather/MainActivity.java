@@ -98,6 +98,10 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void setNotifStrings(final String json) {
             runOnUiThread(() -> WeatherNotifier.setNotifStrings(MainActivity.this, json));
         }
+        @JavascriptInterface public void setNotifConfig(final String json) {
+            runOnUiThread(() -> WeatherNotifier.setNotifConfig(MainActivity.this, json));
+        }
+
     }
 
     private void ensureLocationPermission() {
