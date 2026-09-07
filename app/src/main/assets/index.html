@@ -107,8 +107,8 @@
   .now-feels{font-size:13px;font-weight:700;opacity:.9;margin-top:1px}
   .lohi-row{display:flex;justify-content:center;gap:8px;margin-top:12px;position:relative;z-index:2}
   .lohi{flex:0 0 auto;background:rgba(255,255,255,.13);border-radius:12px;padding:5px 12px;font-size:12px;font-weight:800;text-align:center}
-  .hero-stats{display:flex;justify-content:center;gap:14px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
-  .hs{flex:0 0 auto;text-align:center;min-width:48px}
+  .hero-stats{display:flex;justify-content:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
+  .hs{flex:1 1 0;text-align:center;min-width:0}
   .hs span{font-size:16px;display:block}
   .hs span .ic3{margin:0 auto 1px}
   .ic3{display:block}
@@ -263,6 +263,22 @@
   .agcons em{position:absolute;top:15px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10px;font-weight:800;color:var(--ink-soft);white-space:nowrap}
   .agout{display:flex;justify-content:space-between;gap:10px;margin-top:4px;font-size:12px;color:var(--ink-soft);font-weight:700}
   .agout b{color:var(--ink);font-weight:800}
+  #notifSheet .sheet-card{max-height:82vh;overflow:auto;overscroll-behavior:contain}
+  .nrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 2px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .nsub .nrow:last-child{border-bottom:none}
+  .nlbl{font-size:14px;font-weight:800;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+  .nlbl em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--ink-mute)}
+  .nsw{width:46px;height:27px;border-radius:999px;border:none;background:rgba(255,255,255,.18);position:relative;cursor:pointer;flex:0 0 auto;transition:background .2s}
+  .nsw.on{background:#4ac97c}
+  .nsw span{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .nsw.on span{left:22px}
+  .seg{display:flex;gap:4px;background:rgba(255,255,255,.1);border-radius:12px;padding:3px}
+  .segbtn{border:none;background:transparent;color:var(--ink-soft);font-family:inherit;font-weight:800;font-size:13px;padding:6px 13px;border-radius:9px;cursor:pointer}
+  .segbtn.on{background:rgba(255,255,255,.92);color:#1a1730}
+  .ntimes{display:flex;flex-wrap:wrap;gap:10px;padding:12px 2px 4px}
+  .ntime{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:12px;padding:6px 10px;color:var(--ink)}
+  .ntime .ic{color:var(--ink-soft)}
+  .ntime input[type=time]{border:none;background:transparent;color:var(--ink);font-family:inherit;font-weight:800;font-size:15px;color-scheme:dark;padding:0}
   .grab{width:42px;height:4px;border-radius:999px;background:rgba(255,255,255,.32);margin:0 auto 12px}
 </style>
 </head>
@@ -331,6 +347,15 @@
     <button class="closex" onclick="closeAgree()">✕</button>
     <h3 id="agreeSheetTitle">Model agreement</h3>
     <div id="agreeBody"></div>
+  </div>
+</div>
+
+<div class="sheet" id="notifSheet">
+  <div class="sheet-card">
+    <div class="grab"></div>
+    <button class="closex" onclick="closeNotifSheet()">✕</button>
+    <h3 id="notifSheetTitle">Notifications</h3>
+    <div id="notifBody"></div>
   </div>
 </div>
 
@@ -453,6 +478,60 @@ const NTF={
   th:{title:"สภาพอากาศใน {city}",warmer:"อุ่นกว่าเมื่อวานเล็กน้อย",colder:"เย็นกว่าเมื่อวานเล็กน้อย",same:"พอๆ กับเมื่อวาน"},
   vi:{title:"Thời tiết ở {city}",warmer:"ấm hơn hôm qua một chút",colder:"lạnh hơn hôm qua một chút",same:"gần như hôm qua"},
   bg:{title:"Времето в {city}",warmer:"малко по-топло от вчера",colder:"малко по-студено от вчера",same:"приблизително като вчера"}
+};
+const TL={
+  en:{dew:"Dew pt",frost:"Frost pt",cloud:"Cloud"},pl:{dew:"Pkt rosy",frost:"Pkt szronu",cloud:"Chmury"},
+  de:{dew:"Taupunkt",frost:"Frostpunkt",cloud:"Wolken"},uk:{dew:"Точка роси",frost:"Точка інею",cloud:"Хмари"},
+  es:{dew:"Rocío",frost:"Escarcha",cloud:"Nubes"},fr:{dew:"Pt rosée",frost:"Pt gel",cloud:"Nuages"},
+  ru:{dew:"Точка росы",frost:"Точка инея",cloud:"Облачность"},zh:{dew:"露点",frost:"霜点",cloud:"云量"},
+  ja:{dew:"露点",frost:"霜点",cloud:"雲量"},pt:{dew:"Pt orvalho",frost:"Pt geada",cloud:"Nuvens"},
+  nl:{dew:"Dauwpt",frost:"Vorstpt",cloud:"Bewolking"},it:{dew:"Pt rugiada",frost:"Pt brina",cloud:"Nuvole"},
+  hi:{dew:"ओसांक",frost:"तुषारांक",cloud:"बादल"},ar:{dew:"نقطة الندى",frost:"نقطة الصقيع",cloud:"الغيوم"},
+  el:{dew:"Δρόσος",frost:"Πάγος",cloud:"Νέφωση"},cs:{dew:"Rosný bod",frost:"Bod mrazu",cloud:"Oblačnost"},
+  sv:{dew:"Daggpunkt",frost:"Frostpunkt",cloud:"Moln"},ko:{dew:"이슬점",frost:"서리점",cloud:"구름"},
+  id:{dew:"Titik embun",frost:"Titik beku",cloud:"Awan"},bn:{dew:"শিশিরাঙ্ক",frost:"তুষারাঙ্ক",cloud:"মেঘ"},
+  tr:{dew:"Çiy nok.",frost:"Don nok.",cloud:"Bulut"},te:{dew:"మంచు బిందువు",frost:"గడ్డకట్టు",cloud:"మేఘాలు"},
+  ro:{dew:"Pct rouă",frost:"Pct îngheț",cloud:"Nori"},hu:{dew:"Harmatpont",frost:"Fagyáspont",cloud:"Felhőzet"},
+  fi:{dew:"Kastepiste",frost:"Pakkaspiste",cloud:"Pilvet"},no:{dew:"Duggpunkt",frost:"Frostpunkt",cloud:"Skyer"},
+  sk:{dew:"Rosný bod",frost:"Bod mrazu",cloud:"Oblačnosť"},sw:{dew:"Umande",frost:"Barafu",cloud:"Mawingu"},
+  fa:{dew:"نقطه شبنم",frost:"نقطه یخبندان",cloud:"ابرناکی"},da:{dew:"Dugpunkt",frost:"Frostpunkt",cloud:"Skyer"},
+  th:{dew:"จุดน้ำค้าง",frost:"จุดน้ำค้างแข็ง",cloud:"เมฆ"},vi:{dew:"Điểm sương",frost:"Điểm băng",cloud:"Mây"},
+  bg:{dew:"Точка на роса",frost:"Точка на скреж",cloud:"Облачност"}
+};
+const NUI={
+  en:{title:"Notifications",perDay:"Times per day",severe:"Severe weather alerts",severeSub:"Warn me about storms & warnings"},
+  pl:{title:"Powiadomienia",perDay:"Razy dziennie",severe:"Alerty o groźnej pogodzie",severeSub:"Ostrzegaj o burzach i ostrzeżeniach"},
+  de:{title:"Benachrichtigungen",perDay:"Mal pro Tag",severe:"Unwetterwarnungen",severeSub:"Vor Stürmen & Warnungen warnen"},
+  uk:{title:"Сповіщення",perDay:"Разів на день",severe:"Сповіщення про негоду",severeSub:"Попереджати про шторми та тривоги"},
+  es:{title:"Notificaciones",perDay:"Veces al día",severe:"Alertas de tiempo severo",severeSub:"Avisarme de tormentas y avisos"},
+  fr:{title:"Notifications",perDay:"Fois par jour",severe:"Alertes intempéries",severeSub:"M'avertir des orages et alertes"},
+  ru:{title:"Уведомления",perDay:"Раз в день",severe:"Оповещения о непогоде",severeSub:"Предупреждать о грозах и штормах"},
+  zh:{title:"通知",perDay:"每天次数",severe:"恶劣天气提醒",severeSub:"提醒风暴与预警"},
+  ja:{title:"通知",perDay:"1日の回数",severe:"悪天候アラート",severeSub:"嵐や警報を通知"},
+  pt:{title:"Notificações",perDay:"Vezes por dia",severe:"Alertas de tempo severo",severeSub:"Avisar sobre tempestades e alertas"},
+  nl:{title:"Meldingen",perDay:"Keer per dag",severe:"Onweersmeldingen",severeSub:"Waarschuwen voor storm & alarm"},
+  it:{title:"Notifiche",perDay:"Volte al giorno",severe:"Avvisi meteo avverso",severeSub:"Avvisami di temporali e allerte"},
+  hi:{title:"सूचनाएं",perDay:"प्रतिदिन बार",severe:"गंभीर मौसम अलर्ट",severeSub:"तूफ़ान और चेतावनी के बारे में बताएं"},
+  ar:{title:"الإشعارات",perDay:"مرات في اليوم",severe:"تنبيهات الطقس القاسي",severeSub:"تحذيري من العواصف والتنبيهات"},
+  el:{title:"Ειδοποιήσεις",perDay:"Φορές την ημέρα",severe:"Ειδοποιήσεις κακοκαιρίας",severeSub:"Προειδοποίηση για καταιγίδες"},
+  cs:{title:"Oznámení",perDay:"Krát denně",severe:"Výstrahy nečasu",severeSub:"Upozornit na bouřky a výstrahy"},
+  sv:{title:"Aviseringar",perDay:"Gånger per dag",severe:"Varningar för svårt väder",severeSub:"Varna för oväder"},
+  ko:{title:"알림",perDay:"하루 횟수",severe:"악천후 알림",severeSub:"폭풍·경보를 알림"},
+  id:{title:"Notifikasi",perDay:"Kali per hari",severe:"Peringatan cuaca buruk",severeSub:"Ingatkan soal badai & peringatan"},
+  bn:{title:"বিজ্ঞপ্তি",perDay:"দিনে কতবার",severe:"তীব্র আবহাওয়া সতর্কতা",severeSub:"ঝড় ও সতর্কতা সম্পর্কে জানান"},
+  tr:{title:"Bildirimler",perDay:"Günde kaç kez",severe:"Şiddetli hava uyarıları",severeSub:"Fırtına ve uyarılar için uyar"},
+  te:{title:"నోటిఫికేషన్లు",perDay:"రోజుకు సార్లు",severe:"తీవ్ర వాతావరణ హెచ్చరికలు",severeSub:"తుఫానుల గురించి హెచ్చరించు"},
+  ro:{title:"Notificări",perDay:"Ori pe zi",severe:"Alerte vreme severă",severeSub:"Avertizează despre furtuni"},
+  hu:{title:"Értesítések",perDay:"Naponta hányszor",severe:"Zord idő riasztások",severeSub:"Figyelmeztetés viharokra"},
+  fi:{title:"Ilmoitukset",perDay:"Kertaa päivässä",severe:"Ankaran sään hälytykset",severeSub:"Varoita myrskyistä"},
+  no:{title:"Varsler",perDay:"Ganger per dag",severe:"Varsler om uvær",severeSub:"Varsle om storm"},
+  sk:{title:"Oznámenia",perDay:"Krát denne",severe:"Výstrahy pred nečasom",severeSub:"Upozorniť na búrky"},
+  sw:{title:"Arifa",perDay:"Mara kwa siku",severe:"Tahadhari za hali mbaya",severeSub:"Nionye kuhusu dhoruba"},
+  fa:{title:"اعلان‌ها",perDay:"دفعات در روز",severe:"هشدارهای هوای شدید",severeSub:"درباره طوفان هشدار بده"},
+  da:{title:"Notifikationer",perDay:"Gange om dagen",severe:"Varsler om voldsomt vejr",severeSub:"Advar om storme"},
+  th:{title:"การแจ้งเตือน",perDay:"ครั้งต่อวัน",severe:"แจ้งเตือนสภาพอากาศรุนแรง",severeSub:"เตือนเรื่องพายุ"},
+  vi:{title:"Thông báo",perDay:"Lần mỗi ngày",severe:"Cảnh báo thời tiết xấu",severeSub:"Cảnh báo giông bão"},
+  bg:{title:"Известия",perDay:"Пъти на ден",severe:"Сигнали за тежко време",severeSub:"Предупреждавай за бури"}
 };
 const AGREE={
   en:{title:"Model agreement — next 36 h",agree:"Models agree",aligned:"Mostly aligned",diverge:"Models diverge",consensus:"consensus",coldest:"Coldest",warmest:"Warmest"},
@@ -1707,7 +1786,7 @@ let UNIT=(function(){try{return localStorage.getItem('cw_unit')==='F'?'F':'C';}c
 function tC(v){return v==null?null:(UNIT==='F'?Math.round(v*9/5+32):Math.round(v));}
 let LAST_DATA=null;
 function setUnit(u){if(u===UNIT)return;UNIT=u;try{localStorage.setItem('cw_unit',u);}catch(e){}pushNotifStrings();if(LAST_DATA)render(LAST_DATA);}
-function notifBundle(){var d=I18N[LANG]||I18N.en,n=NTF[LANG]||NTF.en;return {lang:LANG,unit:UNIT,title:n.title,warmer:n.warmer,colder:n.colder,same:n.same,feels:(d.feelsLike||"Feels like"),cond:{clear_day:d.cond_clear_day,clear_night:d.cond_clear_night,pcloudy:d.cond_pcloudy,cloudy:d.cond_cloudy,overcast:d.cond_overcast,fog:d.cond_fog,rain:d.cond_rain,snow:d.cond_snow,thunder:d.cond_thunder}};}
+function notifBundle(){var d=I18N[LANG]||I18N.en,n=NTF[LANG]||NTF.en,u=NUI[LANG]||NUI.en;return {lang:LANG,unit:UNIT,title:n.title,warmer:n.warmer,colder:n.colder,same:n.same,severe:u.severe,feels:(d.feelsLike||"Feels like"),cond:{clear_day:d.cond_clear_day,clear_night:d.cond_clear_night,pcloudy:d.cond_pcloudy,cloudy:d.cond_cloudy,overcast:d.cond_overcast,fog:d.cond_fog,rain:d.cond_rain,snow:d.cond_snow,thunder:d.cond_thunder}};}
 function pushNotifStrings(){try{if(window.AndroidBridge&&AndroidBridge.setNotifStrings)AndroidBridge.setNotifStrings(JSON.stringify(notifBundle()));}catch(e){}}
 const partOf=h=> h<6?'Night':h<12?'Morning':h<18?'Afternoon':'Evening';
 
@@ -1724,7 +1803,7 @@ function buildFallback(){
   const daily=[['2026-09-01','pcloudy-day',22,15,20,19],['2026-09-02','rain',24,12,52,13],['2026-09-03','pcloudy-day',22,13,35,11],['2026-09-04','pcloudy-day',25,14,20,15],['2026-09-05','rain',22,12,55,17],['2026-09-06','clear-day',21,10,5,11],['2026-09-07','clear-day',24,13,15,11]]
     .map(d=>{const dt=new Date(d[0]+'T12:00');return {date:dt,key:d[1],hi:d[2],lo:d[3],precip:d[4],wind:d[5]};});
   return {place:{name:'Gliwice',country:'Poland',lat:50.2976,lon:18.6766},
-    current:{temp:20,feels:20,key:'cloudy',humidity:72,wind:8,uv:3,sunrise:'05:59',sunset:'19:31',pressure:1014},
+    current:{temp:20,feels:20,key:'cloudy',humidity:72,wind:8,uv:3,sunrise:'05:59',sunset:'19:31',pressure:1014,dew:15,cloud:80},
     hourly,daily,
     sources:[{name:'AccuWeather',hi:23,lo:11},{name:'Yr · met.no',hi:22,lo:13},{name:'meteoblue',hi:24,lo:13},{name:'Foreca',hi:22,lo:12},{name:'timeanddate',hi:23,lo:12}],
     pollen:{alder:2,birch:8,grass:12,mugwort:1,olive:0,ragweed:3}, aqi:28, aqiScale:'eu',
@@ -1733,7 +1812,7 @@ function buildFallback(){
 
 /* ============ LIVE FETCH (Open-Meteo, 7-model average) ============ */
 async function fetchWeather(loc){
-  const hv='temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,is_day,wind_speed_10m';
+  const hv='temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,is_day,wind_speed_10m,dew_point_2m,cloud_cover';
   const dv='weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset,uv_index_max';
   const ids=MODELS.map(m=>m.id).join(',');
   const cb='&_='+Date.now(); // cache-buster so pull-to-refresh always re-fetches (was hitting a ~15 min cache)
@@ -1755,7 +1834,8 @@ async function fetchWeather(loc){
     const d=new Date(times[i]);const isDay=(avg('is_day',i)||0)>=0.5;const code=Math.round(mode('weather_code',i));
     const mmv=avg('precipitation',i);
     hourly.push({date:d,h:pad(d.getHours()),temp:R(avg('temperature_2m',i)),feels:R(avg('apparent_temperature',i)),
-      precip:R(avg('precipitation_probability',i)),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),key:codeKey(code,isDay),isDay});
+      precip:R(avg('precipitation_probability',i)),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),key:codeKey(code,isDay),isDay,
+      dew:R(avg('dew_point_2m',i)),cloud:R(avg('cloud_cover',i))});
   }
   // daily averaged across models
   const davg=(v,i)=>{const a=MODELS.map(m=>dd[v+'_'+m.id]&&dd[v+'_'+m.id][i]).filter(x=>x!=null&&!isNaN(x));return a.length?a.reduce((s,x)=>s+x,0)/a.length:null;};
@@ -1785,7 +1865,8 @@ async function fetchWeather(loc){
       feels: now0.feels!=null?now0.feels:R(cur.apparent_temperature),
       key: now0.key||codeKey(cur.weather_code||0, cur.is_day===undefined?true:cur.is_day>=0.5),
       humidity:R(cur.relative_humidity_2m), wind: now0.wind!=null?now0.wind:R(cur.wind_speed_10m),
-      uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null},
+      uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null,
+      dew: now0.dew!=null?now0.dew:null, cloud: now0.cloud!=null?now0.cloud:null},
     hourly,daily,sources,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
 }
 
@@ -1935,6 +2016,7 @@ function render(D,root,ai){
   const _t=D.hourly.map(x=>x.temp).filter(v=>v!=null);
   const hi=_t.length?Math.max(..._t):null, lo=_t.length?Math.min(..._t):null;
   const AG=AGREE[LANG]||AGREE.en;
+  const _tl=TL[LANG]||TL.en;
   const _his=D.sources.map(s=>s.hi), _los=D.sources.map(s=>s.lo);
   const _spread=Math.max(Math.max(..._his)-Math.min(..._his), Math.max(..._los)-Math.min(..._los));
   const _lvl=_spread<=2?'high':_spread<=5?'med':'low';
@@ -1958,7 +2040,7 @@ function render(D,root,ai){
       <div class="logo-row">
         <button class="hhbtn" onclick="event.stopPropagation();openLangSheet()" aria-label="Language">${icoGlobe()}</button>
         <div class="applogo"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
-        <button class="hhbtn${NOTIF?'':' off'}" id="notifBtn" onclick="event.stopPropagation();toggleNotif()" aria-label="Notifications">${icoBell(NOTIF)}</button>
+        <button class="hhbtn${NOTIF?'':' off'}" id="notifBtn" onclick="event.stopPropagation();openNotifSheet()" aria-label="Notifications">${icoBell(NOTIF)}</button>
       </div>
       <div class="locbar" id="tiles"></div>
     </div>
@@ -1984,14 +2066,16 @@ function render(D,root,ai){
       </div>
       <div class="cbadge-row"><div class="cbadge cb-${_lvl}" onclick="event.stopPropagation();openAgree()">◆ ${badgeTxt}</div></div>
       <div class="hero-stats">
-        <div class="hs"><span>${IC3('wind',28)}</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
-        <div class="hs"><span>${IC3('humidity',28)}</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>${t('humidity')}</i></div>
-        <div class="hs"><span>${(c.key||'').indexOf('snow')>=0?IC3('snow',28):IC3('rain',28)}</span><b>${D.hourly[0]&&D.hourly[0].precip!=null?D.hourly[0].precip+'%':'–'}</b><i>${(c.key||'').indexOf('snow')>=0?t('snow'):t('rain')}</i></div>
+        <div class="hs"><span>${IC3('wind',26)}</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
+        <div class="hs"><span>${IC3('humidity',26)}</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>${t('humidity')}</i></div>
+        <div class="hs"><span>${(c.key||'').indexOf('snow')>=0?IC3('snow',26):IC3('rain',26)}</span><b>${D.hourly[0]&&D.hourly[0].precip!=null?D.hourly[0].precip+'%':'–'}</b><i>${(c.key||'').indexOf('snow')>=0?t('snow'):t('rain')}</i></div>
+        <div class="hs"><span>${(c.dew!=null&&c.dew<0)?IC3('frost',26):IC3('dew',26)}</span><b>${c.dew==null?'–':tC(c.dew)+'°'}</b><i>${(c.dew!=null&&c.dew<0)?_tl.frost:_tl.dew}</i></div>
       </div>
       <div class="hero-stats">
-        <div class="hs"><span>${IC3('aqi',28)}</span><b>${D.aqi!=null?D.aqi:'–'}</b><i>AQI ${D.aqi!=null?(D.aqiScale==='us'?'US':'EU'):''}</i></div>
-        <div class="hs"><span>${IC3('pressure',28)}</span><b>${c.pressure!=null?c.pressure:'–'}</b><i>hPa</i></div>
-        <div class="hs"><span>${IC3('uv',28)}</span><b>${c.uv==null?'–':c.uv}</b><i>${t('uvNow')}</i></div>
+        <div class="hs"><span>${IC3('aqi',26)}</span><b>${D.aqi!=null?D.aqi:'–'}</b><i>AQI ${D.aqi!=null?(D.aqiScale==='us'?'US':'EU'):''}</i></div>
+        <div class="hs"><span>${IC3('pressure',26)}</span><b>${c.pressure!=null?c.pressure:'–'}</b><i>hPa</i></div>
+        <div class="hs"><span>${IC3('cloud',26)}</span><b>${c.cloud==null?'–':c.cloud+'%'}</b><i>${_tl.cloud}</i></div>
+        <div class="hs"><span>${IC3('uv',26)}</span><b>${c.uv==null?'–':c.uv}</b><i>${t('uvNow')}</i></div>
       </div>
     </div>
     <div class="taphint">${t('tapParts')}</div>
@@ -2194,6 +2278,7 @@ document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')d
 document.getElementById('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet();});
 document.getElementById('partSheet').addEventListener('click',e=>{if(e.target.id==='partSheet')closeParts();});
 document.getElementById('agreeSheet').addEventListener('click',e=>{if(e.target.id==='agreeSheet')closeAgree();});
+document.getElementById('notifSheet').addEventListener('click',e=>{if(e.target.id==='notifSheet')closeNotifSheet();});
 /* while dragging a horizontal rail, disable pull-to-refresh so sideways scroll never triggers it */
 let _sx=0,_sy=0,_st=null;
 let DRAG={active:false,dir:0,w:0,dx:0,ghost:null};
@@ -2273,7 +2358,13 @@ function cleanupDrag(){
 
 
 /* ============ NOTIFICATIONS TOGGLE + LANGUAGE PICKER ============ */
-let NOTIF=(function(){try{return localStorage.getItem('cw_notif_on')!=='0';}catch(e){return true;}})();
+let NOTIFCFG=(function(){
+  var def={enabled:true,times:["07:00","19:00"],severe:true};
+  try{var s=localStorage.getItem('cw_notif');if(s){var o=JSON.parse(s);return {enabled:o.enabled!==false,times:(o.times&&o.times.length?o.times:def.times).slice(0,3),severe:o.severe!==false};}}catch(e){}
+  try{if(localStorage.getItem('cw_notif_on')==='0')def.enabled=false;}catch(e){}
+  return def;
+})();
+let NOTIF=NOTIFCFG.enabled;
 function icoGlobe(){return '<svg class="hhi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.8 3.3 2.8 14.7 0 18c-2.8-3.3-2.8-14.7 0-18Z"/></svg>';}
 function icoBell(on){return '<svg class="hhi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5a6 6 0 0 1 12 0c0 4.6 1.7 5.7 1.7 5.7H4.3S6 14.1 6 9.5Z"/><path d="M10.3 19.5a1.8 1.8 0 0 0 3.4 0"/>'+(on?'':'<line x1="4.5" y1="3.5" x2="19.5" y2="20.5"/>')+'</svg>';}
 function IC(name,size){size=size||22;var P={
@@ -2302,6 +2393,9 @@ function IC3(name,size){size=size||30;var S={
   rain:'<g filter="url(#softsh)"><g fill="url(#gCloud)"><circle cx="16" cy="16" r="6"/><circle cx="25" cy="15" r="7.5"/><rect x="11" y="14" width="19" height="9" rx="4.5"/></g><g stroke="url(#gDrop)" stroke-width="3.4" stroke-linecap="round"><line x1="15" y1="26" x2="13" y2="33"/><line x1="21" y1="26" x2="19" y2="33"/><line x1="27" y1="26" x2="25" y2="33"/></g></g>',
   snow:'<g filter="url(#softsh)"><g fill="url(#gCloud)"><circle cx="16" cy="16" r="6"/><circle cx="25" cy="15" r="7.5"/><rect x="11" y="14" width="19" height="9" rx="4.5"/></g><g stroke="#eaf4ff" stroke-width="2.4" stroke-linecap="round"><line x1="14" y1="27" x2="14" y2="33"/><line x1="11.5" y1="30" x2="16.5" y2="30"/><line x1="25" y1="27" x2="25" y2="33"/><line x1="22.5" y1="30" x2="27.5" y2="30"/></g></g>',
   aqi:'<g filter="url(#softsh)"><g fill="url(#gSteel)"><rect x="7" y="14" width="24" height="4.2" rx="2.1"/><rect x="7" y="21" width="20" height="4.2" rx="2.1"/><rect x="7" y="28" width="26" height="4.2" rx="2.1"/></g><rect x="9" y="14.6" width="10" height="1.4" rx=".7" fill="#fff" opacity=".55"/></g>',
+  cloud:'<g filter="url(#softsh)"><g fill="url(#gCloud)"><circle cx="15" cy="21" r="7"/><circle cx="26" cy="19" r="9"/><rect x="10" y="19" width="22" height="11" rx="5.5"/></g><ellipse cx="16" cy="16.5" rx="5" ry="3" fill="#fff" opacity=".5"/></g>',
+  dew:'<g filter="url(#softsh)"><rect x="16.3" y="4" width="7.4" height="23" rx="3.7" fill="url(#gSteel)"/><circle cx="20" cy="30" r="6.6" fill="url(#gDrop)"/><rect x="18.4" y="8" width="3.2" height="20" rx="1.6" fill="url(#gDrop)"/><ellipse cx="18.2" cy="9" rx="1.5" ry="3.4" fill="#fff" opacity=".5"/></g>',
+  frost:'<g filter="url(#softsh)" stroke="url(#gWind)" stroke-width="2.6" stroke-linecap="round"><line x1="20" y1="5" x2="20" y2="35"/><line x1="7.5" y1="12.5" x2="32.5" y2="27.5"/><line x1="32.5" y1="12.5" x2="7.5" y2="27.5"/><g stroke-width="2.2"><path d="M20 5 l-3 3M20 5 l3 3M20 35 l-3-3M20 35 l3-3"/><path d="M7.5 12.5 l.3 4.2M7.5 12.5 l4.1-.6M32.5 27.5 l-.3-4.2M32.5 27.5 l-4.1 .6"/><path d="M32.5 12.5 l-4.1-.6M32.5 12.5 l-.3 4.2M7.5 27.5 l4.1 .6M7.5 27.5 l.3-4.2"/></g></g>',
   pressure:'<g filter="url(#softsh)"><circle cx="20" cy="21" r="12" fill="url(#gSteel)"/><circle cx="20" cy="21" r="12" fill="none" stroke="#5f6b88" stroke-width="1.1" opacity=".45"/><path d="M20 21 L27 15" stroke="#3a2e6e" stroke-width="2.6" stroke-linecap="round"/><circle cx="20" cy="21" r="2.2" fill="#3a2e6e"/><ellipse cx="15.5" cy="15.5" rx="4" ry="2.4" fill="#fff" opacity=".5"/></g>',
   wind:'<g filter="url(#softsh)" fill="none" stroke="url(#gWind)" stroke-width="4.4" stroke-linecap="round"><path d="M5 15h16a4.5 4.5 0 1 0-4.5-4.5"/><path d="M5 24h11a4 4 0 1 1-4 4"/></g>',
   flower:'<g filter="url(#softsh)"><g fill="url(#gPink)"><circle cx="20" cy="10" r="4.4"/><circle cx="10" cy="17" r="4.4"/><circle cx="30" cy="17" r="4.4"/><circle cx="14" cy="29" r="4.4"/><circle cx="26" cy="29" r="4.4"/></g><circle cx="20" cy="20" r="4.6" fill="url(#gSun)"/></g>',
@@ -2318,13 +2412,35 @@ function IC3(name,size){size=size||30;var S={
   mask:'<g filter="url(#softsh)"><path d="M9 15 h22 a3 3 0 0 1 3 3 v3 c0 5-5.5 8.5-14 8.5 S6 26 6 21 v-3 a3 3 0 0 1 3-3 Z" fill="url(#gSteel)"/><path d="M9 17 H4M31 17 h5" stroke="url(#gSteel)" stroke-width="2.6" stroke-linecap="round"/><g stroke="#fff" stroke-width="1.4" opacity=".5"><line x1="11" y1="21" x2="29" y2="21"/><line x1="11" y1="25" x2="29" y2="25"/></g></g>'
 };S.uv=S.sun;
 return '<svg class="ic3" style="width:'+size+'px;height:'+size+'px" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">'+(S[name]||'')+'</svg>';}
-function toggleNotif(){
-  NOTIF=!NOTIF;
-  try{localStorage.setItem('cw_notif_on',NOTIF?'1':'0');}catch(e){}
-  try{if(window.AndroidBridge&&AndroidBridge.setNotifications)AndroidBridge.setNotifications(NOTIF);}catch(e){}
-  if(NOTIF)pushNotifStrings();
+function saveNotifCfg(){
+  NOTIF=NOTIFCFG.enabled;
+  try{localStorage.setItem('cw_notif',JSON.stringify(NOTIFCFG));}catch(e){}
+  try{if(window.AndroidBridge&&AndroidBridge.setNotifConfig)AndroidBridge.setNotifConfig(JSON.stringify(NOTIFCFG));}catch(e){}
+  try{if(window.AndroidBridge&&AndroidBridge.setNotifications)AndroidBridge.setNotifications(NOTIFCFG.enabled);}catch(e){}
+  if(NOTIFCFG.enabled)pushNotifStrings();
   var b=document.getElementById('notifBtn');if(b){b.innerHTML=icoBell(NOTIF);b.classList.toggle('off',!NOTIF);}
 }
+function nsw(on,fn){return '<button class="nsw'+(on?' on':'')+'" onclick="'+fn+'()" aria-label="toggle"><span></span></button>';}
+function renderNotifSheet(){
+  var box=document.getElementById('notifBody'); if(!box)return;
+  var c=NOTIFCFG, N=NUI[LANG]||NUI.en;
+  document.getElementById('notifSheetTitle').textContent=N.title;
+  var freq=[1,2,3].map(function(k){return '<button class="segbtn'+(c.times.length===k?' on':'')+'" onclick="setNotifCount('+k+')">'+k+'×</button>';}).join('');
+  var times=c.times.map(function(tm,i){return '<div class="ntime">'+IC('clock')+'<input type="time" value="'+tm+'" onchange="setNotifTime('+i+',this.value)"></div>';}).join('');
+  box.innerHTML=
+    '<div class="nrow"><span class="nlbl">'+N.title+'</span>'+nsw(c.enabled,'setNotifEnabled')+'</div>'+
+    '<div class="nsub"'+(c.enabled?'':' style="opacity:.4;pointer-events:none"')+'>'+
+      '<div class="nrow"><span class="nlbl">'+N.perDay+'</span><div class="seg">'+freq+'</div></div>'+
+      '<div class="ntimes">'+times+'</div>'+
+      '<div class="nrow"><span class="nlbl">'+N.severe+'<em>'+N.severeSub+'</em></span>'+nsw(c.severe,'setNotifSevere')+'</div>'+
+    '</div>';
+}
+function setNotifEnabled(){NOTIFCFG.enabled=!NOTIFCFG.enabled;saveNotifCfg();renderNotifSheet();}
+function setNotifSevere(){NOTIFCFG.severe=!NOTIFCFG.severe;saveNotifCfg();renderNotifSheet();}
+function setNotifCount(n){var P={1:["08:00"],2:["07:00","19:00"],3:["07:00","13:00","19:00"]};NOTIFCFG.times=(P[n]||P[2]).slice();saveNotifCfg();renderNotifSheet();}
+function setNotifTime(i,val){if(!val)return;NOTIFCFG.times[i]=val;saveNotifCfg();}
+function openNotifSheet(){renderNotifSheet();document.getElementById('notifSheet').classList.add('open');setRefresh(false);}
+function closeNotifSheet(){document.getElementById('notifSheet').classList.remove('open');setRefresh(true);}
 function renderLangList(){
   var box=document.getElementById('langList'); if(!box)return;
   box.innerHTML=Object.keys(LANG_NAMES).sort(function(a,b){return (LANG_EN[a]||a).localeCompare(LANG_EN[b]||b);}).map(function(code){
@@ -2345,6 +2461,7 @@ renderTiles();
   const gi=gpsIndex();
   if(gi>=0)ACTIVE=gi; else {let a=0;try{a=parseInt(localStorage.getItem(AKEY)||'0',10);}catch(e){}ACTIVE=Math.min(Math.max(a||0,0),LOCS.length-1);}
   renderTiles(); loadActive();
+  try{if(window.AndroidBridge&&AndroidBridge.setNotifConfig)AndroidBridge.setNotifConfig(JSON.stringify(NOTIFCFG));}catch(e){}
   try{if(window.AndroidBridge&&AndroidBridge.setNotifications)AndroidBridge.setNotifications(NOTIF);}catch(e){}
   pushNotifStrings();
   if((window.AndroidBridge&&AndroidBridge.requestLocation)||navigator.geolocation) useMyLocation(true);
