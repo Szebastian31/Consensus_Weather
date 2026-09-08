@@ -88,12 +88,13 @@
   .hero-wrap{position:relative;margin:0 -14px}
   .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:linear-gradient(180deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0;transition:opacity .45s ease,transform .45s cubic-bezier(.22,.7,.25,1)}
   .hero{position:relative;z-index:1;border-radius:0 0 66px 66px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 18px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
-  .src-wrap{position:relative;margin:40px -14px 0}
+  .src-wrap{position:relative;margin:40px -14px -90px}
   .src-wrap::before{content:'';position:absolute;left:20px;right:20px;top:-12px;bottom:26px;border-radius:52px;background:linear-gradient(0deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0}
-  .src-hero{position:relative;z-index:1;border-radius:66px 66px 0 0;padding:30px 18px calc(26px + env(safe-area-inset-bottom));color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .src-hero{position:relative;z-index:1;border-radius:66px 66px 0 0;padding:30px 18px calc(34px + env(safe-area-inset-bottom));color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
   .src-hero .src-table,.src-hero .note{background:transparent;box-shadow:none;border:none;backdrop-filter:none;-webkit-backdrop-filter:none}
   .src-hero .note{padding:0;margin-top:12px}
   .foot-in{text-align:center;font-size:11px;font-weight:700;color:var(--ink-mute);margin-top:16px}
+  .bottom-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:22px;opacity:.9}
   .foot:empty{display:none}
   .hero .glow{position:absolute;inset:0;background:radial-gradient(520px 260px at 80% 10%,rgba(255,255,255,.22),rgba(255,255,255,0) 60%);pointer-events:none}
   .hero-head{position:relative;z-index:2}
@@ -2309,6 +2310,7 @@ function render(D,root,ai){
 
   <div class="note"><b>${D.live?t('noteLive'):t('noteOffline')}</b> ${D.live?tf('noteLiveBody',{n:D.sources.length}):t('noteOfflineBody')}</div>
   <div class="foot-in">${(D.live?t('footLive'):t('footOffline'))+t('footTail')}</div>
+  <div class="bottom-logo"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
   </div></div>`;
   renderTiles(root, ai);
   drawChart(D.hourly, root.querySelector('#chartBox'), isMain);
