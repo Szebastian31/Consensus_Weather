@@ -88,6 +88,13 @@
   .hero-wrap{position:relative;margin:0 -14px}
   .hero-wrap::before{content:'';position:absolute;left:20px;right:20px;top:26px;bottom:-12px;border-radius:52px;background:linear-gradient(180deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0;transition:opacity .45s ease,transform .45s cubic-bezier(.22,.7,.25,1)}
   .hero{position:relative;z-index:1;border-radius:0 0 66px 66px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 18px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .src-wrap{position:relative;margin:40px -14px 0}
+  .src-wrap::before{content:'';position:absolute;left:20px;right:20px;top:-12px;bottom:26px;border-radius:52px;background:linear-gradient(0deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0}
+  .src-hero{position:relative;z-index:1;border-radius:66px 66px 0 0;padding:30px 18px calc(26px + env(safe-area-inset-bottom));color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .src-hero .src-table,.src-hero .note{background:transparent;box-shadow:none;border:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .src-hero .note{padding:0;margin-top:12px}
+  .foot-in{text-align:center;font-size:11px;font-weight:700;color:var(--ink-mute);margin-top:16px}
+  .foot:empty{display:none}
   .hero .glow{position:absolute;inset:0;background:radial-gradient(520px 260px at 80% 10%,rgba(255,255,255,.22),rgba(255,255,255,0) 60%);pointer-events:none}
   .hero-head{position:relative;z-index:2}
   .hero-divider{height:1px;background:var(--line);margin:8px 0 2px;position:relative;z-index:2}
@@ -100,24 +107,28 @@
   .live-pill .lp1{font-size:9px;font-weight:800;padding:2px 8px 1px;letter-spacing:.1px;opacity:.92}
   .live-pill .lp2{font-size:11px;font-weight:800;padding:2px 10px;border-radius:11px;background:rgba(255,255,255,.9);color:#3a2e6e}
   .hero-top .unit-toggle{justify-self:end}
-  .hero-main{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;position:relative;z-index:2}
+  .hero-main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;margin-top:10px;position:relative;z-index:2}
+  .hero-set{display:flex;align-items:center;justify-content:center}
   .hero-pict{flex:0 0 auto;filter:drop-shadow(0 8px 16px rgba(0,0,0,.28))}
-  .hero-now{text-align:left}
-  .now-temp{font-size:74px;font-weight:800;line-height:.9;letter-spacing:-2px;text-shadow:0 6px 22px rgba(0,0,0,.3)}
-  .now-temp span{font-size:30px;vertical-align:top;opacity:.85}
-  .now-cond{font-size:18px;font-weight:800;margin-top:2px}
+  .hero-sub{text-align:center;margin-top:-4px}
+  .now-temp{font-size:96px;font-weight:800;line-height:.9;letter-spacing:-2px;text-shadow:0 6px 22px rgba(0,0,0,.3);margin-left:-28px;position:relative;z-index:1}
+  .now-temp span{font-size:39px;vertical-align:top;opacity:.85}
+  .now-cond{font-size:18px;font-weight:800}
   .now-feels{font-size:13px;font-weight:700;opacity:.9;margin-top:1px}
   .lohi-row{display:flex;justify-content:center;gap:8px;margin-top:12px;position:relative;z-index:2}
-  .lohi{flex:0 0 auto;background:rgba(255,255,255,.13);border-radius:12px;padding:5px 12px;font-size:12px;font-weight:800;text-align:center}
+  .lohi{flex:0 0 auto;width:140px;display:flex;align-items:center;justify-content:space-between;gap:6px;background:rgba(255,255,255,.13);border-radius:12px;padding:6px 14px;font-size:12px;font-weight:800}
   .hero-stats{display:flex;justify-content:center;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
   .hs{flex:1 1 0;text-align:center;min-width:0}
   .hs span{font-size:16px;display:block}
   .hs span .ic3{margin:0 auto 1px}
   .ic3{display:block}
-  .hs b{font-size:15px;font-weight:800;display:block;margin-top:2px}
+  .hs b{font-size:15px;font-weight:800;display:flex;align-items:baseline;justify-content:center;gap:1px;margin-top:2px;white-space:nowrap}
+  .hs .ptr{font-size:11px;font-weight:900;margin-left:2px;vertical-align:1px}
+  .hs .ptr.up{color:#7CE0A0}
+  .hs .ptr.down{color:#FF9B8A}
   .hs i{font-size:10px;font-weight:700;opacity:.72;font-style:normal;text-transform:uppercase;letter-spacing:.4px}
-  .hero-panel{width:auto;max-width:none;margin:14px 26px 0;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.08)) padding-box,linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.14)) border-box;border:1px solid transparent;border-radius:8px 8px 26px 26px;padding:4px 12px 12px;position:relative;z-index:2}
-  .hero-panel .lohi-row{margin-top:10px}
+  .hero-panel{width:auto;max-width:none;margin:14px 26px 0;padding:14px 0;border-top:1px solid rgba(255,255,255,.16);border-bottom:1px solid rgba(255,255,255,.16);position:relative;z-index:2}
+  .hero-panel .lohi-row{margin-top:0}
 
   .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
   .stat{background:var(--card);border-radius:18px;padding:13px 8px;text-align:center;box-shadow:var(--shadow)}
@@ -149,7 +160,7 @@
   .pico{display:block;margin:0 auto}
 
   .card{background:var(--card);border-radius:28px;padding:16px;box-shadow:var(--shadow)}
-  .hero,.card,.strip-wrap,.days,.src-table,.seg,.stat,.note{backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(255,255,255,.16)}
+  .hero,.card,.strip-wrap,.days,.src-table,.seg,.stat,.note,.src-hero{backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(255,255,255,.16)}
   .legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:4px}
   .lg{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800}
   .dot{width:13px;height:13px;border-radius:5px}
@@ -204,7 +215,7 @@
   #app.snap,.appghost.snap{transition:transform .34s cubic-bezier(.22,.7,.25,1)}
   #app.dragging,.appghost.dragging{will-change:transform}
   /* suspend expensive backdrop-blur while panels are in motion — keeps the swipe buttery */
-  .nb .hero,.nb .card,.nb .strip-wrap,.nb .days,.nb .src-table,.nb .seg,.nb .stat,.nb .note{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .nb .hero,.nb .card,.nb .strip-wrap,.nb .days,.nb .src-table,.nb .seg,.nb .stat,.nb .note,.nb .src-hero{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
   /* hide the hero's faux drop-shadow during a swipe, then roll it back down once settled */
   .ns .hero-wrap::before{opacity:0;transform:translateY(-8px)}
   #app.app-next{animation:appFromRight .46s cubic-bezier(.16,.84,.3,1)}
@@ -220,20 +231,20 @@
   .p-drop{animation:fall 1.3s linear infinite}.p-drop.d2{animation-delay:.4s}.p-drop.d3{animation-delay:.8s}
   .p-star{animation:tw 2.4s ease-in-out infinite}.p-star.s2{animation-delay:.8s}.p-star.s3{animation-delay:1.5s}
   .p-moon{animation:bob 6s ease-in-out infinite}
-  @media (max-width:720px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.now-temp{font-size:72px}}
+  @media (max-width:720px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.now-temp{font-size:94px}}
   .hero-tr{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
   .unit-toggle{display:inline-flex;background:rgba(255,255,255,.18);border-radius:999px;padding:2px;backdrop-filter:blur(4px)}
   .unit-toggle button{border:none;background:transparent;color:#fff;font-family:inherit;font-weight:800;font-size:12px;padding:4px 11px;border-radius:999px;cursor:pointer;opacity:.72}
   .unit-toggle button.on{background:rgba(255,255,255,.92);color:#3a2e6e;opacity:1}
   .taphint{font-size:11px;font-weight:600;opacity:.68;margin-top:12px;text-align:center}
-  .sunmoon{display:flex;flex-direction:column;gap:12px}
-  .smrow{display:flex;align-items:center;gap:14px}
-  .smrow+.smrow{border-top:1px solid var(--line);padding-top:12px}
-  .smicon{width:46px;text-align:center;font-size:34px;line-height:1}
-  .smdur{flex:1}
+  .sunmoon{display:flex;flex-direction:row;gap:0;align-items:stretch}
+  .smrow{flex:1 1 0;display:flex;flex-direction:column;align-items:center;padding:0 12px;text-align:center;min-width:0}
+  .smrow+.smrow{border-top:none;border-left:1px solid var(--line);padding-top:0}
+  .smicon{width:46px;height:46px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:34px;line-height:1;margin-bottom:8px}
+  .smdur{flex:0 0 auto;width:100%;min-height:44px;display:flex;flex-direction:column;justify-content:center;padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--line)}
   .smlabel{font-size:12px;font-weight:800;color:var(--ink-mute)}
   .smval{font-size:17px;font-weight:800}
-  .smtimes{display:flex;gap:16px;text-align:right}
+  .smtimes{display:flex;gap:16px;text-align:center;justify-content:center}
   .smtimes span{display:block;font-size:10px;font-weight:800;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.4px}
   .smtimes b{font-size:16px;font-weight:800}
   .pollen{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
@@ -252,7 +263,7 @@
   #partSheet .sheet-card{max-width:520px;max-height:82vh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #langSheet .sheet-card{max-height:82vh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   #partSheet .segs{display:grid;grid-template-columns:1fr;gap:10px;margin-top:6px}
-  .cbadge{display:inline-flex;align-items:center;gap:5px;margin:7px 0 3px;font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:999px;cursor:pointer;border:1px solid transparent;white-space:nowrap}
+  .cbadge{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:288px;margin:7px 0 3px;font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:999px;cursor:pointer;border:1px solid transparent;white-space:nowrap}
   .cbadge-row{display:flex;justify-content:center;margin:10px 0 2px}
   .cbadge-row .cbadge{margin:0}
   .cb-high{background:rgba(74,201,124,.18);color:#9ff0be;border-color:rgba(74,201,124,.42)}
@@ -1870,7 +1881,7 @@ async function fetchWeather(loc){
   const ids=MODELS.map(m=>m.id).join(',');
   const cb='&_='+Date.now(); // cache-buster so pull-to-refresh always re-fetches (was hitting a ~15 min cache)
   const u1=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&forecast_days=7&hourly=${hv}&daily=${dv}&models=${ids}`+cb;
-  const u2=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day,surface_pressure&daily=uv_index_max,sunrise,sunset&forecast_days=1`+cb;
+  const u2=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day,surface_pressure&hourly=surface_pressure&past_hours=3&forecast_hours=1&daily=uv_index_max,sunrise,sunset&forecast_days=1`+cb;
   const u3=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&current=european_aqi,us_aqi,uv_index,alder_pollen,birch_pollen,olive_pollen,grass_pollen,mugwort_pollen,ragweed_pollen`+cb;
   const opt={cache:'no-store'};
   const [r1,r2,r3]=await Promise.all([fetch(u1,opt),fetch(u2,opt),fetch(u3,opt).catch(()=>null)]);
@@ -1922,6 +1933,12 @@ async function fetchWeather(loc){
     if(!rainSplit||spread>rainSplit.spread) rainSplit={dayIdx:i,spread:Math.round(spread),snow:snow};
   }
   const cur=C.current||{};
+  // pressure trend from the last ~4 h of hourly surface_pressure (rising = fair, falling = unsettled)
+  let ptrend=null;
+  if(C.hourly&&C.hourly.surface_pressure){
+    const pa=C.hourly.surface_pressure.filter(x=>x!=null&&!isNaN(x));
+    if(pa.length>=2){const diff=pa[pa.length-1]-pa[0]; ptrend=diff>0.8?'up':diff<-0.8?'down':'steady';}
+  }
   const sr=C.daily&&C.daily.sunrise?C.daily.sunrise[0].slice(11,16):'';
   const ss=C.daily&&C.daily.sunset?C.daily.sunset[0].slice(11,16):'';
   const aqc=(AQ&&AQ.current)||{};
@@ -1938,7 +1955,7 @@ async function fetchWeather(loc){
       feels: now0.feels!=null?now0.feels:R(cur.apparent_temperature),
       key: now0.key||codeKey(cur.weather_code||0, cur.is_day===undefined?true:cur.is_day>=0.5),
       humidity:R(cur.relative_humidity_2m), wind: now0.wind!=null?now0.wind:R(cur.wind_speed_10m),
-      uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null,
+      uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null, pressureTrend:ptrend,
       dew: now0.dew!=null?now0.dew:null, cloud: now0.cloud!=null?now0.cloud:null},
     hourly,daily,sources,rainSplit,past,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
 }
@@ -2007,14 +2024,16 @@ function ring(frac,color){const R=26,C=2*Math.PI*R,off=C*(1-Math.max(0,Math.min(
     (frac>0?`<circle cx="36" cy="36" r="26" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 36 36)"/>`:'')+`</svg>`;}
 function sunMoonCard(D){
   const c=D.current, m=moonBlock(D.place.lat,D.place.lon,D.tzOffset);
-  return `<h2>${IC('sunrise')} ${t('sunTitle')}</h2><p class="sub">${tf('sunSub',{place:D.place.name})}</p>
-  <div class="card sunmoon">
+  return `<div class="card" style="margin-top:28px">
+    <h2 style="margin:0 0 14px">${IC('sunrise')} ${t('sunTitle')}</h2>
+    <div class="sunmoon">
     <div class="smrow"><div class="smicon">${pico('clear-day',44)}</div>
       <div class="smdur"><div class="smlabel">${t('daylight')}</div><div class="smval">${daylightStr(c.sunrise,c.sunset)||'—'}</div></div>
       <div class="smtimes"><div><span>${t('riseW')}</span><b>${c.sunrise||'--:--'}</b></div><div><span>${t('setW')}</span><b>${c.sunset||'--:--'}</b></div></div></div>
     <div class="smrow"><div class="smicon moon">${m.emoji}</div>
       <div class="smdur"><div class="smlabel">${m.name}</div><div class="smval">${m.illum}% ${t('lit')}</div></div>
       <div class="smtimes"><div><span>${t('riseW')}</span><b>${m.rise}</b></div><div><span>${t('setW')}</span><b>${m.set}</b></div></div></div>
+    </div>
   </div>`;
 }
 function pollenCard(D){
@@ -2023,10 +2042,10 @@ function pollenCard(D){
   if(!items.length) return '';
   items.sort((a,b)=>(b.L.i-a.L.i)||(b.v-a.v));
   const top=items.slice(0,3);
-  return `<h2>${IC('flower')} ${t('pollenTitle')}</h2><p class="sub">${t('pollenSub')}</p>
-  <div class="card pollen">${top.map(x=>`<div class="pcell"><div class="plabel">${x.label}</div>
+  return `<div class="card" style="margin-top:28px"><h2 style="margin:0 0 14px">${IC('flower')} ${t('pollenTitle')}</h2>
+  <div class="pollen">${top.map(x=>`<div class="pcell"><div class="plabel">${x.label}</div>
       <div class="pring">${ring(x.L.frac,POLLEN_COL[Math.max(0,x.L.i)])}<div class="pico2">${IC(x.ic,26)}</div></div>
-      <div class="plvl" style="color:${x.L.i<=0?'var(--ink-soft)':POLLEN_COL[x.L.i]}">${x.L.txt}</div></div>`).join('')}</div>`;
+      <div class="plvl" style="color:${x.L.i<=0?'var(--ink-soft)':POLLEN_COL[x.L.i]}">${x.L.txt}</div></div>`).join('')}</div></div>`;
 }
 function buildTips(D){
   const c=D.current, hrs=D.hourly||[];
@@ -2146,8 +2165,8 @@ function buildTips(D){
   return T.slice(0,n);
 }
 function lifestyleCard(D){
-  return `<h2>${IC('compass')} ${t('tipsTitle')}</h2><p class="sub">${t('tipsSub')}</p>
-  <div class="card tips">${buildTips(D).map(x=>`<div class="tip"><div class="tipic">${IC3(x.ic,30)}</div><div class="tiptx">${x.tx}</div></div>`).join('')}</div>`;
+  return `<div class="card" style="margin-top:28px"><h2 style="margin:0 0 14px">${IC('compass')} ${t('tipsTitle')}</h2>
+  <div class="tips">${buildTips(D).map(x=>`<div class="tip"><div class="tipic">${IC3(x.ic,30)}</div><div class="tiptx">${x.tx}</div></div>`).join('')}</div></div>`;
 }
 
 /* ============ PART-BY-PART POPUP ============ */
@@ -2224,30 +2243,32 @@ function render(D,root,ai){
       <div class="unit-toggle" onclick="event.stopPropagation()"><button class="${UNIT==='C'?'on':''}" onclick="setUnit('C')">°C</button><button class="${UNIT==='F'?'on':''}" onclick="setUnit('F')">°F</button></div>
     </div>
     <div class="hero-main">
-      <div class="hero-pict">${pico(c.key,116)}</div>
-      <div class="hero-now">
+      <div class="hero-set">
+        <div class="hero-pict">${pico(c.key,150)}</div>
         <div class="now-temp">${tC(c.temp)==null?'–':tC(c.temp)}<span>°${UNIT}</span></div>
+      </div>
+      <div class="hero-sub">
         <div class="now-cond">${LB(c.key)}</div>
         <div class="now-feels">${t('feelsLike')} ${tC(c.feels)==null?'–':tC(c.feels)+'°'+UNIT}</div>
       </div>
     </div>
     <div class="hero-panel">
       <div class="lohi-row">
-        <div class="lohi">▲ ${t('high')} ${hi==null?'–':tC(hi)+'°'}</div>
-        <div class="lohi">▼ ${t('low')} ${lo==null?'–':tC(lo)+'°'}</div>
+        <div class="lohi"><span>▼</span><span>${t('low')} ${lo==null?'–':tC(lo)+'°'}</span></div>
+        <div class="lohi"><span>${t('high')} ${hi==null?'–':tC(hi)+'°'}</span><span>▲</span></div>
       </div>
       <div class="cbadge-row"><div class="cbadge cb-${_lvl}" onclick="event.stopPropagation();openAgree()">◆ ${badgeTxt}</div></div>
       <div class="hero-stats">
-        <div class="hs"><span>${IC3('wind',26)}</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
         <div class="hs"><span>${IC3('humidity',26)}</span><b>${c.humidity==null?'–':c.humidity+'%'}</b><i>${t('humidity')}</i></div>
         <div class="hs"><span>${(c.key||'').indexOf('snow')>=0?IC3('snow',26):IC3('rain',26)}</span><b>${D.hourly[0]&&D.hourly[0].precip!=null?D.hourly[0].precip+'%':'–'}</b><i>${(c.key||'').indexOf('snow')>=0?t('snow'):t('rain')}</i></div>
+        <div class="hs"><span>${IC3('wind',26)}</span><b>${c.wind==null?'–':c.wind}</b><i>km/h</i></div>
         <div class="hs"><span>${(c.dew!=null&&c.dew<0)?IC3('frost',26):IC3('dew',26)}</span><b>${c.dew==null?'–':tC(c.dew)+'°'}</b><i>${(c.dew!=null&&c.dew<0)?_tl.frost:_tl.dew}</i></div>
       </div>
       <div class="hero-stats">
-        <div class="hs"><span>${IC3('aqi',26)}</span><b>${D.aqi!=null?D.aqi:'–'}</b><i>AQI ${D.aqi!=null?(D.aqiScale==='us'?'US':'EU'):''}</i></div>
-        <div class="hs"><span>${IC3('pressure',26)}</span><b>${c.pressure!=null?c.pressure:'–'}</b><i>hPa</i></div>
         <div class="hs"><span>${IC3('cloud',26)}</span><b>${c.cloud==null?'–':c.cloud+'%'}</b><i>${_tl.cloud}</i></div>
         <div class="hs"><span>${IC3('uv',26)}</span><b>${c.uv==null?'–':c.uv}</b><i>${t('uvNow')}</i></div>
+        <div class="hs"><span>${IC3('pressure',26)}</span><b>${c.pressure!=null?c.pressure:'–'}${c.pressureTrend==='up'?'<span class="ptr up">↑</span>':c.pressureTrend==='down'?'<span class="ptr down">↓</span>':''}</b><i>hPa</i></div>
+        <div class="hs"><span>${IC3('aqi',26)}</span><b>${D.aqi!=null?D.aqi:'–'}</b><i>AQI ${D.aqi!=null?(D.aqiScale==='us'?'US':'EU'):''}</i></div>
       </div>
     </div>
     <div class="taphint">${t('tapParts')}</div>
@@ -2262,15 +2283,13 @@ function render(D,root,ai){
 
   <div class="card" style="margin-top:28px">
     <h2 style="margin:0 0 10px">${IC('chart')} ${t('curveTitle')}</h2>
-    <div class="legend">
+    <div class="chart-box" id="chartBox"></div>
+    <div class="legend" style="margin-top:12px">
     <div class="lg"><span class="dot" style="background:var(--temp)"></span>${t('legTemp')}</div>
     <div class="lg"><span class="dot" style="background:var(--feels)"></span>${t('feelsLike')}</div>
-    <div class="lg"><span class="dot" style="background:var(--rain);opacity:.5"></span>${t('legRain')}</div></div>
-    <div class="chart-box" id="chartBox"></div>
-    <p class="sub" style="margin:12px 0 0">${t('curveSub')}</p></div>
+    <div class="lg"><span class="dot" style="background:var(--rain);opacity:.5"></span>${t('legRain')}</div></div></div>
 
-  <h2>${IC('cal')} ${t('weekTitle')}</h2><p class="sub">${tf('weekSub',{place:D.place.name})}</p>
-  <div class="days">${(()=>{const all=D.daily;const vals=all.flatMap(d=>[d.lo,d.hi]).filter(v=>v!=null);const gmin=vals.length?Math.min(...vals):0,gmax=vals.length?Math.max(...vals):1;
+  <div class="days" style="margin-top:28px"><h2 style="margin:0;padding:14px 16px">${IC('cal')} ${t('weekTitle')}</h2>${(()=>{const all=D.daily;const vals=all.flatMap(d=>[d.lo,d.hi]).filter(v=>v!=null);const gmin=vals.length?Math.min(...vals):0,gmax=vals.length?Math.max(...vals):1;
     return all.map((d,i)=>{const ok=d.lo!=null&&d.hi!=null;const l=ok?((d.lo-gmin)/(gmax-gmin||1))*100:0,w=ok?((d.hi-d.lo)/(gmax-gmin||1))*100:0;
     return `<div class="drow"><div class="dname">${i===0?t('today'):WD[d.date.getDay()]}<small>${d.date.getDate()}/${d.date.getMonth()+1}</small></div>
       ${pico(d.key,34)}<div class="drain">${d.precip>=10?((d.key&&d.key.indexOf('snow')>=0?'❄':'💧')+d.precip+'%'):''}</div>
@@ -2280,15 +2299,17 @@ function render(D,root,ai){
   ${pollenCard(D)}
   ${lifestyleCard(D)}
 
-  <h2>${IC('signal')} ${t('srcTitle')}</h2><p class="sub">${tf('srcSub',{n:D.sources.length})}</p>
+  <div class="src-wrap"><div class="src-hero">
+  <h2 style="margin:0 0 8px">${IC('signal')} ${t('srcTitle')}</h2><p class="sub">${tf('srcSub',{n:D.sources.length})}</p>
   <div class="src-table" id="srcTable"><table><thead><tr><th>${t('srcModel')}</th><th>${t('winHigh')}</th><th>${t('winLow')}</th></tr></thead><tbody>
     <tr class="avg"><td>${t('consensusAvg')}</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.hi,0)/D.sources.length))}°</td><td>${tC(Math.round(D.sources.reduce((a,s)=>a+s.lo,0)/D.sources.length))}°</td></tr>
     ${D.sources.map(s=>`<tr class="srow"><td>${s.name}</td><td>${tC(s.hi)}°</td><td>${tC(s.lo)}°</td></tr>`).join('')}
   </tbody></table></div>
   <button class="expander" onclick="toggleSrc(event)">${tf('showAll',{n:D.sources.length})}</button>
 
-  <div class="note"><b>${D.live?t('noteLive'):t('noteOffline')}</b> ${D.live?tf('noteLiveBody',{n:D.sources.length}):t('noteOfflineBody')}</div>`;
-  if(isMain)document.getElementById('foot').textContent=(D.live?t('footLive'):t('footOffline'))+t('footTail');
+  <div class="note"><b>${D.live?t('noteLive'):t('noteOffline')}</b> ${D.live?tf('noteLiveBody',{n:D.sources.length}):t('noteOfflineBody')}</div>
+  <div class="foot-in">${(D.live?t('footLive'):t('footOffline'))+t('footTail')}</div>
+  </div></div>`;
   renderTiles(root, ai);
   drawChart(D.hourly, root.querySelector('#chartBox'), isMain);
 }
@@ -2326,7 +2347,7 @@ function narr(key,hi,lo,precip,wind){
 
 /* ---- SVG line chart ---- */
 function svgChart(items,viewW){
-  const n=items.length,H=210,pL=34,pR=14,pT=16,pB=42;
+  const n=items.length,H=210,pL=34,pR=32,pT=16,pB=42;
   const per=(Math.max(viewW||360,280)-pL-pR)/17; // ~18 hours fit the visible width
   const W=pL+pR+per*(n-1);
   const temp=coalesce(items.map(x=>tC(x.temp))),feels=coalesce(items.map(x=>tC(x.feels))),rain=items.map(x=>x.precip==null?0:x.precip);
@@ -2334,10 +2355,10 @@ function svgChart(items,viewW){
   const lo=Math.floor((tmin-1)/2)*2,hi=Math.ceil((tmax+1)/2)*2;
   const X=i=>pL+per*i, Y=v=>pT+(H-pT-pB)*(1-(v-lo)/(hi-lo||1));
   const smooth=arr=>{let d='M'+X(0)+' '+Y(arr[0]);for(let i=0;i<n-1;i++){const x0=X(i),y0=Y(arr[i]),x1=X(i+1),y1=Y(arr[i+1]);const cx=(x0+x1)/2;d+=' C'+cx+' '+y0+' '+cx+' '+y1+' '+x1+' '+y1;}return d;};
-  let grid='';for(let v=lo;v<=hi;v+=Math.max(2,Math.round((hi-lo)/6/2)*2)){grid+=`<line x1="${pL}" y1="${Y(v)}" x2="${W-pR}" y2="${Y(v)}" stroke="rgba(255,255,255,.09)" stroke-width="1"/><text x="${pL-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-weight="700" fill="#A9A2C9">${v}°</text>`;}
+  let grid='';for(let v=lo;v<=hi;v+=Math.max(2,Math.round((hi-lo)/6/2)*2)){grid+=`<line x1="${pL}" y1="${Y(v)}" x2="${W-pR}" y2="${Y(v)}" stroke="rgba(255,255,255,.09)" stroke-width="1"/><text x="${pL-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-weight="700" fill="#A9A2C9">${v}°</text><text x="${W-pR+6}" y="${Y(v)+4}" text-anchor="start" font-size="11" font-weight="700" fill="#A9A2C9">${v}°</text>`;}
   const rmax=H-pB, rh=v=>(v/100)*((H-pT-pB)*0.55);
   let bars='';const bw=(W-pL-pR)/n*0.6;items.forEach((x,i)=>{if(x.precip>0){bars+=`<rect x="${X(i)-bw/2}" y="${rmax-rh(x.precip)}" width="${bw}" height="${rh(x.precip)}" rx="2" fill="#5AB0F0" opacity=".38"/>`;}});
-  let xlab='';items.forEach((x,i)=>{const hh=x.date.getHours();if(hh%6===0){xlab+=`<text x="${X(i)}" y="${H-pB+20}" text-anchor="middle" font-size="11" font-weight="700" fill="#A9A2C9">${pad(hh)}</text>`;if(hh===0)xlab+=`<text x="${X(i)}" y="${H-pB+34}" text-anchor="middle" font-size="10" font-weight="800" fill="#A78BFF">${WD[x.date.getDay()]}</text>`;}});
+  let xlab='';items.forEach((x,i)=>{const hh=x.date.getHours();if(hh%3===0){xlab+=`<text x="${X(i)}" y="${H-pB+20}" text-anchor="middle" font-size="11" font-weight="700" fill="#A9A2C9">${pad(hh)}</text>`;if(hh===0)xlab+=`<text x="${X(i)}" y="${H-pB+34}" text-anchor="middle" font-size="10" font-weight="800" fill="#A78BFF">${WD[x.date.getDay()]}</text>`;}});
   return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
     ${grid}${bars}
     <path d="${smooth(feels)}" fill="none" stroke="#A78BFF" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>
