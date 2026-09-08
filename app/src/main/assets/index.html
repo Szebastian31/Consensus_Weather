@@ -227,9 +227,11 @@
   @keyframes fall{0%{transform:translateY(-3px);opacity:0}30%{opacity:1}100%{transform:translateY(6px);opacity:0}}
   @keyframes tw{0%,100%{opacity:.35}50%{opacity:1}}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-  .p-rays{transform-origin:center;animation:spin 22s linear infinite}
+  .p-rays{transform-box:fill-box;transform-origin:center;animation:spin 22s linear infinite}
   .p-cloud{animation:drift 5s ease-in-out infinite}
   .p-drop{animation:fall 1.3s linear infinite}.p-drop.d2{animation-delay:.4s}.p-drop.d3{animation-delay:.8s}
+  @keyframes flash{0%,50%,100%{opacity:1}54%{opacity:.28}59%{opacity:1}67%{opacity:.45}73%{opacity:1}}
+  .p-bolt{animation:flash 2.6s ease-in-out infinite}
   .p-star{animation:tw 2.4s ease-in-out infinite}.p-star.s2{animation-delay:.8s}.p-star.s3{animation-delay:1.5s}
   .p-moon{animation:bob 6s ease-in-out infinite}
   @media (max-width:720px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.now-temp{font-size:94px}}
@@ -311,6 +313,19 @@
   <radialGradient id="gMoon" cx="38%" cy="32%" r="78%"><stop offset="0%" stop-color="#FFF8DD"/><stop offset="60%" stop-color="#FFE59E"/><stop offset="100%" stop-color="#E4C271"/></radialGradient>
   <linearGradient id="gBolt" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE879"/><stop offset="100%" stop-color="#FFAF1F"/></linearGradient>
   <radialGradient id="gDrop" cx="38%" cy="28%" r="85%"><stop offset="0%" stop-color="#CDE9FF"/><stop offset="100%" stop-color="#3B9BE6"/></radialGradient>
+  <radialGradient id="gSun3" cx="34%" cy="28%" r="75%"><stop offset="0%" stop-color="#FFF3C4"/><stop offset="42%" stop-color="#FFC231"/><stop offset="100%" stop-color="#FF7A16"/></radialGradient>
+  <linearGradient id="gRay" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFCE40"/><stop offset="100%" stop-color="#FF9022"/></linearGradient>
+  <linearGradient id="gFrost" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.92"/><stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.5"/></linearGradient>
+  <linearGradient id="gFrostDk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EEF3FA" stop-opacity="0.92"/><stop offset="100%" stop-color="#C7D2E4" stop-opacity="0.62"/></linearGradient>
+  <radialGradient id="gMoonB" cx="36%" cy="30%" r="80%"><stop offset="0%" stop-color="#F3F9FF"/><stop offset="55%" stop-color="#AFCDF2"/><stop offset="100%" stop-color="#6E93CC"/></radialGradient>
+  <linearGradient id="gRainLine" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8CC8F7"/><stop offset="100%" stop-color="#2E86D8"/></linearGradient>
+  <filter id="halo" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="4.5"/></filter>
+  <filter id="dropsh" x="-45%" y="-40%" width="190%" height="195%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#0b1026" flood-opacity="0.30"/></filter>
+  <linearGradient id="gFrostA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dce8fb" stop-opacity=".96"/><stop offset="1" stop-color="#bcd3f0" stop-opacity=".72"/></linearGradient>
+  <linearGradient id="gFrostB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f9ff" stop-opacity=".98"/><stop offset="1" stop-color="#dbe9f8" stop-opacity=".84"/></linearGradient>
+  <linearGradient id="gFrostC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#98a2ba" stop-opacity=".96"/><stop offset="1" stop-color="#6e788f" stop-opacity=".82"/></linearGradient>
+  <radialGradient id="gMoonLt" cx="38%" cy="34%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset="68%" stop-color="#e9f1fb"/><stop offset="100%" stop-color="#c7d9f0"/></radialGradient>
+  <radialGradient id="gMoonDk" cx="38%" cy="34%" r="82%"><stop offset="0" stop-color="#5a6488"/><stop offset="100%" stop-color="#323a58"/></radialGradient>
   <radialGradient id="gGreen" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#CFF6A6"/><stop offset="55%" stop-color="#66C24A"/><stop offset="100%" stop-color="#2E8B3D"/></radialGradient>
   <radialGradient id="gPink" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#FFD9EC"/><stop offset="55%" stop-color="#F573A9"/><stop offset="100%" stop-color="#D63C7E"/></radialGradient>
   <radialGradient id="gRed" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#FFCDB6"/><stop offset="55%" stop-color="#FF7A59"/><stop offset="100%" stop-color="#E23B3B"/></radialGradient>
@@ -382,35 +397,42 @@
 
 <script>
 /* ============ PICTOGRAMS ============ */
+const PI_SUN=`<g class="p-rays"><path d="M68.01,90.41c-5.57,1.68-9.89,12.69-16.04,13.2-2.21.18-4.31-.78-5.98-2.61l-7.57-8.34c-1.6-1.76-3.25-2.96-5.86-2.82l-12.67.68c-3.94.21-7.15-2.84-6.97-6.72l.6-13.25c.23-5.14-7.51-8.34-12.17-14.55-5.73-7.64,8.44-13.25,11.49-20.16,2.25-5.09-2.12-15.76,1.72-20.18s15.26.14,20.8-2.24S48.62-4.7,54.62,1.4l9.15,9.29c2.09,2.12,3.4,3.62,6.74,3.48l13.05-.51c3.73-.15,6.44,2.69,6.29,6.37l-.53,13.38c-.08,2.03.72,3.49,2.14,4.88l9.67,9.52c2.83,2.79,1.89,6.82-.78,9.4l-9.15,8.83c-1.25,1.21-1.99,2.75-1.92,4.61l.54,13.2c.45,10.91-14.92,4.49-21.82,6.56Z" fill="#d3e4f8"/><path d="M54.54,100.19c-1.61,1.69-4.05,2.02-5.53.5l-10.53-10.76c-1.22-1.25-2.71-2.16-4.57-2.09l-13.46.5c-1.54.06-2.81.01-3.85-.8s-1.63-2.06-1.54-3.64l.65-12.03c.11-2.07-.14-4.62-1.6-6.09l-11.33-11.34c-.81-2.37-.15-4.94,1.8-6.58,2.65-2.23,5.01-4.64,7.55-7.02,2.26-2.12,3.7-4.4,3.53-7.68l-.65-12.47c-.15-2.93,1.99-4.98,4.91-4.89l13.34.44c8.86.3,15.3-20.4,22.1-11.71,2.51,3.21,5.11,5.85,7.92,8.73,1.76,1.8,3.76,3.09,6.52,3l13.31-.44c2.99-.1,4.92,1.95,4.74,4.86l-.72,12.02c-.13,2.2.27,4.54,1.81,6.09l10.96,11.02c1.38,1.39.94,3.96-.39,5.25l-9.76,9.51c-2.02,1.97-2.77,4.43-2.63,7.34l.58,12.62c.22,4.68-8.61,3.84-16.53,3.26-3.99-.29-6.45,1.71-9.03,4.42l-7.59,7.97Z" fill="#ead9c1"/></g><circle cx="51.43" cy="52.05" r="32.92" fill="#fba833"/>`;
+const PI_MOONCORE=`<path d="M77.66,96.87l-32.73.16c-11.1.05-16.69-8.78-20.28-16.37C5.61,69.64-5.24,48.55,2.55,26.68,10.47,4.42,34.51-2.2,36.43.61c.48.7.56,1.96-.2,2.91-6.84,8.58-9.42,19.45-5.91,30.7,2.76,8.83,9.75,17.32,19.48,21.05,6.21-11.23,18.12-17.07,30.52-14.99,11.55,1.94,21.24,10.7,23.58,22.84,3.28,16.98-8.37,32.83-26.24,33.74Z" fill="#cedaea"/><path d="M28.55,84.19c-.39-1.37-.14-2.09.75-2.19,20.23,6.35,38.77-.52,50.38-17.9,2.11-3.15,5.76-9.53-.68-9.59-5.75,2.33-11.68,4.37-18.02,3.9-3.1-.23-9.91-1.09-7.5-4.96,5.91-8.69,16.68-12.91,27.23-10.91,9.54,1.81,18,9.15,20.57,19.22,2.07,8.12.72,16.46-4.67,23.29-4.23,5.37-11.48,9.69-19.39,9.72l-31.17.14c-7.61.03-14.57-4.04-17.5-10.73Z" fill="#8b9bb5"/><path d="M48.93,57.45c-6.59-.57-12.29.3-17.1,4.29-4.42,3.67-7.15,8.89-7.09,15.78C7.92,68.86-.87,50.15,3.42,31.72,7.01,16.34,19.23,4.88,34.76,1.98c-9.56,11.49-10.75,27.05-3.32,39.87,4.09,7.05,9.72,11.92,17.5,15.61Z" fill="#8b87af"/><path d="M28.55,84.19c-.77-1.77-1.64-3.5-.72-5.33,10.33,5.1,20.93,4.61,31.38.63,11.62-4.43,22.59-18.65,20.5-21.74-.33-.49-1.35-.96-2.32-.59-8.01,3.08-18.65,4.48-25.65.35-.59-1.35.94-2.89,1.73-4.05-.1.9.19,1.62.91,1.97,6.7,3.21,15.77,1.54,22.82-1.72,1.87-.86,3.99-.75,5.39.46,3.9,3.37-1.37,10.39-5.39,15.5-4.66,5.92-10.27,10.86-17.81,12.7-9.03,3.95-20.41,4.71-29.46.87-.58-.25-1.24.62-1.39.95Z" fill="#aebbcf"/>`;
+const PI_MOON=`<circle class="p-star" cx="55.83" cy="20.23" r="3.75" fill="#a9b9cf"/><circle class="p-star s2" cx="3.21" cy="83.87" r="2.84" fill="#9dadc7"/><circle class="p-star s3" cx="79.29" cy="8.84" r="2.87" fill="#a6b8cd"/><circle class="p-star s2" cx="86.87" cy="27.7" r="2.29" fill="#a0b2c9"/>`+PI_MOONCORE;
+const PI_PCD=`<path d="M21.96,75.88l-6.67-.25c-2.13-.08-4.46-2.51-4.38-4.73l.41-10.54c.12-2.98-1.01-5.01-3.18-6.85-4.51-3.81-10.05-8.14-7.49-12.49,4.3-7.29,10.75-7.36,10.54-14.61l-.29-10.43c-.23-8.24,13.72-3.29,18.85-5.17S38.06-.2,43.5,0s8.76,9.28,13.23,10.81,9.35-.31,13.7.1c9.27.86,3.39,13.26,5.66,18.66s15.16,11.55,9.12,17.61l-4.67,4.68c1.85,2.74,3.11,5.44,3.68,8.95,8.54,1.5,14.28,8.72,14.05,17.46-.25,9.39-7.35,16.97-16.86,16.96l-41.54-.05c-10.25-.01-17.89-8.71-17.89-19.3Z" fill="#d4e5f7"/><path d="M70.39,44.32c-11.34-4.18-23.66,1.1-28.03,12.7-6.52-.29-12.74,2.27-16.53,7.44-3.75.25-7.05-5.61-8.59-8.89-6.91-14.71-.27-31.89,14.44-38.6s31.87.37,38.03,14.95c1.39,3.29,3.62,10.01.68,12.4Z" fill="#fab93b"/><path d="M70.39,44.32c.98-9.77-4.56-19.45-12.62-24.37-8.98-5.48-19.68-5.58-28.44-.22-7.87,4.81-12.65,12.66-13.37,21.14-.79,9.23,2.89,17.89,9.86,23.6-2.03,2.77-3.1,5.69-3.84,9.01-2.53.19-5.36.65-7.43-.43-3.88-2.02.65-12.69-2.03-17.26l-9.32-9.92c-1.36-1.45-1.49-3.5-.01-4.97l8.32-8.28c1.28-1.27,1.87-2.95,1.79-4.84l-.45-10.59c-.1-2.38,1.32-4.22,3.76-4.11l10.65.45c2.22.09,4.13-.55,5.63-2.1l8.19-8.45c1.01-1.04,2.89-1.43,3.97-.35l9.27,9.37c1.25,1.27,3.07,1.58,4.88,1.5l10.66-.47c2.34-.1,4.02,1.7,3.91,4.07l-.44,9.99c-.1,2.24.44,4.24,2,5.8l7.99,7.96c1.27,1.27,1.64,3.39.32,4.68l-4.86,4.71c-2.22-3.11-5.07-4.71-8.39-5.94Z" fill="#ead9c1"/><path d="M79.91,55.04c-7.1,2.45-.93,14.75-5.96,19.46-4.59,4.29-13.56-1.47-18.18,3.04l-9.04,8.84c-2.35,2.3-5.33,1.3-7.52-.76l-9.22-8.67c-1.48-1.4-4.23-.64-5.88-.62-.04-3.57.91-6.87,3.03-9.73.52-.25,1.09-.33,1.57,0,15.96,10.79,38.09.8,41.77-17.92l1.61-1.18c3.45,1.73,6.08,4.42,7.83,7.53Z" fill="#ead9c1"/><path d="M68.73,45.84c3.53,2.08-.21,9.06-1.95,11.98-5.71,9.6-17.9,14.66-28.81,12.68-3.49-.64-11.75-2.82-8.54-6.93,3.8-3.57,8.78-4.85,14.37-4.28,3.63-10.98,14.2-16.7,24.93-13.45Z" fill="#fab93b"/><path d="M72.08,47.52c-.96,4.94-2.71,9.64-6.03,13.82-8.59,10.83-23.89,14.06-36.2,7.84-1.24-.63-2.06-1.37-2.72-2.57.86-1.16,1.34-2.14,2.29-3.04-.19.49-.3,1.8.28,2.19,6.86,4.62,14.69,4.59,22.38,2.15,8.44-2.67,14.38-9.46,16.55-18.11.37-1.49,1.01-2.8.08-3.95l3.35,1.68Z" fill="#e1dcc9"/><path d="M59.87,96.91c-4.04.53-18.51.7-16.43-1.31-.75-.63.75-1.59,8.3-.96l8.05-.17c.63-.17.95-.14,1.75-.25.78-.1,1.04-.25,1.92-.33l10.63-.13c23.22-1.13,33.72-29.18,18.09-46.13-15.1-16.37-41.24-9.64-48.62,10.8-12.61-3.35-25.89,3.97-25.45,17.99.46,14.69,14.67,18.74,26.82,17.17l.82,1.14c.58.44.41,1.16-.5,2.15l-10.8-.13c-12.42-1.27-20.96-12.34-19.2-24.12,1.86-12.46,13.9-20.41,26.56-17.19,1.9-4.34,4.1-8.19,7.66-11.43,13.38-12.14,34.06-11.23,45.86,2.68,7.78,9.16,9.57,21.93,4.27,33.1-4.65,9.81-15.04,16.86-26.75,16.98l-12.99.13Z" fill="#cfe0f7"/><path d="M45.75,94.74l-12.2.02c-10.98-1.75-18.57-12.16-16.13-23.16,2.58-11.6,14.6-17.69,25.68-13.96,4.3-13,16.5-20.97,29.91-20.21,12.95.74,24.32,10.02,27.07,23.14,3.65,17.39-8.93,34.17-26.63,34.35l-11.87.12" fill="#94c0dd" opacity=".7"/>`;
+const PI_CLOUD=`<path d="M129.18,17.94C110.2-4.43,76.93-5.89,55.41,13.63c-5.74,5.21-9.27,11.4-12.33,18.38C22.72,26.83,3.36,39.61.37,59.65c-2.83,18.95,10.91,36.76,30.88,38.8l17.37.21s.03-.04.05-.06h20.96c.42.2,1.19.26,2.5.09l20.9-.21c18.83-.19,35.54-11.53,43.03-27.31,8.52-17.98,5.64-38.5-6.87-53.24ZM95,93.64l-17.09.21c-1.41.13-1.83.38-3.09.54-1.29.17-1.81.13-2.82.4l-23.07-.26-.83-1.15c-19.54,2.53-42.4-3.98-43.14-27.61-.71-22.55,20.64-34.33,40.93-28.94C57.75,3.94,99.79-6.88,124.09,19.45c25.15,27.26,8.25,72.37-29.09,74.19Z" fill="url(#gFrostA)"/><path d="M49.41,95.2l-19.63.03C12.13,92.41-.09,75.66,3.85,57.98c4.15-18.65,23.48-28.45,41.31-22.46C52.07,14.62,71.7,1.79,93.28,3.02c20.82,1.19,39.12,16.11,43.54,37.21,5.87,27.98-14.36,54.95-42.83,55.25l-19.1.2-25.48-.49Z" fill="#94c0dd" fill-opacity=".82"/>`;
+const PI_CLOUD2=`<path d="M129.18,17.94C110.2-4.43,76.93-5.89,55.41,13.63c-5.74,5.21-9.27,11.4-12.33,18.38C22.72,26.83,3.36,39.61.37,59.65c-2.83,18.95,10.91,36.76,30.88,38.8l17.37.21s.03-.04.05-.06h20.96c.42.2,1.19.26,2.5.09l20.9-.21c18.83-.19,35.54-11.53,43.03-27.31,8.52-17.98,5.64-38.5-6.87-53.24ZM95,93.64l-17.09.21c-1.41.13-1.83.38-3.09.54-1.29.17-1.81.13-2.82.4l-23.07-.26-.83-1.15c-19.54,2.53-42.4-3.98-43.14-27.61-.71-22.55,20.64-34.33,40.93-28.94C57.75,3.94,99.79-6.88,124.09,19.45c25.15,27.26,8.25,72.37-29.09,74.19Z" fill="url(#gFrostB)"/><path d="M49.41,95.2l-19.63.03C12.13,92.41-.09,75.66,3.85,57.98c4.15-18.65,23.48-28.45,41.31-22.46C52.07,14.62,71.7,1.79,93.28,3.02c20.82,1.19,39.12,16.11,43.54,37.21,5.87,27.98-14.36,54.95-42.83,55.25l-19.1.2-25.48-.49Z" fill="#b3d0ea" fill-opacity=".55"/>`;
+const PI_CLOUD3=`<path d="M129.18,17.94C110.2-4.43,76.93-5.89,55.41,13.63c-5.74,5.21-9.27,11.4-12.33,18.38C22.72,26.83,3.36,39.61.37,59.65c-2.83,18.95,10.91,36.76,30.88,38.8l17.37.21s.03-.04.05-.06h20.96c.42.2,1.19.26,2.5.09l20.9-.21c18.83-.19,35.54-11.53,43.03-27.31,8.52-17.98,5.64-38.5-6.87-53.24ZM95,93.64l-17.09.21c-1.41.13-1.83.38-3.09.54-1.29.17-1.81.13-2.82.4l-23.07-.26-.83-1.15c-19.54,2.53-42.4-3.98-43.14-27.61-.71-22.55,20.64-34.33,40.93-28.94C57.75,3.94,99.79-6.88,124.09,19.45c25.15,27.26,8.25,72.37-29.09,74.19Z" fill="url(#gFrostC)"/><path d="M49.41,95.2l-19.63.03C12.13,92.41-.09,75.66,3.85,57.98c4.15-18.65,23.48-28.45,41.31-22.46C52.07,14.62,71.7,1.79,93.28,3.02c20.82,1.19,39.12,16.11,43.54,37.21,5.87,27.98-14.36,54.95-42.83,55.25l-19.1.2-25.48-.49Z" fill="#535c76" fill-opacity=".82"/>`;
+const PI_RAIN=`<path class="p-drop" d="M62.08,101.82c-.73,1.57-1.98,2.06-3.3,1.67-1.13-.33-2.07-1.89-1.36-3.35l5.67-11.56c.58-1.18,1.72-1.52,2.67-1.31,1.08.24,2.3,1.63,1.67,2.99l-5.35,11.56Z" fill="#bdcfe7"/><path class="p-drop d2" d="M16.11,89.73c-.69,1.47-2,2.01-3.09,1.66s-2.17-1.83-1.51-3.24l5.31-11.3c.66-1.4,1.71-2.03,3.05-1.63s2.18,1.86,1.45,3.43l-5.22,11.09Z" fill="#becfe8"/><path class="p-drop d3" d="M78.86,89.97c-.77,1.62-2.29,1.67-3.18,1.28-1.26-.56-1.82-1.91-1.17-3.26l5.37-11.2c.67-1.4,1.71-1.98,3.17-1.57.88.24,2.15,1.55,1.48,2.93l-5.67,11.83Z" fill="#bccee7"/><path class="p-drop d2" d="M23.38,103c-.55,1.13-1.69,1.27-2.34.98-.85-.38-1.38-1.42-.84-2.51l4.36-8.93c.49-1,1.77-.64,2.25-.24.61.52,1.12,1.46.63,2.45l-4.06,8.25Z" fill="#b8cae7"/><path d="M52.38,71.68c-1.69,1.93-8.01,2.17-9.18-.04-.88-.74-.85-1.47.23-1.77l8.51-.19c.53-1.27,1.31-1.74,2.36-1.42.77.42,1.11.38,1.03-.11l13.66-.15c27.12-1.32,39.39-34.08,21.13-53.88C72.48-5,41.94,2.86,33.33,26.74c-14.73-3.92-30.24,4.64-29.72,21.02.54,17.16,17.14,21.89,31.33,20.05l.96,1.33c.68.52.48,1.36-.58,2.52l-12.61-.16C8.19,70.02-1.78,57.09.27,43.32c2.17-14.55,16.23-23.84,31.02-20.08,2.22-5.07,4.78-9.57,8.95-13.35,15.63-14.18,39.79-13.11,53.57,3.13,9.08,10.71,11.18,25.61,4.99,38.67-5.43,11.46-17.57,19.7-31.25,19.83l-15.18.15Z" fill="#cfe0f7"/><path d="M54.31,68.27l-.76-1.32,5.31-8.9-16.35-.11-5.02,10.89-1.6.32-14.26.02C8.81,67.12-.06,54.95,2.8,42.11c3.02-13.55,17.05-20.66,30-16.31C37.82,10.62,52.07,1.3,67.74,2.2c15.12.86,28.41,11.7,31.62,27.03,4.26,20.32-10.43,39.91-31.11,40.13l-13.87.15c-.16-.4-.15-.89-.09-1.22Z" fill="#9eb4e6"/><path d="M54.31,68.27l-1.46,2.74-8.59.06c-.65,0-1.11.29-1.05.58h-7.9c-.16-.06-.11-.29-.37-.55l-11.92-.12v-1.11s12.35-.19,12.35-.19c.12-.28.35-.52.52-.53l5.66-12.54,19.68.07-6.92,11.59Z" fill="#e0ebf8"/>`;
+const PI_SNOW=`<path class="p-drop" d="M21.88,71.29c4.94.37,9.78-.09,15-.08l22.81.04c6.38.01,12.36.42,18.12-1.48.99,5.46-2.06,10.63-7.68,11.13-5.23.46-9.91-3.31-9.71-9.19l-23.94-.05,3.39,8.83c.88,4.04-1.29,7.98-4.59,9.5s-7.49,1.04-9.96-1.34c-2.84-2.73-3.54-6.72-2-10.3l2.87-6.7c-1.89.44-3.06-.23-4.3-.35Z" fill="#bccde4"/><path class="p-drop d2" d="M52.88,82.84c4.31,7.12,9.58,14.9,3.75,19.24-2.44,1.81-5.64,1.42-7.87-.26-5.26-3.97-.29-11.89,4.12-18.97Z" fill="#bccee5"/><path d="M77.8,69.77c-.72,1.69-2.36,2.51-4.92,2.46-3.8.63-10.04,1.08-13.19-.75l-22.81-.05c-.6,1.5-9.63,1.63-10.07,1.33-1-1.12-2.64-1.61-4.93-1.47C7.68,69.86-2.13,56.44.4,42.4c2.53-14.05,16.57-22.95,30.87-19.16,2.08-5.61,5.13-9.99,9.53-13.9,17.16-15.28,44.6-11.4,56.39,8.5,5.85,9.87,6.73,21.36,2.09,32.52-3.63,8.72-11.56,16.12-21.47,19.4Z" fill="#d3e0f5"/><path d="M60.61,69.64l-25.32-.14-3.9-6.81-3.84,6.72c-9.47.65-18.49-3.98-22.61-11.78-4.54-8.6-3.02-18.42,2.68-25.37,6.08-7.4,16.3-9.05,24.91-6.68,4.27-11.43,14.14-20.39,25.79-22.71,12.88-2.57,25.65,1.8,34.01,11.88,7.48,9.01,9.7,20.68,5.77,32.55-3,9.05-10.98,17.39-21.31,20.56-2.18-5.45-4.57-10.04-7.74-14.93-3.28,5.4-5.99,10.55-8.44,16.72Z" fill="#a5acd7"/>`;
+const PI_MOON2=`<path d="M66.09,122.9h-1.81c-17.66-.7-19.32-2.36-28.74-6.61C8.09,100.4-7.56,70,3.67,38.47,15.1,6.38,49.76-3.18,52.53.88c.69,1.01.8,2.82-.29,4.19-9.87,12.37-13.58,28.04-8.52,44.27,3.97,12.74,14.05,24.97,28.09,30.35,15.76,8.48,31.73.19,43.82-1.18,5.5-.5,4.21,5.19,1.22,12.25-20.05,32.98-45.66,31.6-50.75,32.13Z" fill="#cedaea"/><path d="M72.75,84.08c22.11,8.15,38.89-4.74,42.18-.82,2.58,1.82-10.99,27.13-36.07,33.7-14.18,4.28-34.33,1.16-43.18-5.2C11.42,99.28-1.26,72.3,4.93,45.73,10.1,23.56,27.73,7.03,50.11,2.85c-13.78,16.57-15.5,39-4.79,57.48,5.89,10.16,16.22,18.43,27.43,23.75Z" fill="#8b87af"/>`;
+const PI_VB={clear:'0 0 102.85 103.63',clearN:'0 0 104.46 97.03',pcloudy:'0 0 102.65 97.26',rain:'0 0 102.35 104.12',snow:'0 0 102.24 103.27'};
 function pico(key,size){size=size||34;
   const night=key.indexOf('-night')>=0, base=key.replace('-day','').replace('-night','');
-  const rays=`<g class="p-rays">${[0,45,90,135,180,225,270,315].map(a=>`<rect x="49.5" y="4" width="5" height="13" rx="2.5" fill="#FFC24B" transform="rotate(${a} 52 50)"/>`).join('')}</g>`;
-  const sun=`<g filter="url(#softsh)">${rays}<circle cx="52" cy="50" r="20" fill="url(#gSun)"/><ellipse cx="45" cy="42" rx="8.5" ry="5.5" fill="#FFF7D6" opacity=".5"/></g>`;
-  const cloud=(dk,x,y,s)=>`<g class="p-cloud" filter="url(#softsh)" transform="translate(${x} ${y}) scale(${s})"><path d="M26 66 a20 20 0 0 1 3-40 a24 24 0 0 1 47 6 a16 16 0 0 1 -4 34 Z" fill="url(#${dk?'gCloudDk':'gCloud'})"/><ellipse cx="40" cy="35" rx="15" ry="8" fill="#fff" opacity=".45"/></g>`;
-  const moon=`<g class="p-moon" filter="url(#softsh)"><circle cx="54" cy="50" r="21" fill="url(#gMoon)"/><circle cx="61" cy="44" r="3.6" fill="#E0BC6E" opacity=".5"/><circle cx="47" cy="58" r="2.8" fill="#E0BC6E" opacity=".45"/><circle cx="59" cy="61" r="2.2" fill="#E0BC6E" opacity=".4"/></g>`;
-  const moonBehind=`<g transform="translate(30 -10) scale(.56)">${moon}</g>`;
-  const stars=`<circle class="p-star" cx="24" cy="26" r="2.6" fill="#FFF7D6"/><circle class="p-star s2" cx="82" cy="22" r="2" fill="#FFF7D6"/><circle class="p-star s3" cx="28" cy="64" r="1.8" fill="#FFF7D6"/>`;
-  const drops=`<g>${[[40,74],[54,76],[68,74]].map((p,i)=>`<path class="p-drop ${i==1?'d2':i==2?'d3':''}" d="M${p[0]} ${p[1]} q3.5 5 0 9.5 q-3.5 -4.5 0 -9.5 Z" fill="url(#gDrop)"/>`).join('')}</g>`;
-  const flake=(x,y,c)=>`<g class="p-drop ${c}" stroke="#eaf4ff" stroke-width="2.1" stroke-linecap="round"><line x1="${x-5}" y1="${y}" x2="${x+5}" y2="${y}"/><line x1="${x}" y1="${y-5}" x2="${x}" y2="${y+5}"/><line x1="${x-3.6}" y1="${y-3.6}" x2="${x+3.6}" y2="${y+3.6}"/><line x1="${x-3.6}" y1="${y+3.6}" x2="${x+3.6}" y2="${y-3.6}"/></g>`;
-  const flakes=flake(40,78,'')+flake(55,82,'d2')+flake(70,78,'d3');
-  const bolt=`<path class="p-moon" filter="url(#softsh)" d="M55 60 l-13 20 h9 l-4 16 17 -24 h-10 l6 -12 Z" fill="url(#gBolt)"/>`;
-  const fogLines=`<g>${[80,88,96].map((y,i)=>`<line x1="18" y1="${y}" x2="86" y2="${y}" stroke="#eef3fb" stroke-width="4" stroke-linecap="round" opacity="${.85-i*.22}"/>`).join('')}</g>`;
-  const mb=night?moonBehind:'';
+  const g=(inner,tx,ty,s,op)=>`<g transform="translate(${tx} ${ty}) scale(${s})"${op?` opacity="${op}"`:''}>${inner}</g>`;
+  const cloud=(tx,ty,s,op,v)=>g(v==='dk'?PI_CLOUD3:(v?PI_CLOUD2:PI_CLOUD),tx,ty,s,op);
+  const dot=(x,y,r,c)=>`<circle class="p-star ${c}" cx="${x}" cy="${y}" r="${r}" fill="#cbd9f2"/>`;
+  const rainAt=(x,y,d)=>`<path class="p-drop ${d}" d="M${x} ${y} c-5.4 6.6 -5.4 12 0 17 c5.4 -4.9 5.4 -10.4 0 -17 Z" fill="url(#gRainLine)"/>`;
+  const flakeAt=(x,y,d)=>`<g class="p-drop ${d}" stroke="#cbdff5" stroke-width="2.6" stroke-linecap="round"><line x1="${x}" y1="${y-6.5}" x2="${x}" y2="${y+6.5}"/><line x1="${x-5.6}" y1="${y-3.2}" x2="${x+5.6}" y2="${y+3.2}"/><line x1="${x-5.6}" y1="${y+3.2}" x2="${x+5.6}" y2="${y-3.2}"/></g>`;
+  const bolt=`<path class="p-bolt" d="M66 76 l-14 22 h9 l-4 17 18 -26 h-10 l7 -13 Z" fill="#fba833"/>`;
   let s='';
   switch(base){
-    case 'clear':s=night?stars+moon:sun;break;
-    case 'pcloudy':s=night?stars+moonBehind+cloud(false,8,22,1):`<g transform="translate(-10 -12) scale(.78)">${sun}</g>`+cloud(false,8,20,1.02);break;
-    case 'cloudy':s=mb+cloud(false,0,6,1.26);break;
-    case 'overcast':s=mb+cloud(true,2,2,1.3);break;
-    case 'fog':s=mb+cloud(false,0,-2,1.22)+fogLines;break;
-    case 'rain':s=mb+cloud(true,0,-4,1.2)+drops;break;
-    case 'snow':s=mb+cloud(true,0,-4,1.2)+flakes;break;
-    case 'thunder':s=mb+cloud(true,0,-6,1.24)+bolt;break;
-    default:s=sun;
+    case 'clear': s=night?(dot(30,26,3.2,'')+dot(104,20,2.6,'s2')+dot(30,100,2.4,'s3')+dot(110,78,2,'')+dot(90,108,2.6,'s2')+dot(98,44,2.2,'s3')+g(PI_MOON2,24,20,.64)):g(PI_SUN,13,12,1.02); break;
+    case 'pcloudy': s=night?(g(PI_MOON2,30,18,.5)+cloud(18,46,.66,'',true)):(g(PI_SUN,32,24,.56)+cloud(18,46,.66,'',true)); break;
+    case 'cloudy': s=cloud(6,24,.82,'',true); break;
+    case 'overcast': s=cloud(24,10,.7,'.9')+cloud(6,48,.48,'',true); break;
+    case 'fog': s=cloud(14,6,.72,'',true)+`<g stroke="#94c0dd" stroke-width="7" stroke-linecap="round"><line x1="34" y1="98" x2="98" y2="98"/><line x1="42" y1="114" x2="90" y2="114" opacity=".6"/></g>`; break;
+    case 'rain': s=cloud(14,4,.72)+rainAt(46,84,'')+rainAt(66,86,'d2')+rainAt(86,84,'d3'); break;
+    case 'snow': s=cloud(14,4,.72,'',true)+flakeAt(50,92,'')+flakeAt(80,96,'d2')+flakeAt(65,110,'d3'); break;
+    case 'sleet': s=cloud(14,4,.72)+rainAt(42,88,'')+flakeAt(64,96,'d2')+rainAt(88,88,'d3'); break;
+    case 'thunder': s=cloud(14,2,.72,'','dk')+bolt; break;
+    case 'tstorm': s=cloud(14,2,.72,'','dk')+bolt+rainAt(38,88,'')+rainAt(94,90,'d2'); break;
+    default: s=g(PI_SUN,13,12,1.02);
   }
-  return `<svg class="pico" style="width:${size}px;height:${size}px" viewBox="0 0 104 104" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+  return `<svg class="pico" style="width:${size}px;height:${size}px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg"><g filter="url(#dropsh)" opacity=".95">${s}</g></svg>`;
 }
-function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='clear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
+function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='tstorm')b='thunder';if(b==='sleet')b='snow';if(b==='clear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
 const HEROGRAD={
   'clear-day':'linear-gradient(135deg,#3E90E0 0%,#5FB0F2 45%,#FFC24B 100%)',
   'clear-night':'linear-gradient(135deg,#221A52 0%,#3A2E7A 55%,#5B4B9E 100%)',
@@ -421,6 +443,7 @@ const HEROGRAD={
   'fog':'linear-gradient(135deg,#7C7E9C 0%,#B7BAD0 100%)',
   'rain':'linear-gradient(135deg,#3A4C7A 0%,#5C79B0 60%,#7E9BC9 100%)',
   'snow':'linear-gradient(135deg,#5B7BA6 0%,#9FC2E6 100%)',
+  'sleet':'linear-gradient(135deg,#5B7BA6 0%,#9FC2E6 100%)',
   'thunder':'linear-gradient(135deg,#2A2350 0%,#4A3E7A 55%,#8B5CC7 100%)'
 };
 function heroGrad(k){return HEROGRAD[k]||HEROGRAD[k.replace('-day','').replace('-night','')]||'linear-gradient(135deg,#5B4B9E,#E4657F 70%,#FF9E5E)';}
@@ -436,7 +459,7 @@ const SKY={
   snow:{dawn:'linear-gradient(180deg,#4a597e 0%,#8f9fc4 50%,#e9d3d8 100%)',midday:'linear-gradient(180deg,#6f8bb8 0%,#a6c2de 55%,#e6f1fb 100%)',day:'linear-gradient(180deg,#6076a0 0%,#93aecd 55%,#cfe0f0 100%)',dusk:'linear-gradient(180deg,#3a4468 0%,#71749c 50%,#d0a0aa 100%)',night:'linear-gradient(180deg,#2a3550 0%,#4a5a7a 100%)'},
   fog:{dawn:'linear-gradient(180deg,#565e74 0%,#8f8f9e 55%,#cbb3a6 100%)',day:'linear-gradient(180deg,#606a80 0%,#8f97a9 55%,#c2c7d2 100%)',dusk:'linear-gradient(180deg,#42485a 0%,#77778a 55%,#b59180 100%)',night:'linear-gradient(180deg,#262b3a 0%,#474e60 100%)'}
 };
-function skyGrad(key,phase){const base=key.replace('-day','').replace('-night','');const set=SKY[base]||SKY.cloudy;return set[phase]||set.day||set.night||set[Object.keys(set)[0]];}
+function skyGrad(key,phase){let base=key.replace('-day','').replace('-night','');if(base==='tstorm')base='thunder';if(base==='sleet')base='snow';const set=SKY[base]||SKY.cloudy;return set[phase]||set.day||set.night||set[Object.keys(set)[0]];}
 function skyPhase(key,hourMin,srMin,ssMin){
   const night=key.includes('-night')||(srMin!=null&&(hourMin<srMin-30||hourMin>ssMin+30));
   if(srMin==null||ssMin==null) return night?'night':'day';
@@ -455,11 +478,13 @@ function codeKey(code,isDay){
   if(code===2) return 'pcloudy'+d;
   if(code===3) return 'overcast'+d;
   if(code===45||code===48) return 'fog'+d;
+  if(code===56||code===57||code===66||code===67) return 'sleet'+d;
   if(code>=51&&code<=67) return 'rain'+d;
   if(code>=71&&code<=77) return 'snow'+d;
   if(code>=80&&code<=82) return 'rain'+d;
   if(code>=85&&code<=86) return 'snow'+d;
-  if(code>=95) return 'thunder'+d;
+  if(code===95) return 'thunder'+d;
+  if(code>=96) return 'tstorm'+d;
   return 'pcloudy'+d;
 }
 </script>
@@ -2006,7 +2031,15 @@ function aqiLabel(v,scale){if(v==null)return '—';
 function moonPhaseInfo(p){const a=[['🌑','New moon'],['🌒','Waxing crescent'],['🌓','First quarter'],['🌔','Waxing gibbous'],['🌕','Full moon'],['🌖','Waning gibbous'],['🌗','Last quarter'],['🌘','Waning crescent']];return a[Math.round(p*8)%8];}
 function moonBlock(lat,lon,off){const now=new Date();const mt=SC.moonTimes(now,lat,lon),il=SC.moonIllum(now);
   const emojis=['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];const idx=Math.round(il.phase*8)%8;
-  return {emoji:emojis[idx],name:t('moon'+idx),illum:Math.round(il.fraction*100),rise:fmtTZ(mt.rise,off),set:fmtTZ(mt.set,off)};}
+  return {emoji:emojis[idx],name:t('moon'+idx),illum:Math.round(il.fraction*100),fraction:il.fraction,waxing:il.phase<0.5,rise:fmtTZ(mt.rise,off),set:fmtTZ(mt.set,off)};}
+function moonIcon(fraction,waxing,size){size=size||44;fraction=Math.max(0,Math.min(1,fraction));
+  const r=52,cx=64,cy=64,rx=(r*Math.abs(1-2*fraction)).toFixed(1),gib=fraction>0.5,litSide=waxing?1:0;
+  const disk=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#gMoonDk)"/>`;
+  const litSemi=`<path d="M${cx} ${cy-r} A ${r} ${r} 0 0 ${litSide} ${cx} ${cy+r} Z" fill="url(#gMoonLt)"/>`;
+  const ell=`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${r}" fill="url(#${gib?'gMoonLt':'gMoonDk'})"/>`;
+  const rim=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#cbd9f2" stroke-opacity=".5" stroke-width="2.5"/>`;
+  return `<svg class="pico" style="width:${size}px;height:${size}px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg"><g filter="url(#dropsh)" opacity=".95">${disk}${litSemi}${ell}${rim}</g></svg>`;
+}
 function daylightStr(sr,ss){if(!sr||!ss)return '';const a=sr.split(':'),b=ss.split(':');let m=(+b[0]*60+ +b[1])-(+a[0]*60+ +a[1]);if(m<0)m+=1440;return Math.floor(m/60)+' '+t('hrs')+' '+(m%60)+' '+t('mins');}
 
 /* ============ POLLEN + LIFESTYLE ============ */
@@ -2031,7 +2064,7 @@ function sunMoonCard(D){
     <div class="smrow"><div class="smicon">${pico('clear-day',44)}</div>
       <div class="smdur"><div class="smlabel">${t('daylight')}</div><div class="smval">${daylightStr(c.sunrise,c.sunset)||'—'}</div></div>
       <div class="smtimes"><div><span>${t('riseW')}</span><b>${c.sunrise||'--:--'}</b></div><div><span>${t('setW')}</span><b>${c.sunset||'--:--'}</b></div></div></div>
-    <div class="smrow"><div class="smicon moon">${m.emoji}</div>
+    <div class="smrow"><div class="smicon moon">${moonIcon(m.fraction,m.waxing,44)}</div>
       <div class="smdur"><div class="smlabel">${m.name}</div><div class="smval">${m.illum}% ${t('lit')}</div></div>
       <div class="smtimes"><div><span>${t('riseW')}</span><b>${m.rise}</b></div><div><span>${t('setW')}</span><b>${m.set}</b></div></div></div>
     </div>
