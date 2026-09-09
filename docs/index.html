@@ -232,6 +232,8 @@
   .p-drop{animation:fall 1.3s linear infinite}.p-drop.d2{animation-delay:.4s}.p-drop.d3{animation-delay:.8s}
   @keyframes flash{0%,50%,100%{opacity:1}54%{opacity:.28}59%{opacity:1}67%{opacity:.45}73%{opacity:1}}
   .p-bolt{animation:flash 2.6s ease-in-out infinite}
+  @keyframes gust{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+  .p-gust{animation:gust 3s ease-in-out infinite}
   .p-star{animation:tw 2.4s ease-in-out infinite}.p-star.s2{animation-delay:.8s}.p-star.s3{animation-delay:1.5s}
   .p-moon{animation:bob 6s ease-in-out infinite}
   @media (max-width:720px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.now-temp{font-size:94px}}
@@ -326,6 +328,8 @@
   <linearGradient id="gFrostC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#98a2ba" stop-opacity=".96"/><stop offset="1" stop-color="#6e788f" stop-opacity=".82"/></linearGradient>
   <radialGradient id="gMoonLt" cx="38%" cy="34%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset="68%" stop-color="#e9f1fb"/><stop offset="100%" stop-color="#c7d9f0"/></radialGradient>
   <radialGradient id="gMoonDk" cx="38%" cy="34%" r="82%"><stop offset="0" stop-color="#5a6488"/><stop offset="100%" stop-color="#323a58"/></radialGradient>
+  <linearGradient id="gSand" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8c07a"/><stop offset="1" stop-color="#c8935a"/></linearGradient>
+  <radialGradient id="gHail" cx="38%" cy="32%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset="100%" stop-color="#c2d8ef"/></radialGradient>
   <radialGradient id="gGreen" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#CFF6A6"/><stop offset="55%" stop-color="#66C24A"/><stop offset="100%" stop-color="#2E8B3D"/></radialGradient>
   <radialGradient id="gPink" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#FFD9EC"/><stop offset="55%" stop-color="#F573A9"/><stop offset="100%" stop-color="#D63C7E"/></radialGradient>
   <radialGradient id="gRed" cx="36%" cy="28%" r="85%"><stop offset="0%" stop-color="#FFCDB6"/><stop offset="55%" stop-color="#FF7A59"/><stop offset="100%" stop-color="#E23B3B"/></radialGradient>
@@ -416,26 +420,36 @@ function pico(key,size){size=size||34;
   const rainAt=(x,y,d)=>`<path class="p-drop ${d}" d="M${x} ${y} c-5.4 6.6 -5.4 12 0 17 c5.4 -4.9 5.4 -10.4 0 -17 Z" fill="url(#gRainLine)"/>`;
   const flakeAt=(x,y,d)=>`<g class="p-drop ${d}" stroke="#cbdff5" stroke-width="2.6" stroke-linecap="round"><line x1="${x}" y1="${y-6.5}" x2="${x}" y2="${y+6.5}"/><line x1="${x-5.6}" y1="${y-3.2}" x2="${x+5.6}" y2="${y+3.2}"/><line x1="${x-5.6}" y1="${y+3.2}" x2="${x+5.6}" y2="${y-3.2}"/></g>`;
   const bolt=`<path class="p-bolt" d="M66 76 l-14 22 h9 l-4 17 18 -26 h-10 l7 -13 Z" fill="#fba833"/>`;
+  const hailAt=(x,y,d)=>`<circle class="p-drop ${d}" cx="${x}" cy="${y}" r="6.5" fill="url(#gHail)" stroke="#9fbfe0" stroke-width="1.4"/>`;
+  const gust=inner=>`<g class="p-gust">${inner}</g>`;
   let s='';
   switch(base){
     case 'clear': s=night?(dot(30,26,3.2,'')+dot(104,20,2.6,'s2')+dot(30,100,2.4,'s3')+dot(110,78,2,'')+dot(90,108,2.6,'s2')+dot(98,44,2.2,'s3')+g(PI_MOON2,24,20,.64)):g(PI_SUN,13,12,1.02); break;
+    case 'mclear': s=(night?g(PI_MOON2,14,10,.58):g(PI_SUN,16,8,.66))+cloud(40,52,.44,'',true); break;
     case 'pcloudy': s=night?(g(PI_MOON2,30,18,.5)+cloud(18,46,.66,'',true)):(g(PI_SUN,32,24,.56)+cloud(18,46,.66,'',true)); break;
     case 'cloudy': s=cloud(6,24,.82,'',true); break;
     case 'overcast': s=cloud(24,10,.7,'.9')+cloud(6,48,.48,'',true); break;
     case 'fog': s=cloud(14,6,.72,'',true)+`<g stroke="#94c0dd" stroke-width="7" stroke-linecap="round"><line x1="34" y1="98" x2="98" y2="98"/><line x1="42" y1="114" x2="90" y2="114" opacity=".6"/></g>`; break;
     case 'rain': s=cloud(14,4,.72)+rainAt(46,84,'')+rainAt(66,86,'d2')+rainAt(86,84,'d3'); break;
+    case 'hrain': s=cloud(14,2,.72)+rainAt(38,82,'')+rainAt(54,84,'d2')+rainAt(70,82,'d3')+rainAt(86,84,'')+rainAt(48,98,'d2')+rainAt(78,98,'d3'); break;
+    case 'rshowers': s=(night?g(PI_MOON2,28,4,.5):g(PI_SUN,30,8,.56))+cloud(16,30,.62,'',true)+rainAt(44,92,'')+rainAt(74,94,'d2'); break;
     case 'snow': s=cloud(14,4,.72,'',true)+flakeAt(50,92,'')+flakeAt(80,96,'d2')+flakeAt(65,110,'d3'); break;
+    case 'sshowers': s=(night?g(PI_MOON2,28,4,.5):g(PI_SUN,30,8,.56))+cloud(16,30,.62,'',true)+flakeAt(46,94,'')+flakeAt(76,98,'d2'); break;
     case 'sleet': s=cloud(14,4,.72)+rainAt(42,88,'')+flakeAt(64,96,'d2')+rainAt(88,88,'d3'); break;
     case 'thunder': s=cloud(14,2,.72,'','dk')+bolt; break;
     case 'tstorm': s=cloud(14,2,.72,'','dk')+bolt+rainAt(38,88,'')+rainAt(94,90,'d2'); break;
+    case 'hail': s=cloud(14,2,.72,'','dk')+bolt+hailAt(40,92,'')+hailAt(92,94,'d2'); break;
+    case 'sand': s=`<g opacity=".5">`+g(PI_SUN,62,2,.4)+`</g>`+gust(`<g stroke="url(#gSand)" stroke-width="8.5" stroke-linecap="round" fill="none"><path d="M14 66 q16 -9 32 0 t32 0"/><path d="M12 90 q18 -10 36 0 t36 0"/><path d="M20 112 q15 -8 30 0 t30 0" opacity=".72"/></g>`); break;
     default: s=g(PI_SUN,13,12,1.02);
   }
   return `<svg class="pico" style="width:${size}px;height:${size}px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg"><g filter="url(#dropsh)" opacity=".95">${s}</g></svg>`;
 }
-function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='tstorm')b='thunder';if(b==='sleet')b='snow';if(b==='clear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
+function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='tstorm'||b==='hail')b='thunder';if(b==='sleet')b='snow';if(b==='rshowers'||b==='hrain')b='rain';if(b==='sshowers')b='snow';if(b==='sand')b='fog';if(b==='clear'||b==='mclear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
 const HEROGRAD={
   'clear-day':'linear-gradient(135deg,#3E90E0 0%,#5FB0F2 45%,#FFC24B 100%)',
   'clear-night':'linear-gradient(135deg,#221A52 0%,#3A2E7A 55%,#5B4B9E 100%)',
+  'mclear-day':'linear-gradient(135deg,#3E90E0 0%,#5FB0F2 45%,#FFC24B 100%)',
+  'mclear-night':'linear-gradient(135deg,#221A52 0%,#3A2E7A 55%,#5B4B9E 100%)',
   'pcloudy-day':'linear-gradient(135deg,#4E7FC7 0%,#7FA8DC 50%,#F2B54B 100%)',
   'pcloudy-night':'linear-gradient(135deg,#242058 0%,#40467F 60%,#6E6AA8 100%)',
   'cloudy':'linear-gradient(135deg,#6D6E93 0%,#9CA0BE 60%,#C3B7D6 100%)',
@@ -444,6 +458,11 @@ const HEROGRAD={
   'rain':'linear-gradient(135deg,#3A4C7A 0%,#5C79B0 60%,#7E9BC9 100%)',
   'snow':'linear-gradient(135deg,#5B7BA6 0%,#9FC2E6 100%)',
   'sleet':'linear-gradient(135deg,#5B7BA6 0%,#9FC2E6 100%)',
+  'rshowers':'linear-gradient(135deg,#3A4C7A 0%,#5C79B0 60%,#7E9BC9 100%)',
+  'hrain':'linear-gradient(135deg,#2E3E68 0%,#4A648F 60%,#6F8CB6 100%)',
+  'sshowers':'linear-gradient(135deg,#5B7BA6 0%,#9FC2E6 100%)',
+  'hail':'linear-gradient(135deg,#2A2350 0%,#4A3E7A 55%,#8B5CC7 100%)',
+  'sand':'linear-gradient(135deg,#7A5B34 0%,#C8935A 55%,#E8C07A 100%)',
   'thunder':'linear-gradient(135deg,#2A2350 0%,#4A3E7A 55%,#8B5CC7 100%)'
 };
 function heroGrad(k){return HEROGRAD[k]||HEROGRAD[k.replace('-day','').replace('-night','')]||'linear-gradient(135deg,#5B4B9E,#E4657F 70%,#FF9E5E)';}
@@ -459,7 +478,7 @@ const SKY={
   snow:{dawn:'linear-gradient(180deg,#4a597e 0%,#8f9fc4 50%,#e9d3d8 100%)',midday:'linear-gradient(180deg,#6f8bb8 0%,#a6c2de 55%,#e6f1fb 100%)',day:'linear-gradient(180deg,#6076a0 0%,#93aecd 55%,#cfe0f0 100%)',dusk:'linear-gradient(180deg,#3a4468 0%,#71749c 50%,#d0a0aa 100%)',night:'linear-gradient(180deg,#2a3550 0%,#4a5a7a 100%)'},
   fog:{dawn:'linear-gradient(180deg,#565e74 0%,#8f8f9e 55%,#cbb3a6 100%)',day:'linear-gradient(180deg,#606a80 0%,#8f97a9 55%,#c2c7d2 100%)',dusk:'linear-gradient(180deg,#42485a 0%,#77778a 55%,#b59180 100%)',night:'linear-gradient(180deg,#262b3a 0%,#474e60 100%)'}
 };
-function skyGrad(key,phase){let base=key.replace('-day','').replace('-night','');if(base==='tstorm')base='thunder';if(base==='sleet')base='snow';const set=SKY[base]||SKY.cloudy;return set[phase]||set.day||set.night||set[Object.keys(set)[0]];}
+function skyGrad(key,phase){let base=key.replace('-day','').replace('-night','');if(base==='mclear')base='clear';if(base==='tstorm'||base==='hail')base='thunder';if(base==='sleet'||base==='sshowers')base='snow';if(base==='rshowers'||base==='hrain')base='rain';if(base==='sand')base='fog';const set=SKY[base]||SKY.cloudy;return set[phase]||set.day||set.night||set[Object.keys(set)[0]];}
 function skyPhase(key,hourMin,srMin,ssMin){
   const night=key.includes('-night')||(srMin!=null&&(hourMin<srMin-30||hourMin>ssMin+30));
   if(srMin==null||ssMin==null) return night?'night':'day';
@@ -474,17 +493,20 @@ function skyPhase(key,hourMin,srMin,ssMin){
 /* WMO code -> key (always carries -day/-night so night clouds can show a moon) */
 function codeKey(code,isDay){
   const d=isDay?'-day':'-night';
-  if(code===0||code===1) return 'clear'+d;
+  if(code===0) return 'clear'+d;
+  if(code===1) return 'mclear'+d;
   if(code===2) return 'pcloudy'+d;
   if(code===3) return 'overcast'+d;
   if(code===45||code===48) return 'fog'+d;
   if(code===56||code===57||code===66||code===67) return 'sleet'+d;
+  if(code===65) return 'hrain'+d;
   if(code>=51&&code<=67) return 'rain'+d;
   if(code>=71&&code<=77) return 'snow'+d;
-  if(code>=80&&code<=82) return 'rain'+d;
-  if(code>=85&&code<=86) return 'snow'+d;
-  if(code===95) return 'thunder'+d;
-  if(code>=96) return 'tstorm'+d;
+  if(code===82) return 'hrain'+d;
+  if(code>=80&&code<=82) return 'rshowers'+d;
+  if(code>=85&&code<=86) return 'sshowers'+d;
+  if(code===95) return 'tstorm'+d;
+  if(code>=96) return 'hail'+d;
   return 'pcloudy'+d;
 }
 </script>
@@ -1906,9 +1928,9 @@ async function fetchWeather(loc){
   const dv='weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset,uv_index_max';
   const ids=MODELS.map(m=>m.id).join(',');
   const cb='&_='+Date.now(); // cache-buster so pull-to-refresh always re-fetches (was hitting a ~15 min cache)
-  const u1=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&forecast_days=7&hourly=${hv}&daily=${dv}&models=${ids}`+cb;
+  const u1=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&forecast_days=7&past_days=1&hourly=${hv}&daily=${dv}&models=${ids}`+cb;
   const u2=`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day,surface_pressure&hourly=surface_pressure&past_hours=3&forecast_hours=1&daily=uv_index_max,sunrise,sunset&forecast_days=1`+cb;
-  const u3=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&current=european_aqi,us_aqi,uv_index,alder_pollen,birch_pollen,olive_pollen,grass_pollen,mugwort_pollen,ragweed_pollen`+cb;
+  const u3=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${loc.lat}&longitude=${loc.lon}&timezone=auto&current=european_aqi,us_aqi,uv_index,dust,alder_pollen,birch_pollen,olive_pollen,grass_pollen,mugwort_pollen,ragweed_pollen`+cb;
   const opt={cache:'no-store'};
   const [r1,r2,r3]=await Promise.all([fetch(u1,opt),fetch(u2,opt),fetch(u3,opt).catch(()=>null)]);
   const H=await r1.json(); const C=await r2.json();
@@ -1939,8 +1961,11 @@ async function fetchWeather(loc){
   // daily averaged across models
   const davg=(v,i)=>{const a=MODELS.map(m=>dd[v+'_'+m.id]&&dd[v+'_'+m.id][i]).filter(x=>x!=null&&!isNaN(x));return a.length?a.reduce((s,x)=>s+x,0)/a.length:null;};
   const dmode=(v,i)=>{const a=MODELS.map(m=>dd[v+'_'+m.id]&&dd[v+'_'+m.id][i]).filter(x=>x!=null);if(!a.length)return 0;const c={};let b=a[0],bn=0;a.forEach(x=>{c[x]=(c[x]||0)+1;if(c[x]>bn){bn=c[x];b=x;}});return b;};
+  // daily anchored to today (past_days=1 prepends yesterday, so find today's index)
+  const todayDate=nowStr.slice(0,10);
+  let d0=dd.time.findIndex(t=>t===todayDate); if(d0<0)d0=0;
   const daily=[];
-  for(let i=0;i<dd.time.length;i++){
+  for(let i=d0;i<dd.time.length;i++){
     daily.push({date:new Date(dd.time[i]+'T12:00'),key:codeKey(Math.round(dmode('weather_code',i)),true),
       hi:R(davg('temperature_2m_max',i)),lo:R(davg('temperature_2m_min',i)),
       precip:R(davg('precipitation_probability_max',i)),wind:R(davg('wind_speed_10m_max',i))});
@@ -1949,14 +1974,15 @@ async function fetchWeather(loc){
   const sources=MODELS.map(m=>{const arr=[];for(let i=si;i<Math.min(si+37,n);i++){const v=hh['temperature_2m_'+m.id]&&hh['temperature_2m_'+m.id][i];if(v!=null)arr.push(v);}return arr.length?{name:m.name,hi:Math.round(Math.max(...arr)),lo:Math.round(Math.min(...arr))}:null;}).filter(Boolean);
   // per-model precip disagreement over the next few days (the consensus edge)
   let rainSplit=null;
-  for(let i=1;i<Math.min(4,dd.time.length);i++){
+  for(let rel=1;rel<Math.min(4,daily.length);rel++){
+    const i=d0+rel;
     const probs=MODELS.map(m=>dd['precipitation_probability_max_'+m.id]&&dd['precipitation_probability_max_'+m.id][i]).filter(x=>x!=null&&!isNaN(x));
     if(probs.length<3) continue;
     const spread=Math.max(...probs)-Math.min(...probs);
     const codes=MODELS.map(m=>dd['weather_code_'+m.id]&&dd['weather_code_'+m.id][i]).filter(x=>x!=null);
     const snowVotes=codes.filter(c=>(c>=71&&c<=77)||c===85||c===86).length;
     const snow=codes.length>0&&snowVotes*2>=codes.length;
-    if(!rainSplit||spread>rainSplit.spread) rainSplit={dayIdx:i,spread:Math.round(spread),snow:snow};
+    if(!rainSplit||spread>rainSplit.spread) rainSplit={dayIdx:rel,spread:Math.round(spread),snow:snow};
   }
   const cur=C.current||{};
   // pressure trend from the last ~4 h of hourly surface_pressure (rising = fair, falling = unsettled)
@@ -1976,11 +2002,20 @@ async function fetchWeather(loc){
   const aqi=useUS?num(aqc.us_aqi):num(aqc.european_aqi), aqiScale=useUS?'us':'eu';
   const uvNow=num(aqc.uv_index)!=null?Math.round(aqc.uv_index):(C.daily&&C.daily.uv_index_max!=null?R(C.daily.uv_index_max[0]):null);
   const now0=hourly[0]||{}; // headline = the 7-model consensus, consistent with the rest of the card
+  // current condition key, with a sandstorm override: strong airborne dust + wind, when not precipitating
+  const isDayNow=cur.is_day===undefined?true:cur.is_day>=0.5;
+  const curWind=now0.wind!=null?now0.wind:R(cur.wind_speed_10m);
+  let curKey=now0.key||codeKey(cur.weather_code||0,isDayNow);
+  const dust=num(aqc.dust);
+  if(dust!=null&&dust>=225&&curWind!=null&&curWind>=22){
+    const kb=curKey.replace('-day','').replace('-night','');
+    if(['rain','hrain','sleet','snow','rshowers','sshowers','thunder','tstorm','hail'].indexOf(kb)<0) curKey='sand'+(isDayNow?'-day':'-night');
+  }
   return {place:loc, tzOffset:H.utc_offset_seconds||0,
     current:{temp: now0.temp!=null?now0.temp:R(cur.temperature_2m),
       feels: now0.feels!=null?now0.feels:R(cur.apparent_temperature),
-      key: now0.key||codeKey(cur.weather_code||0, cur.is_day===undefined?true:cur.is_day>=0.5),
-      humidity:R(cur.relative_humidity_2m), wind: now0.wind!=null?now0.wind:R(cur.wind_speed_10m),
+      key: curKey,
+      humidity:R(cur.relative_humidity_2m), wind: curWind,
       uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null, pressureTrend:ptrend,
       dew: now0.dew!=null?now0.dew:null, cloud: now0.cloud!=null?now0.cloud:null},
     hourly,daily,sources,rainSplit,past,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
