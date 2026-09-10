@@ -144,8 +144,8 @@
   .hero-set{display:flex;align-items:center;justify-content:center}
   .hero-pict{flex:0 0 auto;filter:drop-shadow(0 8px 16px rgba(0,0,0,.28))}
   .hero-sub{text-align:center;margin-top:-4px}
-  .now-temp{font-size:96px;font-weight:800;line-height:.9;letter-spacing:-2px;text-shadow:0 6px 22px rgba(0,0,0,.3);margin-left:-28px;position:relative;z-index:1}
-  .now-temp span{font-size:39px;vertical-align:top;opacity:.85}
+  .now-temp{font-size:88px;font-weight:800;line-height:.9;letter-spacing:-2px;text-shadow:0 6px 22px rgba(0,0,0,.3);margin-left:-28px;position:relative;z-index:1}
+  .now-temp span{font-size:36px;vertical-align:top;opacity:.85}
   .now-cond{font-size:18px;font-weight:800}
   .now-feels{font-size:13px;font-weight:700;opacity:.9;margin-top:1px}
   .lohi-row{display:flex;justify-content:center;gap:8px;margin-top:12px;position:relative;z-index:2}
@@ -268,7 +268,7 @@
   .p-gust{animation:gust 3s ease-in-out infinite}
   .p-star{animation:tw 2.4s ease-in-out infinite}.p-star.s2{animation-delay:.8s}.p-star.s3{animation-delay:1.5s}
   .p-moon{animation:bob 6s ease-in-out infinite}
-  @media (max-width:720px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.now-temp{font-size:94px}}
+  @media (max-width:720px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.now-temp{font-size:86px}}
   .hero-tr{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
   .unit-toggle{display:inline-flex;background:rgba(255,255,255,.18);border-radius:999px;padding:2px;backdrop-filter:blur(4px)}
   .unit-toggle button{border:none;background:transparent;color:#fff;font-family:inherit;font-weight:800;font-size:12px;padding:4px 11px;border-radius:999px;cursor:pointer;opacity:.72}
@@ -284,11 +284,11 @@
   .smtimes{display:flex;gap:16px;text-align:center;justify-content:center}
   .smtimes span{display:block;font-size:10px;font-weight:800;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.4px}
   .smtimes b{font-size:16px;font-weight:800}
-  .pollen{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+  .pollen{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
   .pcell{display:flex;flex-direction:column;align-items:center;gap:6px}
   .plabel{font-size:13px;font-weight:800;color:var(--ink-soft)}
-  .pring{position:relative;width:72px;height:72px}
-  .pring .pico2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px}
+  .pring{position:relative;width:50px;height:50px}
+  .pring .pico2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:17px}
   .plvl{font-size:14px;font-weight:800}
   .tips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
   .tip{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:14px;padding:10px 12px}
@@ -482,7 +482,7 @@ function pico(key,size){size=size||34;
   }
   return `<svg class="pico" style="width:${size}px;height:${size}px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg"><g filter="url(#dropsh)" opacity=".95">${s}</g></svg>`;
 }
-function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='tstorm'||b==='hail')b='thunder';if(b==='sleet')b='snow';if(b==='rshowers'||b==='hrain')b='rain';if(b==='sshowers')b='snow';if(b==='sand')b='fog';if(b==='clear'||b==='mclear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
+function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='tstorm'||b==='hail')b='thunder';if(b==='sleet')b='snow';if(b==='rshowers'||b==='hrain')b='rain';if(b==='sshowers')b='snow';if(b==='clear'||b==='mclear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
 const HEROGRAD={
   'clear-day':'linear-gradient(135deg,#3E90E0 0%,#5FB0F2 45%,#FFC24B 100%)',
   'clear-night':'linear-gradient(135deg,#221A52 0%,#3A2E7A 55%,#5B4B9E 100%)',
@@ -1911,6 +1911,43 @@ const TIPX={
   bg:{tip_pollen_mod:"{name} умерен — лек риск от алергия",tip_pollen_high:"{name} висок — вземете антихистамин преди да излезете",tip_pollen_vhigh:"{name} много висок — ограничете времето навън",tip_cloth_wind:"Ветровито — яке против вятър помага, поривите разхлаждат",tip_dew_muggy:"Задушно — ще е лепкаво",tip_dew_dry:"Сух въздух — пийте вода и хидратирайте кожата",tip_window_warm:"Най-топло {a}–{b} ({t}) — излезте тогава",tip_window_cool:"Рязко захлаждане след {h} — вземете пласт дрехи",tip_rain_soon:"Вероятен дъжд около {h} — вземете чадър",tip_rain_dry:"Сухо до вечерта",tip_garden_yes:"Чудесно време за сушене — пране или градина",tip_star_yes:"Ясно тази нощ, луна {n}% — добро за наблюдение на звезди",tip_star_no:"Облачно тази нощ — не е за звезди",tip_golden:"Златен час ~{h} — красива светлина за снимки",tip_cons_diverge:"Моделите се разминават за следващите дни — бъдете гъвкави",tip_cons_rain:"Моделите се разминават за дъжд на {day} — дръжте чадър подръка",tip_cons_snow:"Моделите се разминават за сняг на {day} — дръжте топли дрехи подръка"}
 };
 (function(){for(var _l in TIPX){if(I18N[_l])for(var _k in TIPX[_l])I18N[_l][_k]=TIPX[_l][_k];}})();
+/* Late-added strings (temperature-unit label, sandstorm label, 3-level biometeo tip), all 33 languages */
+const L10N_EXTRA={
+  en:{tempUnit:"Temperature units",cond_sand:"Sandstorm",tip_biomet_good:"Body-friendly weather — settled conditions today",tip_biomet_ok:"Fair for well-being — only mild weather stress",tip_biomet_bad:"Hard on well-being — abrupt weather swings today"},
+  pl:{tempUnit:"Jednostka temperatury",cond_sand:"Burza piaskowa",tip_biomet_good:"Pogoda sprzyja — spokojne warunki dziś",tip_biomet_ok:"Umiarkowany wpływ — lekkie obciążenie pogodą",tip_biomet_bad:"Trudny dzień biometeo — gwałtowne zmiany pogody mogą pogarszać samopoczucie"},
+  de:{tempUnit:"Temperatureinheit",cond_sand:"Sandsturm",tip_biomet_good:"Angenehm für den Körper — heute ruhiges Wetter",tip_biomet_ok:"Mäßiger Wettereinfluss — leichte Belastung",tip_biomet_bad:"Belastendes Biowetter — heute abrupte Wetterwechsel"},
+  uk:{tempUnit:"Одиниця температури",cond_sand:"Піщана буря",tip_biomet_good:"Погода сприятлива — сьогодні спокійні умови",tip_biomet_ok:"Помірний вплив — легке навантаження погодою",tip_biomet_bad:"Складна біопогода — сьогодні різкі зміни погоди"},
+  es:{tempUnit:"Unidad de temperatura",cond_sand:"Tormenta de arena",tip_biomet_good:"Clima agradable — condiciones estables hoy",tip_biomet_ok:"Influencia moderada — leve carga del tiempo",tip_biomet_bad:"Tiempo exigente — cambios bruscos hoy"},
+  fr:{tempUnit:"Unité de température",cond_sand:"Tempête de sable",tip_biomet_good:"Météo favorable — conditions calmes aujourd'hui",tip_biomet_ok:"Influence modérée — légère charge météo",tip_biomet_bad:"Météo éprouvante — changements brusques aujourd'hui"},
+  ru:{tempUnit:"Единица температуры",cond_sand:"Песчаная буря",tip_biomet_good:"Погода благоприятна — сегодня спокойные условия",tip_biomet_ok:"Умеренное влияние — небольшая нагрузка",tip_biomet_bad:"Тяжёлая биопогода — сегодня резкие перемены"},
+  zh:{tempUnit:"温度单位",cond_sand:"沙尘暴",tip_biomet_good:"天气宜人 — 今日状况平稳",tip_biomet_ok:"影响一般 — 天气压力较轻",tip_biomet_bad:"体感不适 — 今日天气骤变"},
+  ja:{tempUnit:"温度の単位",cond_sand:"砂嵐",tip_biomet_good:"体にやさしい天気 — 今日は穏やか",tip_biomet_ok:"影響は中程度 — 軽い気象ストレス",tip_biomet_bad:"体にこたえる天気 — 今日は急変あり"},
+  pt:{tempUnit:"Unidade de temperatura",cond_sand:"Tempestade de areia",tip_biomet_good:"Tempo agradável — condições estáveis hoje",tip_biomet_ok:"Influência moderada — leve carga do tempo",tip_biomet_bad:"Tempo puxado — mudanças bruscas hoje"},
+  nl:{tempUnit:"Temperatuureenheid",cond_sand:"Zandstorm",tip_biomet_good:"Aangenaam weer — rustige omstandigheden vandaag",tip_biomet_ok:"Matige invloed — lichte weerbelasting",tip_biomet_bad:"Zwaar weer voor het lichaam — abrupte wisselingen vandaag"},
+  it:{tempUnit:"Unità di temperatura",cond_sand:"Tempesta di sabbia",tip_biomet_good:"Meteo favorevole — condizioni stabili oggi",tip_biomet_ok:"Influenza moderata — lieve carico meteo",tip_biomet_bad:"Meteo impegnativo — sbalzi improvvisi oggi"},
+  hi:{tempUnit:"तापमान इकाई",cond_sand:"रेतीला तूफ़ान",tip_biomet_good:"अनुकूल मौसम — आज स्थिर स्थिति",tip_biomet_ok:"मध्यम प्रभाव — हल्का मौसमी दबाव",tip_biomet_bad:"सेहत पर भारी — आज अचानक बदलाव"},
+  ar:{tempUnit:"وحدة الحرارة",cond_sand:"عاصفة رملية",tip_biomet_good:"طقس ملائم — أوضاع مستقرة اليوم",tip_biomet_ok:"تأثير معتدل — ضغط جوي خفيف",tip_biomet_bad:"طقس مُرهِق — تقلبات مفاجئة اليوم"},
+  el:{tempUnit:"Μονάδα θερμοκρασίας",cond_sand:"Αμμοθύελλα",tip_biomet_good:"Ευνοϊκός καιρός — σταθερές συνθήκες σήμερα",tip_biomet_ok:"Μέτρια επίδραση — ήπια πίεση καιρού",tip_biomet_bad:"Δύσκολος καιρός — απότομες αλλαγές σήμερα"},
+  cs:{tempUnit:"Jednotka teploty",cond_sand:"Písečná bouře",tip_biomet_good:"Příznivé počasí — dnes klidné podmínky",tip_biomet_ok:"Mírný vliv — lehká zátěž počasím",tip_biomet_bad:"Náročné biopočasí — dnes prudké změny"},
+  sv:{tempUnit:"Temperaturenhet",cond_sand:"Sandstorm",tip_biomet_good:"Behagligt väder — lugna förhållanden idag",tip_biomet_ok:"Måttlig påverkan — lätt väderbelastning",tip_biomet_bad:"Påfrestande väder — tvära kast idag"},
+  ko:{tempUnit:"온도 단위",cond_sand:"모래폭풍",tip_biomet_good:"몸에 편한 날씨 — 오늘은 안정적",tip_biomet_ok:"영향은 보통 — 약한 기상 스트레스",tip_biomet_bad:"몸에 부담 — 오늘 급변"},
+  id:{tempUnit:"Satuan suhu",cond_sand:"Badai pasir",tip_biomet_good:"Cuaca nyaman — kondisi stabil hari ini",tip_biomet_ok:"Pengaruh sedang — sedikit beban cuaca",tip_biomet_bad:"Cuaca berat — perubahan mendadak hari ini"},
+  bn:{tempUnit:"তাপমাত্রার একক",cond_sand:"বালুঝড়",tip_biomet_good:"আরামদায়ক আবহাওয়া — আজ স্থিতিশীল",tip_biomet_ok:"মাঝারি প্রভাব — সামান্য আবহাওয়ার চাপ",tip_biomet_bad:"শরীরে চাপ — আজ হঠাৎ পরিবর্তন"},
+  tr:{tempUnit:"Sıcaklık birimi",cond_sand:"Kum fırtınası",tip_biomet_good:"Vücuda iyi gelen hava — bugün sakin",tip_biomet_ok:"Orta düzey etki — hafif hava yükü",tip_biomet_bad:"Zorlayıcı hava — bugün ani değişimler"},
+  te:{tempUnit:"ఉష్ణోగ్రత యూనిట్",cond_sand:"ఇసుక తుఫాను",tip_biomet_good:"అనుకూల వాతావరణం — నేడు స్థిరంగా",tip_biomet_ok:"మధ్యస్థ ప్రభావం — తేలికపాటి ఒత్తిడి",tip_biomet_bad:"శరీరానికి కష్టం — నేడు ఆకస్మిక మార్పులు"},
+  ro:{tempUnit:"Unitate de temperatură",cond_sand:"Furtună de nisip",tip_biomet_good:"Vreme prietenoasă — condiții stabile azi",tip_biomet_ok:"Influență moderată — ușoară încărcare",tip_biomet_bad:"Vreme solicitantă — schimbări bruște azi"},
+  hu:{tempUnit:"Hőmérséklet-egység",cond_sand:"Homokvihar",tip_biomet_good:"Kellemes idő — ma nyugodt körülmények",tip_biomet_ok:"Mérsékelt hatás — enyhe időjárási terhelés",tip_biomet_bad:"Megterhelő időjárás — ma hirtelen változások"},
+  fi:{tempUnit:"Lämpötilayksikkö",cond_sand:"Hiekkamyrsky",tip_biomet_good:"Keholle ystävällinen sää — tänään tyyntä",tip_biomet_ok:"Kohtalainen vaikutus — lievä sääkuormitus",tip_biomet_bad:"Rasittava sää — äkillisiä muutoksia tänään"},
+  no:{tempUnit:"Temperaturenhet",cond_sand:"Sandstorm",tip_biomet_good:"Behagelig vær — rolige forhold i dag",tip_biomet_ok:"Moderat påvirkning — lett værbelastning",tip_biomet_bad:"Krevende vær — brå endringer i dag"},
+  sk:{tempUnit:"Jednotka teploty",cond_sand:"Piesočná búrka",tip_biomet_good:"Priaznivé počasie — dnes pokojné podmienky",tip_biomet_ok:"Mierny vplyv — ľahká záťaž počasím",tip_biomet_bad:"Náročné biopočasie — dnes prudké zmeny"},
+  sw:{tempUnit:"Kipimo cha joto",cond_sand:"Dhoruba ya mchanga",tip_biomet_good:"Hali ya hewa nzuri — shwari leo",tip_biomet_ok:"Athari ya wastani — mzigo mdogo wa hali ya hewa",tip_biomet_bad:"Hali ngumu mwilini — mabadiliko ya ghafla leo"},
+  fa:{tempUnit:"واحد دما",cond_sand:"طوفان شن",tip_biomet_good:"هوای مطبوع — شرایط آرام امروز",tip_biomet_ok:"تأثیر متوسط — فشار جوی خفیف",tip_biomet_bad:"هوای طاقت‌فرسا — تغییرات ناگهانی امروز"},
+  da:{tempUnit:"Temperaturenhed",cond_sand:"Sandstorm",tip_biomet_good:"Behageligt vejr — rolige forhold i dag",tip_biomet_ok:"Moderat påvirkning — let vejrbelastning",tip_biomet_bad:"Krævende vejr — pludselige skift i dag"},
+  th:{tempUnit:"หน่วยอุณหภูมิ",cond_sand:"พายุทราย",tip_biomet_good:"อากาศสบาย — สภาพนิ่งวันนี้",tip_biomet_ok:"ผลกระทบปานกลาง — ความเครียดจากอากาศเล็กน้อย",tip_biomet_bad:"อากาศหนักต่อร่างกาย — เปลี่ยนแปลงฉับพลันวันนี้"},
+  vi:{tempUnit:"Đơn vị nhiệt độ",cond_sand:"Bão cát",tip_biomet_good:"Thời tiết dễ chịu — điều kiện ổn định hôm nay",tip_biomet_ok:"Ảnh hưởng vừa phải — áp lực thời tiết nhẹ",tip_biomet_bad:"Thời tiết vất vả — thay đổi đột ngột hôm nay"},
+  bg:{tempUnit:"Мерна единица за температура",cond_sand:"Пясъчна буря",tip_biomet_good:"Приятно време — спокойни условия днес",tip_biomet_ok:"Умерено влияние — леко натоварване",tip_biomet_bad:"Натоварващо време — резки промени днес"}
+};
+(function(){for(var _l in L10N_EXTRA){if(I18N[_l])for(var _k in L10N_EXTRA[_l])I18N[_l][_k]=L10N_EXTRA[_l][_k];}})();
 let LANG=(function(){try{var s=localStorage.getItem('cw_lang');if(s&&LANG_NAMES[s])return s;}catch(e){}var n=(navigator.language||'en').slice(0,2).toLowerCase();return LANG_NAMES[n]?n:'en';})();
 function t(k){var d=I18N[LANG]||I18N.en;var v=(d&&d[k]!=null)?d[k]:(I18N.en[k]!=null?I18N.en[k]:k);return v;}
 function tf(k,vars){var s=t(k);if(vars)for(var p in vars)s=s.split('{'+p+'}').join(vars[p]);return s;}
@@ -2059,7 +2096,7 @@ async function fetchWeather(loc){
       humidity:R(cur.relative_humidity_2m), wind: curWind,
       uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null, pressureTrend:ptrend,
       dew: now0.dew!=null?now0.dew:null, cloud: now0.cloud!=null?now0.cloud:null},
-    hourly,daily,sources,rainSplit,past,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:(cur.time||'').slice(11,16)};
+    hourly,daily,sources,rainSplit,past,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:pad(new Date().getHours())+':'+pad(new Date().getMinutes())};
 }
 
 /* ============ SUN & MOON (trimmed SunCalc — MIT, V. Agafonkin) ============ */
@@ -2129,9 +2166,9 @@ function pollenLevel(type,val){
   return {i,txt:names[i]||t('lvl_vhigh'),frac:Math.max(i/4,0.12)};
 }
 const POLLEN_COL=['#3FC6B7','#8FD14F','#F2C744','#F2913D','#E4574C'];
-function ring(frac,color){const R=26,C=2*Math.PI*R,off=C*(1-Math.max(0,Math.min(1,frac)));
-  return `<svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="26" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>`+
-    (frac>0?`<circle cx="36" cy="36" r="26" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 36 36)"/>`:'')+`</svg>`;}
+function ring(frac,color){const R=18,C=2*Math.PI*R,off=C*(1-Math.max(0,Math.min(1,frac)));
+  return `<svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="18" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="5"/>`+
+    (frac>0?`<circle cx="25" cy="25" r="18" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}" transform="rotate(-90 25 25)"/>`:'')+`</svg>`;}
 function sunMoonCard(D){
   const c=D.current, m=moonBlock(D.place.lat,D.place.lon,D.tzOffset);
   return `<div class="card" style="margin-top:28px">
@@ -2151,10 +2188,10 @@ function pollenCard(D){
   const items=Object.keys(POLLEN_META).map(k=>{const v=D.pollen[k];return {k,v,L:pollenLevel(k,v),label:t('p_'+k),ic:POLLEN_META[k][1]};}).filter(x=>x.v!=null);
   if(!items.length) return '';
   items.sort((a,b)=>(b.L.i-a.L.i)||(b.v-a.v));
-  const top=items.slice(0,3);
+  const top=items.slice(0,4);
   return `<div class="card" style="margin-top:28px"><h2 style="margin:0 0 14px">${IC('flower')} ${t('pollenTitle')}</h2>
   <div class="pollen">${top.map(x=>`<div class="pcell"><div class="plabel">${x.label}</div>
-      <div class="pring">${ring(x.L.frac,POLLEN_COL[Math.max(0,x.L.i)])}<div class="pico2">${IC(x.ic,26)}</div></div>
+      <div class="pring">${ring(x.L.frac,POLLEN_COL[Math.max(0,x.L.i)])}<div class="pico2">${IC(x.ic,17)}</div></div>
       <div class="plvl" style="color:${x.L.i<=0?'var(--ink-soft)':POLLEN_COL[x.L.i]}">${x.L.txt}</div></div>`).join('')}</div></div>`;
 }
 function buildTips(D){
@@ -2268,6 +2305,21 @@ function buildTips(D){
     const spread=Math.max(Math.max(...his)-Math.min(...his), Math.max(...los)-Math.min(...los));
     if(spread>5) T.push({ic:'alert',tx:t('tip_cons_diverge'),pri:72});
   }
+
+  // — Biometeo burden: adverse pressure / humidity / wind / temperature stress —
+  (function(){
+    let score=0;
+    if(c.pressureTrend==='up'||c.pressureTrend==='down') score++;   // sudden pressure change
+    if(hum>=85) score++;                                            // high humidity
+    if(wind>=35) score++;                                           // strong winds
+    const tw=hrs.slice(0,12).map(x=>x.temp).filter(v=>v!=null);
+    let swing=tw.length>=2?(Math.max(...tw)-Math.min(...tw)):0;      // upcoming temp swing
+    if(D.past&&D.past.length&&tp!=null){const pv=D.past.map(x=>x.temp).filter(v=>v!=null); if(pv.length)swing=Math.max(swing,Math.abs(tp-pv[0]));}
+    if(swing>=8) score++;                                           // sudden temperature change
+    if(score>=2) T.push({ic:'pressure',tx:t('tip_biomet_bad'),pri:66});
+    else if(score===1) T.push({ic:'pressure',tx:t('tip_biomet_ok'),pri:34});
+    else T.push({ic:'pressure',tx:t('tip_biomet_good'),pri:24});
+  })();
 
   // rank by relevance, keep an even 8–12
   T.sort((a,b)=>b.pri-a.pri);
@@ -2460,7 +2512,7 @@ function render(D,root,ai){
     <div class="hero-body" onclick="openParts()">
     <div class="hero-main">
       <div class="hero-set">
-        <div class="hero-pict">${pico(c.key,150)}</div>
+        <div class="hero-pict">${pico(c.key,138)}</div>
         <div class="now-temp">${tC(c.temp)==null?'–':tC(c.temp)}<span>°${UNIT}</span></div>
       </div>
       <div class="hero-sub">
@@ -2910,10 +2962,16 @@ renderTiles();
   const gi=gpsIndex();
   if(gi>=0)ACTIVE=gi; else {let a=0;try{a=parseInt(localStorage.getItem(AKEY)||'0',10);}catch(e){}ACTIVE=Math.min(Math.max(a||0,0),LOCS.length-1);}
   renderTiles(); loadActive();
-  try{if(window.AndroidBridge&&AndroidBridge.setNotifConfig)AndroidBridge.setNotifConfig(JSON.stringify(NOTIFCFG));}catch(e){}
-  try{if(window.AndroidBridge&&AndroidBridge.setNotifications)AndroidBridge.setNotifications(NOTIF);}catch(e){}
   pushNotifStrings();
+  // request location on first open BEFORE the notification prompt, so the two OS dialogs don't collide
   if((window.AndroidBridge&&AndroidBridge.requestLocation)||navigator.geolocation) useMyLocation(true);
+  // configure notifications shortly after, so its permission dialog follows the location one
+  setTimeout(function(){
+    try{if(window.AndroidBridge&&AndroidBridge.setNotifConfig)AndroidBridge.setNotifConfig(JSON.stringify(NOTIFCFG));}catch(e){}
+    try{if(window.AndroidBridge&&AndroidBridge.setNotifications)AndroidBridge.setNotifications(NOTIF);}catch(e){}
+  }, 1500);
+  // keep the forecast (and the LIVE timestamp) fresh while the app stays open
+  setInterval(function(){ if(!document.hidden) refreshWeather(); }, 900000);
 })();
 </script>
 </body>
