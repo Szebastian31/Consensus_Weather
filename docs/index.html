@@ -25,7 +25,7 @@
     min-height:100vh;padding:0 14px 90px;-webkit-font-smoothing:antialiased;transition:background .8s ease}
   .wrap{max-width:600px;margin:0 auto;position:relative;z-index:1}
   #skyfx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
-  .applogo{display:flex;align-items:center;justify-content:center;gap:12px;padding:0;cursor:pointer}
+  .applogo{display:flex;align-items:center;justify-content:center;gap:10px;padding:0;cursor:pointer}
   .logo-badge.spin{animation:logospin .7s cubic-bezier(.4,0,.2,1)}
   @keyframes logospin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
   .logo-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:0 0 10px}
@@ -36,10 +36,10 @@
   .hhbtn.off{color:rgba(255,255,255,.5)}
   .hhi{width:20px;height:20px;display:block}
   .ic{display:inline-block;vertical-align:middle;flex:0 0 auto}
-  .logo-badge{width:46px;height:46px;border-radius:13px;object-fit:cover;box-shadow:0 8px 18px -8px rgba(0,0,0,.55)}
+  .logo-badge{width:39px;height:39px;border-radius:11px;object-fit:cover;box-shadow:0 8px 18px -8px rgba(0,0,0,.55)}
   .logo-word{display:flex;flex-direction:column;line-height:1.04}
-  .lw1{font-size:21px;font-weight:800;letter-spacing:.2px;background:linear-gradient(90deg,#FFB020,#E4657F);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-  .lw2{font-size:16px;font-weight:600;letter-spacing:.2px;background:linear-gradient(90deg,#8FD0FF,#4E7FC7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .lw1{font-size:18px;font-weight:800;letter-spacing:.2px;background:linear-gradient(90deg,#FFB020,#E4657F);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .lw2{font-size:14px;font-weight:600;letter-spacing:.2px;background:linear-gradient(90deg,#8FD0FF,#4E7FC7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 
   /* location tiles: 2 side slots + center (current) */
   .tiles{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:10px;align-items:stretch;margin:2px 0 14px}
@@ -76,9 +76,11 @@
   .drawer.open{visibility:visible}
   .drawer-scrim{position:absolute;inset:0;background:rgba(8,10,25,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .28s ease}
   .drawer.open .drawer-scrim{opacity:1}
-  .drawer-panel{position:absolute;top:0;left:0;bottom:0;width:80%;max-width:322px;background:rgba(22,26,48,.72);backdrop-filter:blur(26px) saturate(1.4);-webkit-backdrop-filter:blur(26px) saturate(1.4);border-right:1px solid rgba(255,255,255,.14);box-shadow:8px 0 40px -10px rgba(0,0,0,.6);padding:max(22px,env(safe-area-inset-top)) 20px 22px;transform:translateX(-102%);transition:transform .3s cubic-bezier(.22,.7,.25,1);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .drawer-panel{position:absolute;top:0;left:0;bottom:0;width:80%;max-width:322px;background:rgba(22,26,48,.72);backdrop-filter:blur(26px) saturate(1.4);-webkit-backdrop-filter:blur(26px) saturate(1.4);border-right:1px solid rgba(255,255,255,.14);box-shadow:8px 0 40px -10px rgba(0,0,0,.6);padding:max(22px,env(safe-area-inset-top)) 20px 22px;transform:translateX(-102%);transition:transform .3s cubic-bezier(.22,.7,.25,1);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column}
   .drawer.open .drawer-panel{transform:translateX(0)}
-  .drawer .closex{float:right}
+  .drawer .closex{position:absolute;top:16px;right:16px;z-index:2}
+  .menu-foot{margin-top:auto;padding-top:22px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .menu-foot .mf-cap{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-mute)}
   .drawer h3{margin:2px 0 2px;font-size:21px;font-weight:800;color:var(--ink)}
   .drawer .dsub{font-size:12px;font-weight:700;color:var(--ink-mute);margin-bottom:8px}
   .drawer-sec{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-mute);margin:18px 0 8px}
@@ -139,6 +141,7 @@
   .live-pill{justify-self:start;display:inline-flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.18);border-radius:14px;padding:3px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);text-align:center;white-space:nowrap}
   .live-pill .lp1{font-size:9px;font-weight:800;padding:2px 8px 1px;letter-spacing:.1px;opacity:.92}
   .live-pill .lp2{font-size:11px;font-weight:800;padding:2px 10px;border-radius:11px;background:rgba(255,255,255,.9);color:#3a2e6e}
+  .time-pill{justify-self:end;font-size:12px;font-weight:800;padding:5px 13px;border-radius:12px;background:rgba(255,255,255,.9);color:#3a2e6e;white-space:nowrap;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
   .hero-top .unit-toggle{justify-self:end}
   .hero-main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;margin-top:2px;position:relative;z-index:2}
   .hero-set{display:flex;align-items:center;justify-content:center}
@@ -2504,7 +2507,7 @@ function render(D,root,ai){
       <div class="logo-row">
         <button class="hhbtn" onclick="event.stopPropagation();openMenu()" aria-label="Menu">${icoMenu()}</button>
         <div class="applogo" onclick="event.stopPropagation();spinLogo(this);refreshWeather()" role="button" aria-label="Refresh"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
-        <div class="live-pill"><span class="lp1">${D.live?t('liveAvg'):t('offline')}</span><span class="lp2">${D.updated||'--:--'}</span></div>
+        <div class="time-pill" title="${D.live?t('liveAvg'):t('offline')}">${D.updated||'--:--'}</div>
       </div>
       <div class="locsel" id="tiles" onclick="event.stopPropagation();openManage()"></div>
     </div>
@@ -2948,7 +2951,8 @@ function renderMenu(){
     `<h3>${t('menuTitle')}</h3><div class="dsub">${t('menuSub')}</div>`+
     `<div class="drawer-row" onclick="event.stopPropagation()"><div class="dr-l"><span class="dr-ic">${icoTherm()}</span><span>${t('tempUnit')}</span></div><div class="unit-toggle"><button class="${UNIT==='C'?'on':''}" onclick="setUnit('C');renderMenu()">°C</button><button class="${UNIT==='F'?'on':''}" onclick="setUnit('F');renderMenu()">°F</button></div></div>`+
     `<div class="drawer-row" onclick="closeMenu();openLangSheet()"><div class="dr-l"><span class="dr-ic">${icoGlobe()}</span><span>${t('langTitle')}</span></div><div class="dr-l"><span class="dr-val">${LANG_NAMES[LANG]||LANG.toUpperCase()}</span><span class="dr-cev">›</span></div></div>`+
-    `<div class="drawer-row" onclick="closeMenu();openNotifSheet()"><div class="dr-l"><span class="dr-ic">${icoBell(NOTIF)}</span><span>${t('notifTitle')}</span></div><div class="dr-l"><span class="dr-val">${NOTIF?t('onLbl'):t('offLbl')}</span><span class="dr-cev">›</span></div></div>`;
+    `<div class="drawer-row" onclick="closeMenu();openNotifSheet()"><div class="dr-l"><span class="dr-ic">${icoBell(NOTIF)}</span><span>${t('notifTitle')}</span></div><div class="dr-l"><span class="dr-val">${NOTIF?t('onLbl'):t('offLbl')}</span><span class="dr-cev">›</span></div></div>`+
+    `<div class="menu-foot"><div class="live-pill"><span class="lp1">${(LAST_DATA&&LAST_DATA.live)?t('liveAvg'):t('offline')}</span><span class="lp2">${(LAST_DATA&&LAST_DATA.updated)||'--:--'}</span></div></div>`;
 }
 function openMenu(){renderMenu();document.getElementById('menuDrawer').classList.add('open');setRefresh(false);}
 function closeMenu(){var d=document.getElementById('menuDrawer');if(d)d.classList.remove('open');if(!document.querySelector('.sheet.open'))setRefresh(true);}
