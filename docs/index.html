@@ -141,7 +141,9 @@
   .live-pill{justify-self:start;display:inline-flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.18);border-radius:14px;padding:3px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);text-align:center;white-space:nowrap}
   .live-pill .lp1{font-size:9px;font-weight:800;padding:2px 8px 1px;letter-spacing:.1px;opacity:.92}
   .live-pill .lp2{font-size:11px;font-weight:800;padding:2px 10px;border-radius:11px;background:rgba(255,255,255,.9);color:#3a2e6e}
-  .time-pill{justify-self:end;font-size:12px;font-weight:800;padding:5px 13px;border-radius:12px;background:rgba(255,255,255,.9);color:#3a2e6e;white-space:nowrap;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+  .time-pill{justify-self:end;display:inline-flex;flex-direction:column;align-items:stretch;border-radius:13px;background:rgba(20,24,44,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:hidden;box-shadow:0 6px 16px -8px rgba(0,0,0,.5)}
+  .time-pill .tp-now{font-size:12px;font-weight:800;padding:5px 13px;border-radius:13px;background:rgba(255,255,255,.92);color:#3a2e6e;text-align:center;white-space:nowrap}
+  .time-pill .tp-loc{font-size:11px;font-weight:800;padding:2px 6px 4px;color:rgba(255,255,255,.9);text-align:center;white-space:nowrap;letter-spacing:.3px}
   .hero-top .unit-toggle{justify-self:end}
   .hero-main{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;margin-top:2px;position:relative;z-index:2}
   .hero-set{display:flex;align-items:center;justify-content:center}
@@ -2500,6 +2502,7 @@ function render(D,root,ai){
   document.body.style.backgroundAttachment='fixed';document.body.style.backgroundSize='cover';
   SkyFX.set(c.key,phase);}
   const app=root;
+  const _lt=new Date(Date.now()+((D.tzOffset||0)*1000)), locNow=pad(_lt.getUTCHours())+':'+pad(_lt.getUTCMinutes());
   app.innerHTML=`
   <div class="hero-wrap"><div class="hero">
     <div class="glow"></div>
@@ -2507,7 +2510,7 @@ function render(D,root,ai){
       <div class="logo-row">
         <button class="hhbtn" onclick="event.stopPropagation();openMenu()" aria-label="Menu">${icoMenu()}</button>
         <div class="applogo" onclick="event.stopPropagation();spinLogo(this);refreshWeather()" role="button" aria-label="Refresh"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
-        <div class="time-pill" title="${D.live?t('liveAvg'):t('offline')}">${D.updated||'--:--'}</div>
+        <div class="time-pill" title="${D.live?t('liveAvg'):t('offline')}"><div class="tp-now">${D.updated||'--:--'}</div><div class="tp-loc"><span id="locClock">${locNow}</span></div></div>
       </div>
       <div class="locsel" id="tiles" onclick="event.stopPropagation();openManage()"></div>
     </div>
@@ -2619,7 +2622,7 @@ function narr(key,hi,lo,precip,wind){
 
 /* ---- SVG line chart ---- */
 function svgChart(items,viewW){
-  const n=items.length,H=210,pL=34,pR=32,pT=16,pB=42;
+  const n=items.length,H=178,pL=34,pR=32,pT=16,pB=42;
   const per=(Math.max(viewW||360,280)-pL-pR)/17; // ~18 hours fit the visible width
   const W=pL+pR+per*(n-1);
   const temp=coalesce(items.map(x=>tC(x.temp))),feels=coalesce(items.map(x=>tC(x.feels))),rain=items.map(x=>x.precip==null?0:x.precip);
@@ -2957,6 +2960,8 @@ function renderMenu(){
 function openMenu(){renderMenu();document.getElementById('menuDrawer').classList.add('open');setRefresh(false);}
 function closeMenu(){var d=document.getElementById('menuDrawer');if(d)d.classList.remove('open');if(!document.querySelector('.sheet.open'))setRefresh(true);}
 
+function tickLocClock(){var el=document.getElementById('locClock');if(!el||!LAST_DATA)return;var d=new Date(Date.now()+((LAST_DATA.tzOffset||0)*1000));el.textContent=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes());}
+
 /* ============ INIT ============ */
 document.documentElement.lang=LANG;
 document.documentElement.dir=RTL_LANGS.indexOf(LANG)>=0?'rtl':'ltr';
@@ -2976,6 +2981,8 @@ renderTiles();
   }, 1500);
   // keep the forecast (and the LIVE timestamp) fresh while the app stays open
   setInterval(function(){ if(!document.hidden) refreshWeather(); }, 900000);
+  // keep the location's local time ticking between refreshes
+  setInterval(tickLocClock, 30000);
 })();
 </script>
 </body>
