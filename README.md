@@ -146,7 +146,7 @@ Weather data by Open-Meteo.com (CC-BY 4.0). Please keep this attribution if you 
 
 ## License
 
-Released under the MIT License ↗ (LICENSE).
+Released under the [MIT License](https://github.com/Szebastian31/Consensus_Weather/blob/main/LICENSE).
 
 <p align="center">
   <img src="docs/logo.png" alt="Consensus Weather" width="560">
