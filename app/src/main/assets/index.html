@@ -81,6 +81,7 @@
   .drawer .closex{position:absolute;top:16px;right:16px;z-index:2}
   .menu-foot{margin-top:auto;padding-top:22px;display:flex;flex-direction:column;align-items:center;gap:6px}
   .menu-foot .mf-cap{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-mute)}
+  .menu-foot .mf-credit{font-size:10px;font-weight:700;color:var(--ink-mute);text-align:center;line-height:1.5;margin-top:2px;opacity:.85}
   .drawer h3{margin:2px 0 2px;font-size:21px;font-weight:800;color:var(--ink)}
   .drawer .dsub{font-size:12px;font-weight:700;color:var(--ink-mute);margin-bottom:8px}
   .drawer-sec{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-mute);margin:18px 0 8px}
@@ -474,20 +475,25 @@ function pico(key,size){size=size||34;
     case 'overcast': s=cloud(24,10,.7,'.9')+cloud(6,48,.48,'',true); break;
     case 'fog': s=cloud(14,6,.72,'',true)+`<g stroke="#94c0dd" stroke-width="7" stroke-linecap="round"><line x1="34" y1="98" x2="98" y2="98"/><line x1="42" y1="114" x2="90" y2="114" opacity=".6"/></g>`; break;
     case 'rain': s=cloud(14,4,.72)+rainAt(46,84,'')+rainAt(66,86,'d2')+rainAt(86,84,'d3'); break;
+    case 'lrain': case 'prain': s=cloud(14,6,.72)+rainAt(56,86,'')+rainAt(76,90,'d2'); break;
     case 'hrain': s=cloud(14,2,.72)+rainAt(38,82,'')+rainAt(54,84,'d2')+rainAt(70,82,'d3')+rainAt(86,84,'')+rainAt(48,98,'d2')+rainAt(78,98,'d3'); break;
     case 'rshowers': s=(night?g(PI_MOON2,28,4,.5):g(PI_SUN,30,8,.56))+cloud(16,30,.62,'',true)+rainAt(44,92,'')+rainAt(74,94,'d2'); break;
     case 'snow': s=cloud(14,4,.72,'',true)+flakeAt(50,92,'')+flakeAt(80,96,'d2')+flakeAt(65,110,'d3'); break;
+    case 'lsnow': case 'psnow': s=cloud(14,6,.72,'',true)+flakeAt(58,94,'')+flakeAt(80,100,'d2'); break;
+    case 'hsnow': s=cloud(14,2,.72,'',true)+flakeAt(40,90,'')+flakeAt(58,96,'d2')+flakeAt(76,90,'d3')+flakeAt(50,110,'')+flakeAt(84,108,'d2'); break;
     case 'sshowers': s=(night?g(PI_MOON2,28,4,.5):g(PI_SUN,30,8,.56))+cloud(16,30,.62,'',true)+flakeAt(46,94,'')+flakeAt(76,98,'d2'); break;
     case 'sleet': s=cloud(14,4,.72)+rainAt(42,88,'')+flakeAt(64,96,'d2')+rainAt(88,88,'d3'); break;
     case 'thunder': s=cloud(14,2,.72,'','dk')+bolt; break;
     case 'tstorm': s=cloud(14,2,.72,'','dk')+bolt+rainAt(38,88,'')+rainAt(94,90,'d2'); break;
     case 'hail': s=cloud(14,2,.72,'','dk')+bolt+hailAt(40,92,'')+hailAt(92,94,'d2'); break;
+    case 'dust': s=`<g opacity=".4">`+g(PI_SUN,62,2,.4)+`</g>`+gust(`<g stroke="url(#gSand)" stroke-width="6" stroke-linecap="round" fill="none" opacity=".72"><path d="M16 74 q16 -8 32 0 t32 0"/><path d="M18 98 q15 -8 30 0 t30 0" opacity=".65"/></g>`); break;
+    case 'bdust': s=`<g opacity=".46">`+g(PI_SUN,62,2,.4)+`</g>`+gust(`<g stroke="url(#gSand)" stroke-width="7.5" stroke-linecap="round" fill="none"><path d="M14 68 q16 -9 32 0 t32 0"/><path d="M12 92 q18 -9 36 0 t36 0" opacity=".82"/><path d="M20 112 q15 -7 30 0 t30 0" opacity=".6"/></g>`); break;
     case 'sand': s=`<g opacity=".5">`+g(PI_SUN,62,2,.4)+`</g>`+gust(`<g stroke="url(#gSand)" stroke-width="8.5" stroke-linecap="round" fill="none"><path d="M14 66 q16 -9 32 0 t32 0"/><path d="M12 90 q18 -10 36 0 t36 0"/><path d="M20 112 q15 -8 30 0 t30 0" opacity=".72"/></g>`); break;
     default: s=g(PI_SUN,13,12,1.02);
   }
   return `<svg class="pico" style="width:${size}px;height:${size}px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg"><g filter="url(#dropsh)" opacity=".95">${s}</g></svg>`;
 }
-function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='tstorm'||b==='hail')b='thunder';if(b==='sleet')b='snow';if(b==='rshowers'||b==='hrain')b='rain';if(b==='sshowers')b='snow';if(b==='clear'||b==='mclear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
+function LB(key){var b=key.replace('-day','').replace('-night','');if(b==='tstorm'||b==='hail')b='thunder';if(b==='sleet')b='snow';if(b==='rshowers')b='rain';if(b==='sshowers')b='snow';if(b==='clear'||b==='mclear')return key.indexOf('-night')>=0?t('cond_clear_night'):t('cond_clear_day');return t('cond_'+b);}
 const HEROGRAD={
   'clear-day':'linear-gradient(135deg,#3E90E0 0%,#5FB0F2 45%,#FFC24B 100%)',
   'clear-night':'linear-gradient(135deg,#221A52 0%,#3A2E7A 55%,#5B4B9E 100%)',
@@ -508,7 +514,12 @@ const HEROGRAD={
   'sand':'linear-gradient(135deg,#7A5B34 0%,#C8935A 55%,#E8C07A 100%)',
   'thunder':'linear-gradient(135deg,#2A2350 0%,#4A3E7A 55%,#8B5CC7 100%)'
 };
-function heroGrad(k){return HEROGRAD[k]||HEROGRAD[k.replace('-day','').replace('-night','')]||'linear-gradient(135deg,#5B4B9E,#E4657F 70%,#FF9E5E)';}
+function heroGrad(k){var b=k.replace('-day','').replace('-night','');
+  if(b==='lrain'||b==='prain'||b==='rshowers')b='rain';
+  else if(b==='lsnow'||b==='hsnow'||b==='psnow'||b==='sshowers'||b==='sleet')b='snow';
+  else if(b==='dust'||b==='bdust')b='sand';
+  else if(b==='tstorm'||b==='hail')b='thunder';
+  return HEROGRAD[k]||HEROGRAD[b]||'linear-gradient(135deg,#5B4B9E,#E4657F 70%,#FF9E5E)';}
 
 /* ---- living sky background: time-of-day × condition (from the Sky Gradient Library) ---- */
 const SKY={
@@ -522,7 +533,7 @@ const SKY={
   fog:{dawn:'linear-gradient(180deg,#565463 0%,#948d92 55%,#d8bda6 100%)',midday:'linear-gradient(180deg,#7a7c86 0%,#a6a4a6 50%,#d8d4cc 100%)',day:'linear-gradient(180deg,#67666f 0%,#95928f 55%,#c8c3ba 100%)',dusk:'linear-gradient(180deg,#403e48 0%,#726c6e 55%,#b89279 100%)',night:'linear-gradient(180deg,#232128 0%,#454049 100%)'},
   sand:{dawn:'linear-gradient(180deg,#4a3a44 0%,#b07a5e 50%,#f0b878 100%)',midday:'linear-gradient(180deg,#c08a3e 0%,#dcae5c 45%,#f5dca0 100%)',day:'linear-gradient(180deg,#a9743c 0%,#c89a55 55%,#e8c885 100%)',dusk:'linear-gradient(180deg,#3e2a2a 0%,#96552f 50%,#e0863a 100%)',night:'linear-gradient(180deg,#1f1710 0%,#3e2f20 60%,#5a4530 100%)'}
 };
-function skyGrad(key,phase){let base=key.replace('-day','').replace('-night','');if(base==='mclear')base='clear';if(base==='tstorm'||base==='hail')base='thunder';if(base==='sleet'||base==='sshowers')base='snow';if(base==='rshowers'||base==='hrain')base='rain';const set=SKY[base]||SKY.cloudy;return set[phase]||set.day||set.night||set[Object.keys(set)[0]];}
+function skyGrad(key,phase){let base=key.replace('-day','').replace('-night','');if(base==='mclear')base='clear';if(base==='tstorm'||base==='hail')base='thunder';if(base==='sleet'||base==='sshowers'||base==='lsnow'||base==='hsnow'||base==='psnow')base='snow';if(base==='rshowers'||base==='hrain'||base==='lrain'||base==='prain')base='rain';if(base==='dust'||base==='bdust')base='sand';const set=SKY[base]||SKY.cloudy;return set[phase]||set.day||set.night||set[Object.keys(set)[0]];}
 function skyPhase(key,hourMin,srMin,ssMin){
   const night=key.includes('-night')||(srMin!=null&&(hourMin<srMin-30||hourMin>ssMin+30));
   if(srMin==null||ssMin==null) return night?'night':'day';
@@ -552,6 +563,23 @@ function codeKey(code,isDay,cloud){
   if(code===95) return 'tstorm'+d;
   if(code>=96) return 'hail'+d;
   return 'pcloudy'+d;
+}
+/* refine a base condition with actual precip amount (mm/h): intensity + precip-aware override */
+function wxKey(code,isDay,cloud,mm,prob,temp){
+  const d=isDay?'-day':'-night';
+  const base=codeKey(code,isDay,cloud), b=base.replace('-day','').replace('-night','');
+  if(b==='tstorm'||b==='thunder'||b==='hail') return base;           // keep storms as-is
+  const snowy=(b==='snow'||b==='sshowers'||b==='sleet');
+  const dryish=(b==='clear'||b==='mclear'||b==='pcloudy'||b==='cloudy'||b==='overcast'||b==='fog');
+  if(mm!=null&&mm>=0.1){                                             // actually precipitating now
+    const isSnow=snowy||(dryish&&temp!=null&&temp<=0.5);
+    if(isSnow) return (mm<1?'lsnow':mm>2.5?'hsnow':'snow')+d;
+    return (mm<2.5?'lrain':mm>7.5?'hrain':'rain')+d;
+  }
+  if(dryish&&prob!=null&&prob>=55){                                  // likely soon, code still dry
+    return ((temp!=null&&temp<=0.5)?'psnow':'prain')+d;
+  }
+  return base;
 }
 </script>
 <script>
@@ -723,7 +751,7 @@ const I18N={
     yourLocations:"Your locations",addLocation:"Add a location",searchPh:"Search city, e.g. Kraków",searchBtn:"Search",useMyLoc:"📍 Use my current location",current:"current",remove:"Remove",noMatches:"No matches — try another spelling.",searching:"Searching…",searchNet:"Search needs an internet connection.",maxLoc:"You already have {n} locations — remove one first.",
     loading:"Loading forecast…",loadingCity:"Loading {city}…",findingLoc:"Finding your location…",cantReach:"Couldn't reach the weather service.",cantReachSub:"Check your connection and pull down to retry.",
     srcModel:"Source / model",winHigh:"Window high",winLow:"Window low",consensusAvg:"◆ Consensus average",showAll:"Show all {n} models ▾",hideModels:"Hide models ▴",
-    noteLive:"Live consensus.",noteLiveBody:"Numbers are averaged across {n} national weather models (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, refreshed each time you open a location.",noteOffline:"Offline snapshot.",noteOfflineBody:"Showing the saved Gliwice snapshot — connect to the internet and reopen to pull a live 7-model average for any city.",
+    noteLive:"Live consensus.",noteLiveBody:"Numbers are averaged across {n} national weather models (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, refreshed each time you open a location.",noteOffline:"Offline snapshot.",noteOfflineBody:"Showing the saved Gliwice snapshot — connect to the internet and reopen to pull a live 7-model average for any city.",
     footLive:"Live data · Open-Meteo multi-model average",footOffline:"Offline fallback",footTail:" · pull-to-refresh or reopen to refresh"
   },
   pl:{
@@ -760,7 +788,7 @@ const I18N={
     yourLocations:"Twoje lokalizacje",addLocation:"Dodaj lokalizację",searchPh:"Szukaj miasta, np. Kraków",searchBtn:"Szukaj",useMyLoc:"📍 Użyj mojej lokalizacji",current:"bieżąca",remove:"Usuń",noMatches:"Brak wyników — spróbuj inaczej.",searching:"Szukam…",searchNet:"Wyszukiwanie wymaga internetu.",maxLoc:"Masz już {n} lokalizacji — najpierw usuń jedną.",
     loading:"Ładowanie prognozy…",loadingCity:"Ładowanie {city}…",findingLoc:"Ustalanie lokalizacji…",cantReach:"Nie można połączyć się z serwisem pogodowym.",cantReachSub:"Sprawdź połączenie i pociągnij w dół, aby ponowić.",
     srcModel:"Źródło / model",winHigh:"Maks. w oknie",winLow:"Min. w oknie",consensusAvg:"◆ Średnia konsensusu",showAll:"Pokaż wszystkie {n} modeli ▾",hideModels:"Ukryj modele ▴",
-    noteLive:"Konsensus na żywo.",noteLiveBody:"Wartości są uśrednione z {n} krajowych modeli pogodowych (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) przez Open-Meteo, odświeżane przy każdym otwarciu lokalizacji.",noteOffline:"Zrzut offline.",noteOfflineBody:"Pokazano zapisany zrzut dla Gliwic — połącz się z internetem i otwórz ponownie, aby pobrać średnią z 7 modeli dla dowolnego miasta.",
+    noteLive:"Konsensus na żywo.",noteLiveBody:"Wartości są uśrednione z {n} krajowych modeli pogodowych (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) przez Open-Meteo, odświeżane przy każdym otwarciu lokalizacji.",noteOffline:"Zrzut offline.",noteOfflineBody:"Pokazano zapisany zrzut dla Gliwic — połącz się z internetem i otwórz ponownie, aby pobrać średnią z 7 modeli dla dowolnego miasta.",
     footLive:"Dane na żywo · średnia wielomodelowa Open-Meteo",footOffline:"Tryb offline",footTail:" · pociągnij lub otwórz ponownie, aby odświeżyć"
   },
   de:{
@@ -796,7 +824,7 @@ const I18N={
     yourLocations:"Deine Orte",addLocation:"Ort hinzufügen",searchPh:"Stadt suchen, z. B. Kraków",searchBtn:"Suchen",useMyLoc:"📍 Meinen Standort verwenden",current:"aktuell",remove:"Entfernen",noMatches:"Keine Treffer — andere Schreibweise versuchen.",searching:"Suche…",searchNet:"Suche benötigt Internet.",maxLoc:"Du hast bereits {n} Orte — entferne zuerst einen.",
     loading:"Prognose wird geladen…",loadingCity:"{city} wird geladen…",findingLoc:"Standort wird ermittelt…",cantReach:"Wetterdienst nicht erreichbar.",cantReachSub:"Verbindung prüfen und nach unten ziehen zum Wiederholen.",
     srcModel:"Quelle / Modell",winHigh:"Max. im Zeitraum",winLow:"Min. im Zeitraum",consensusAvg:"◆ Konsens-Durchschnitt",showAll:"Alle {n} Modelle zeigen ▾",hideModels:"Modelle ausblenden ▴",
-    noteLive:"Live-Konsens.",noteLiveBody:"Werte sind über {n} nationale Wettermodelle (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo gemittelt, aktualisiert bei jedem Öffnen eines Orts.",noteOffline:"Offline-Momentaufnahme.",noteOfflineBody:"Gespeicherte Momentaufnahme für Gliwice — verbinde dich mit dem Internet und öffne erneut für einen Live-7-Modell-Durchschnitt jeder Stadt.",
+    noteLive:"Live-Konsens.",noteLiveBody:"Werte sind über {n} nationale Wettermodelle (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo gemittelt, aktualisiert bei jedem Öffnen eines Orts.",noteOffline:"Offline-Momentaufnahme.",noteOfflineBody:"Gespeicherte Momentaufnahme für Gliwice — verbinde dich mit dem Internet und öffne erneut für einen Live-7-Modell-Durchschnitt jeder Stadt.",
     footLive:"Live-Daten · Open-Meteo Mehrmodell-Durchschnitt",footOffline:"Offline-Fallback",footTail:" · zum Aktualisieren ziehen oder neu öffnen"
   },
   es:{
@@ -832,7 +860,7 @@ const I18N={
     yourLocations:"Tus ubicaciones",addLocation:"Añadir ubicación",searchPh:"Busca una ciudad, p. ej. Kraków",searchBtn:"Buscar",useMyLoc:"📍 Usar mi ubicación",current:"actual",remove:"Quitar",noMatches:"Sin resultados — prueba otra grafía.",searching:"Buscando…",searchNet:"La búsqueda necesita internet.",maxLoc:"Ya tienes {n} ubicaciones — quita una primero.",
     loading:"Cargando pronóstico…",loadingCity:"Cargando {city}…",findingLoc:"Buscando tu ubicación…",cantReach:"No se pudo conectar con el servicio meteorológico.",cantReachSub:"Revisa tu conexión y desliza hacia abajo para reintentar.",
     srcModel:"Fuente / modelo",winHigh:"Máx. del periodo",winLow:"Mín. del periodo",consensusAvg:"◆ Media de consenso",showAll:"Ver los {n} modelos ▾",hideModels:"Ocultar modelos ▴",
-    noteLive:"Consenso en vivo.",noteLiveBody:"Los valores se promedian entre {n} modelos meteorológicos nacionales (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) vía Open-Meteo, actualizados cada vez que abres una ubicación.",noteOffline:"Instantánea sin conexión.",noteOfflineBody:"Mostrando la instantánea guardada de Gliwice — conéctate a internet y vuelve a abrir para obtener una media en vivo de 7 modelos para cualquier ciudad.",
+    noteLive:"Consenso en vivo.",noteLiveBody:"Los valores se promedian entre {n} modelos meteorológicos nacionales (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) vía Open-Meteo, actualizados cada vez que abres una ubicación.",noteOffline:"Instantánea sin conexión.",noteOfflineBody:"Mostrando la instantánea guardada de Gliwice — conéctate a internet y vuelve a abrir para obtener una media en vivo de 7 modelos para cualquier ciudad.",
     footLive:"Datos en vivo · media multimodelo de Open-Meteo",footOffline:"Modo sin conexión",footTail:" · desliza o vuelve a abrir para actualizar"
   },
   fr:{
@@ -868,7 +896,7 @@ const I18N={
     yourLocations:"Vos lieux",addLocation:"Ajouter un lieu",searchPh:"Rechercher une ville, ex. Kraków",searchBtn:"Rechercher",useMyLoc:"📍 Utiliser ma position",current:"actuel",remove:"Retirer",noMatches:"Aucun résultat — essayez une autre orthographe.",searching:"Recherche…",searchNet:"La recherche nécessite internet.",maxLoc:"Vous avez déjà {n} lieux — retirez-en un d'abord.",
     loading:"Chargement des prévisions…",loadingCity:"Chargement de {city}…",findingLoc:"Localisation en cours…",cantReach:"Service météo injoignable.",cantReachSub:"Vérifiez votre connexion et tirez vers le bas pour réessayer.",
     srcModel:"Source / modèle",winHigh:"Max. sur la période",winLow:"Min. sur la période",consensusAvg:"◆ Moyenne de consensus",showAll:"Voir les {n} modèles ▾",hideModels:"Masquer les modèles ▴",
-    noteLive:"Consensus en direct.",noteLiveBody:"Les valeurs sont moyennées sur {n} modèles météo nationaux (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, actualisés à chaque ouverture d'un lieu.",noteOffline:"Instantané hors ligne.",noteOfflineBody:"Affichage de l'instantané enregistré pour Gliwice — connectez-vous à internet et rouvrez pour obtenir une moyenne en direct de 7 modèles pour n'importe quelle ville.",
+    noteLive:"Consensus en direct.",noteLiveBody:"Les valeurs sont moyennées sur {n} modèles météo nationaux (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, actualisés à chaque ouverture d'un lieu.",noteOffline:"Instantané hors ligne.",noteOfflineBody:"Affichage de l'instantané enregistré pour Gliwice — connectez-vous à internet et rouvrez pour obtenir une moyenne en direct de 7 modèles pour n'importe quelle ville.",
     footLive:"Données en direct · moyenne multi-modèles Open-Meteo",footOffline:"Repli hors ligne",footTail:" · tirez ou rouvrez pour actualiser"
   },
   it:{
@@ -904,7 +932,7 @@ const I18N={
     yourLocations:"Le tue località",addLocation:"Aggiungi località",searchPh:"Cerca una città, es. Kraków",searchBtn:"Cerca",useMyLoc:"📍 Usa la mia posizione",current:"attuale",remove:"Rimuovi",noMatches:"Nessun risultato — prova un'altra grafia.",searching:"Ricerca…",searchNet:"La ricerca richiede internet.",maxLoc:"Hai già {n} località — rimuovine una prima.",
     loading:"Caricamento previsioni…",loadingCity:"Caricamento di {city}…",findingLoc:"Individuazione della posizione…",cantReach:"Servizio meteo non raggiungibile.",cantReachSub:"Controlla la connessione e trascina in giù per riprovare.",
     srcModel:"Fonte / modello",winHigh:"Max nel periodo",winLow:"Min nel periodo",consensusAvg:"◆ Media di consenso",showAll:"Mostra tutti i {n} modelli ▾",hideModels:"Nascondi modelli ▴",
-    noteLive:"Consenso in diretta.",noteLiveBody:"I valori sono mediati su {n} modelli meteo nazionali (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) tramite Open-Meteo, aggiornati a ogni apertura di una località.",noteOffline:"Istantanea offline.",noteOfflineBody:"Visualizzazione dell'istantanea salvata per Gliwice — connettiti a internet e riapri per ottenere una media in diretta di 7 modelli per qualsiasi città.",
+    noteLive:"Consenso in diretta.",noteLiveBody:"I valori sono mediati su {n} modelli meteo nazionali (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) tramite Open-Meteo, aggiornati a ogni apertura di una località.",noteOffline:"Istantanea offline.",noteOfflineBody:"Visualizzazione dell'istantanea salvata per Gliwice — connettiti a internet e riapri per ottenere una media in diretta di 7 modelli per qualsiasi città.",
     footLive:"Dati in diretta · media multi-modello Open-Meteo",footOffline:"Ripiego offline",footTail:" · trascina o riapri per aggiornare"
   },
   nl:{
@@ -940,7 +968,7 @@ const I18N={
     yourLocations:"Jouw locaties",addLocation:"Locatie toevoegen",searchPh:"Zoek een stad, bijv. Kraków",searchBtn:"Zoeken",useMyLoc:"📍 Mijn locatie gebruiken",current:"huidig",remove:"Verwijder",noMatches:"Geen resultaten — probeer een andere spelling.",searching:"Zoeken…",searchNet:"Zoeken vereist internet.",maxLoc:"Je hebt al {n} locaties — verwijder er eerst een.",
     loading:"Verwachting laden…",loadingCity:"{city} laden…",findingLoc:"Locatie bepalen…",cantReach:"Weerdienst niet bereikbaar.",cantReachSub:"Controleer je verbinding en trek omlaag om opnieuw te proberen.",
     srcModel:"Bron / model",winHigh:"Max. in periode",winLow:"Min. in periode",consensusAvg:"◆ Consensusgemiddelde",showAll:"Toon alle {n} modellen ▾",hideModels:"Verberg modellen ▴",
-    noteLive:"Live consensus.",noteLiveBody:"Waarden zijn gemiddeld over {n} nationale weermodellen (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, ververst telkens als je een locatie opent.",noteOffline:"Offline momentopname.",noteOfflineBody:"Toont de opgeslagen momentopname voor Gliwice — maak verbinding met internet en heropen voor een live 7-modellengemiddelde voor elke stad.",
+    noteLive:"Live consensus.",noteLiveBody:"Waarden zijn gemiddeld over {n} nationale weermodellen (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, ververst telkens als je een locatie opent.",noteOffline:"Offline momentopname.",noteOfflineBody:"Toont de opgeslagen momentopname voor Gliwice — maak verbinding met internet en heropen voor een live 7-modellengemiddelde voor elke stad.",
     footLive:"Live gegevens · Open-Meteo multi-modelgemiddelde",footOffline:"Offline terugval",footTail:" · trek of heropen om te verversen"
   },
   pt:{
@@ -976,7 +1004,7 @@ const I18N={
     yourLocations:"Os seus locais",addLocation:"Adicionar local",searchPh:"Procurar cidade, ex. Kraków",searchBtn:"Procurar",useMyLoc:"📍 Usar a minha localização",current:"atual",remove:"Remover",noMatches:"Sem resultados — tente outra grafia.",searching:"A procurar…",searchNet:"A procura precisa de internet.",maxLoc:"Já tem {n} locais — remova um primeiro.",
     loading:"A carregar previsão…",loadingCity:"A carregar {city}…",findingLoc:"A localizar…",cantReach:"Serviço meteorológico indisponível.",cantReachSub:"Verifique a ligação e puxe para baixo para tentar novamente.",
     srcModel:"Fonte / modelo",winHigh:"Máx. no período",winLow:"Mín. no período",consensusAvg:"◆ Média de consenso",showAll:"Mostrar todos os {n} modelos ▾",hideModels:"Ocultar modelos ▴",
-    noteLive:"Consenso ao vivo.",noteLiveBody:"Os valores são a média de {n} modelos meteorológicos nacionais (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, atualizados sempre que abre um local.",noteOffline:"Instantâneo offline.",noteOfflineBody:"A mostrar o instantâneo guardado de Gliwice — ligue-se à internet e reabra para obter uma média ao vivo de 7 modelos para qualquer cidade.",
+    noteLive:"Consenso ao vivo.",noteLiveBody:"Os valores são a média de {n} modelos meteorológicos nacionais (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, atualizados sempre que abre um local.",noteOffline:"Instantâneo offline.",noteOfflineBody:"A mostrar o instantâneo guardado de Gliwice — ligue-se à internet e reabra para obter uma média ao vivo de 7 modelos para qualquer cidade.",
     footLive:"Dados ao vivo · média multimodelo Open-Meteo",footOffline:"Alternativa offline",footTail:" · puxe ou reabra para atualizar"
   },
   uk:{
@@ -1012,7 +1040,7 @@ const I18N={
     yourLocations:"Ваші локації",addLocation:"Додати локацію",searchPh:"Пошук міста, напр. Kraków",searchBtn:"Пошук",useMyLoc:"📍 Моє місцезнаходження",current:"поточна",remove:"Видалити",noMatches:"Немає збігів — спробуйте інше написання.",searching:"Пошук…",searchNet:"Для пошуку потрібен інтернет.",maxLoc:"У вас уже {n} локацій — спершу видаліть одну.",
     loading:"Завантаження прогнозу…",loadingCity:"Завантаження {city}…",findingLoc:"Визначення місцезнаходження…",cantReach:"Не вдалося зв'язатися з погодним сервісом.",cantReachSub:"Перевірте з'єднання та потягніть вниз, щоб повторити.",
     srcModel:"Джерело / модель",winHigh:"Макс. за період",winLow:"Мін. за період",consensusAvg:"◆ Середнє консенсусу",showAll:"Показати всі {n} моделей ▾",hideModels:"Сховати моделі ▴",
-    noteLive:"Консенсус наживо.",noteLiveBody:"Значення усереднені за {n} національними моделями погоди (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) через Open-Meteo, оновлюються щоразу під час відкриття локації.",noteOffline:"Офлайн-знімок.",noteOfflineBody:"Показано збережений знімок для Гливиць — під'єднайтеся до інтернету й відкрийте знову, щоб отримати живе середнє з 7 моделей для будь-якого міста.",
+    noteLive:"Консенсус наживо.",noteLiveBody:"Значення усереднені за {n} національними моделями погоди (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) через Open-Meteo, оновлюються щоразу під час відкриття локації.",noteOffline:"Офлайн-знімок.",noteOfflineBody:"Показано збережений знімок для Гливиць — під'єднайтеся до інтернету й відкрийте знову, щоб отримати живе середнє з 7 моделей для будь-якого міста.",
     footLive:"Живі дані · багатомодельне середнє Open-Meteo",footOffline:"Офлайн-резерв",footTail:" · потягніть або відкрийте знову для оновлення"
   },
   ru:{
@@ -1048,7 +1076,7 @@ const I18N={
     yourLocations:"Ваши локации",addLocation:"Добавить локацию",searchPh:"Поиск города, напр. Kraków",searchBtn:"Поиск",useMyLoc:"📍 Использовать моё местоположение",current:"текущая",remove:"Удалить",noMatches:"Ничего не найдено — попробуйте другое написание.",searching:"Поиск…",searchNet:"Для поиска нужен интернет.",maxLoc:"У вас уже {n} локаций — сначала удалите одну.",
     loading:"Загрузка прогноза…",loadingCity:"Загрузка {city}…",findingLoc:"Определение местоположения…",cantReach:"Не удалось связаться с погодным сервисом.",cantReachSub:"Проверьте соединение и потяните вниз, чтобы повторить.",
     srcModel:"Источник / модель",winHigh:"Макс. за период",winLow:"Мин. за период",consensusAvg:"◆ Среднее консенсуса",showAll:"Показать все {n} моделей ▾",hideModels:"Скрыть модели ▴",
-    noteLive:"Консенсус в реальном времени.",noteLiveBody:"Значения усреднены по {n} национальным моделям погоды (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) через Open-Meteo, обновляются при каждом открытии локации.",noteOffline:"Офлайн-снимок.",noteOfflineBody:"Показан сохранённый снимок для Гливице — подключитесь к интернету и откройте снова, чтобы получить живое среднее из 7 моделей для любого города.",
+    noteLive:"Консенсус в реальном времени.",noteLiveBody:"Значения усреднены по {n} национальным моделям погоды (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) через Open-Meteo, обновляются при каждом открытии локации.",noteOffline:"Офлайн-снимок.",noteOfflineBody:"Показан сохранённый снимок для Гливице — подключитесь к интернету и откройте снова, чтобы получить живое среднее из 7 моделей для любого города.",
     footLive:"Живые данные · многомодельное среднее Open-Meteo",footOffline:"Офлайн-резерв",footTail:" · потяните или откройте снова для обновления"
   },
   zh:{
@@ -1156,7 +1184,7 @@ const I18N={
     yourLocations:"आपके स्थान",addLocation:"स्थान जोड़ें",searchPh:"शहर खोजें, जैसे Kraków",searchBtn:"खोजें",useMyLoc:"📍 मेरा स्थान उपयोग करें",current:"वर्तमान",remove:"हटाएँ",noMatches:"कोई परिणाम नहीं — दूसरी वर्तनी आज़माएँ।",searching:"खोज रहे हैं…",searchNet:"खोज के लिए इंटरनेट चाहिए।",maxLoc:"आपके पास पहले से {n} स्थान हैं — पहले एक हटाएँ।",
     loading:"पूर्वानुमान लोड हो रहा है…",loadingCity:"{city} लोड हो रहा है…",findingLoc:"आपका स्थान खोजा जा रहा है…",cantReach:"मौसम सेवा तक नहीं पहुँच सके।",cantReachSub:"कनेक्शन जाँचें और पुनः प्रयास हेतु नीचे खींचें।",
     srcModel:"स्रोत / मॉडल",winHigh:"अवधि में अधिकतम",winLow:"अवधि में न्यूनतम",consensusAvg:"◆ सहमति औसत",showAll:"सभी {n} मॉडल दिखाएँ ▾",hideModels:"मॉडल छिपाएँ ▴",
-    noteLive:"लाइव सहमति।",noteLiveBody:"मान {n} राष्ट्रीय मौसम मॉडलों (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) का Open-Meteo के माध्यम से औसत हैं, हर बार स्थान खोलने पर ताज़ा होते हैं।",noteOffline:"ऑफ़लाइन स्नैपशॉट।",noteOfflineBody:"Gliwice का सहेजा गया स्नैपशॉट दिखाया जा रहा है — इंटरनेट से जुड़ें और किसी भी शहर के लिए लाइव 7-मॉडल औसत हेतु फिर से खोलें।",
+    noteLive:"लाइव सहमति।",noteLiveBody:"मान {n} राष्ट्रीय मौसम मॉडलों (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) का Open-Meteo के माध्यम से औसत हैं, हर बार स्थान खोलने पर ताज़ा होते हैं।",noteOffline:"ऑफ़लाइन स्नैपशॉट।",noteOfflineBody:"Gliwice का सहेजा गया स्नैपशॉट दिखाया जा रहा है — इंटरनेट से जुड़ें और किसी भी शहर के लिए लाइव 7-मॉडल औसत हेतु फिर से खोलें।",
     footLive:"लाइव डेटा · Open-Meteo बहु-मॉडल औसत",footOffline:"ऑफ़लाइन फ़ॉलबैक",footTail:" · ताज़ा करने हेतु खींचें या फिर से खोलें"
   },
   ar:{
@@ -1228,7 +1256,7 @@ const I18N={
     yourLocations:"Οι τοποθεσίες σας",addLocation:"Προσθήκη τοποθεσίας",searchPh:"Αναζήτηση πόλης, π.χ. Kraków",searchBtn:"Αναζήτηση",useMyLoc:"📍 Χρήση της τρέχουσας τοποθεσίας",current:"τρέχουσα",remove:"Αφαίρεση",noMatches:"Καμία αντιστοιχία — δοκιμάστε άλλη ορθογραφία.",searching:"Αναζήτηση…",searchNet:"Η αναζήτηση χρειάζεται σύνδεση στο διαδίκτυο.",maxLoc:"Έχετε ήδη {n} τοποθεσίες — αφαιρέστε πρώτα μία.",
     loading:"Φόρτωση πρόγνωσης…",loadingCity:"Φόρτωση {city}…",findingLoc:"Εντοπισμός τοποθεσίας…",cantReach:"Αδυναμία σύνδεσης με την υπηρεσία καιρού.",cantReachSub:"Ελέγξτε τη σύνδεση και τραβήξτε προς τα κάτω για επανάληψη.",
     srcModel:"Πηγή / μοντέλο",winHigh:"Μέγιστη περιόδου",winLow:"Ελάχιστη περιόδου",consensusAvg:"◆ Μέσος όρος συναίνεσης",showAll:"Εμφάνιση και των {n} μοντέλων ▾",hideModels:"Απόκρυψη μοντέλων ▴",
-    noteLive:"Ζωντανή συναίνεση.",noteLiveBody:"Οι τιμές είναι μέσος όρος {n} εθνικών μοντέλων καιρού (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) μέσω Open-Meteo, με ανανέωση κάθε φορά που ανοίγετε μια τοποθεσία.",noteOffline:"Στιγμιότυπο εκτός σύνδεσης.",noteOfflineBody:"Εμφανίζεται το αποθηκευμένο στιγμιότυπο της Gliwice — συνδεθείτε στο διαδίκτυο και ανοίξτε ξανά για ζωντανό μέσο όρο 7 μοντέλων για κάθε πόλη.",
+    noteLive:"Ζωντανή συναίνεση.",noteLiveBody:"Οι τιμές είναι μέσος όρος {n} εθνικών μοντέλων καιρού (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) μέσω Open-Meteo, με ανανέωση κάθε φορά που ανοίγετε μια τοποθεσία.",noteOffline:"Στιγμιότυπο εκτός σύνδεσης.",noteOfflineBody:"Εμφανίζεται το αποθηκευμένο στιγμιότυπο της Gliwice — συνδεθείτε στο διαδίκτυο και ανοίξτε ξανά για ζωντανό μέσο όρο 7 μοντέλων για κάθε πόλη.",
     footLive:"Ζωντανά δεδομένα · μέσος όρος πολλών μοντέλων Open-Meteo",footOffline:"Εφεδρικά εκτός σύνδεσης",footTail:" · τραβήξτε ή ανοίξτε ξανά για ανανέωση"
   },
   cs:{
@@ -1264,7 +1292,7 @@ const I18N={
     yourLocations:"Vaše lokality",addLocation:"Přidat lokalitu",searchPh:"Hledat město, např. Kraków",searchBtn:"Hledat",useMyLoc:"📍 Použít mou aktuální polohu",current:"aktuální",remove:"Odebrat",noMatches:"Žádné výsledky — zkuste jiný pravopis.",searching:"Hledám…",searchNet:"Hledání vyžaduje připojení k internetu.",maxLoc:"Už máte {n} lokalit — nejprve jednu odeberte.",
     loading:"Načítání předpovědi…",loadingCity:"Načítání {city}…",findingLoc:"Zjišťování polohy…",cantReach:"Nelze se připojit k meteoslužbě.",cantReachSub:"Zkontrolujte připojení a stáhněte dolů pro opakování.",
     srcModel:"Zdroj / model",winHigh:"Max. okna",winLow:"Min. okna",consensusAvg:"◆ Průměr konsenzu",showAll:"Zobrazit všech {n} modelů ▾",hideModels:"Skrýt modely ▴",
-    noteLive:"Živý konsenzus.",noteLiveBody:"Hodnoty jsou průměrem {n} národních meteomodelů (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) přes Open-Meteo, obnovují se při každém otevření lokality.",noteOffline:"Offline snímek.",noteOfflineBody:"Zobrazen uložený snímek Gliwice — připojte se k internetu a otevřete znovu pro živý průměr 7 modelů pro libovolné město.",
+    noteLive:"Živý konsenzus.",noteLiveBody:"Hodnoty jsou průměrem {n} národních meteomodelů (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) přes Open-Meteo, obnovují se při každém otevření lokality.",noteOffline:"Offline snímek.",noteOfflineBody:"Zobrazen uložený snímek Gliwice — připojte se k internetu a otevřete znovu pro živý průměr 7 modelů pro libovolné město.",
     footLive:"Živá data · průměr více modelů Open-Meteo",footOffline:"Offline záloha",footTail:" · stáhněte nebo otevřete znovu pro obnovení"
   },
   sv:{
@@ -1300,7 +1328,7 @@ const I18N={
     yourLocations:"Dina platser",addLocation:"Lägg till plats",searchPh:"Sök stad, t.ex. Kraków",searchBtn:"Sök",useMyLoc:"📍 Använd min nuvarande plats",current:"aktuell",remove:"Ta bort",noMatches:"Inga träffar — prova en annan stavning.",searching:"Söker…",searchNet:"Sökning kräver internetanslutning.",maxLoc:"Du har redan {n} platser — ta bort en först.",
     loading:"Laddar prognos…",loadingCity:"Laddar {city}…",findingLoc:"Hittar din plats…",cantReach:"Kunde inte nå vädertjänsten.",cantReachSub:"Kontrollera anslutningen och dra nedåt för att försöka igen.",
     srcModel:"Källa / modell",winHigh:"Fönster max",winLow:"Fönster min",consensusAvg:"◆ Konsensussnitt",showAll:"Visa alla {n} modeller ▾",hideModels:"Dölj modeller ▴",
-    noteLive:"Live-konsensus.",noteLiveBody:"Värdena är ett snitt av {n} nationella vädermodeller (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, uppdateras varje gång du öppnar en plats.",noteOffline:"Offline-ögonblicksbild.",noteOfflineBody:"Visar den sparade Gliwice-ögonblicksbilden — anslut till internet och öppna igen för ett live-snitt av 7 modeller för valfri stad.",
+    noteLive:"Live-konsensus.",noteLiveBody:"Värdena är ett snitt av {n} nationella vädermodeller (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, uppdateras varje gång du öppnar en plats.",noteOffline:"Offline-ögonblicksbild.",noteOfflineBody:"Visar den sparade Gliwice-ögonblicksbilden — anslut till internet och öppna igen för ett live-snitt av 7 modeller för valfri stad.",
     footLive:"Livedata · Open-Meteo flermodellssnitt",footOffline:"Offline-reserv",footTail:" · dra eller öppna igen för att uppdatera"
   },
   ko:{
@@ -1336,7 +1364,7 @@ const I18N={
     yourLocations:"내 위치",addLocation:"위치 추가",searchPh:"도시 검색, 예: Kraków",searchBtn:"검색",useMyLoc:"📍 현재 위치 사용",current:"현재",remove:"삭제",noMatches:"일치 항목 없음 — 다른 철자를 시도하세요.",searching:"검색 중…",searchNet:"검색에는 인터넷 연결이 필요합니다.",maxLoc:"이미 {n}개의 위치가 있습니다 — 먼저 하나를 삭제하세요.",
     loading:"예보 불러오는 중…",loadingCity:"{city} 불러오는 중…",findingLoc:"위치 찾는 중…",cantReach:"날씨 서비스에 연결할 수 없습니다.",cantReachSub:"연결을 확인하고 아래로 당겨 다시 시도하세요.",
     srcModel:"출처 / 모델",winHigh:"구간 최고",winLow:"구간 최저",consensusAvg:"◆ 합의 평균",showAll:"{n}개 모델 모두 보기 ▾",hideModels:"모델 숨기기 ▴",
-    noteLive:"실시간 합의.",noteLiveBody:"수치는 Open-Meteo를 통한 {n}개 국가 기상 모델(ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC)의 평균이며, 위치를 열 때마다 갱신됩니다.",noteOffline:"오프라인 스냅샷.",noteOfflineBody:"저장된 Gliwice 스냅샷 표시 중 — 인터넷에 연결하고 다시 열면 어느 도시든 7개 모델 실시간 평균을 불러옵니다.",
+    noteLive:"실시간 합의.",noteLiveBody:"수치는 Open-Meteo를 통한 {n}개 국가 기상 모델(ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM)의 평균이며, 위치를 열 때마다 갱신됩니다.",noteOffline:"오프라인 스냅샷.",noteOfflineBody:"저장된 Gliwice 스냅샷 표시 중 — 인터넷에 연결하고 다시 열면 어느 도시든 7개 모델 실시간 평균을 불러옵니다.",
     footLive:"실시간 데이터 · Open-Meteo 다중 모델 평균",footOffline:"오프라인 대체",footTail:" · 당기거나 다시 열어 새로고침"
   },
   id:{
@@ -1372,7 +1400,7 @@ const I18N={
     yourLocations:"Lokasi Anda",addLocation:"Tambah lokasi",searchPh:"Cari kota, mis. Kraków",searchBtn:"Cari",useMyLoc:"📍 Gunakan lokasi saya saat ini",current:"saat ini",remove:"Hapus",noMatches:"Tidak ada kecocokan — coba ejaan lain.",searching:"Mencari…",searchNet:"Pencarian butuh koneksi internet.",maxLoc:"Anda sudah punya {n} lokasi — hapus satu dulu.",
     loading:"Memuat prakiraan…",loadingCity:"Memuat {city}…",findingLoc:"Mencari lokasi Anda…",cantReach:"Tidak dapat menjangkau layanan cuaca.",cantReachSub:"Periksa koneksi dan tarik ke bawah untuk mencoba lagi.",
     srcModel:"Sumber / model",winHigh:"Tertinggi jendela",winLow:"Terendah jendela",consensusAvg:"◆ Rata-rata konsensus",showAll:"Tampilkan semua {n} model ▾",hideModels:"Sembunyikan model ▴",
-    noteLive:"Konsensus langsung.",noteLiveBody:"Angka dirata-ratakan dari {n} model cuaca nasional (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, disegarkan setiap kali Anda membuka lokasi.",noteOffline:"Cuplikan luring.",noteOfflineBody:"Menampilkan cuplikan Gliwice tersimpan — sambungkan ke internet dan buka lagi untuk rata-rata langsung 7 model untuk kota mana pun.",
+    noteLive:"Konsensus langsung.",noteLiveBody:"Angka dirata-ratakan dari {n} model cuaca nasional (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, disegarkan setiap kali Anda membuka lokasi.",noteOffline:"Cuplikan luring.",noteOfflineBody:"Menampilkan cuplikan Gliwice tersimpan — sambungkan ke internet dan buka lagi untuk rata-rata langsung 7 model untuk kota mana pun.",
     footLive:"Data langsung · rata-rata multi-model Open-Meteo",footOffline:"Cadangan luring",footTail:" · tarik atau buka lagi untuk menyegarkan"
   },
   bn:{
@@ -1408,7 +1436,7 @@ const I18N={
     yourLocations:"আপনার অবস্থান",addLocation:"অবস্থান যোগ করুন",searchPh:"শহর খুঁজুন, যেমন Kraków",searchBtn:"খুঁজুন",useMyLoc:"📍 আমার বর্তমান অবস্থান ব্যবহার করুন",current:"বর্তমান",remove:"সরান",noMatches:"কোনো মিল নেই — অন্য বানান চেষ্টা করুন।",searching:"খোঁজা হচ্ছে…",searchNet:"অনুসন্ধানের জন্য ইন্টারনেট সংযোগ দরকার।",maxLoc:"আপনার ইতিমধ্যে {n}টি অবস্থান আছে — আগে একটি সরান।",
     loading:"পূর্বাভাস লোড হচ্ছে…",loadingCity:"{city} লোড হচ্ছে…",findingLoc:"আপনার অবস্থান খোঁজা হচ্ছে…",cantReach:"আবহাওয়া সেবায় পৌঁছানো যায়নি।",cantReachSub:"সংযোগ পরীক্ষা করুন এবং পুনরায় চেষ্টা করতে নিচে টানুন।",
     srcModel:"উৎস / মডেল",winHigh:"সময়সীমার সর্বোচ্চ",winLow:"সময়সীমার সর্বনিম্ন",consensusAvg:"◆ ঐকমত্যের গড়",showAll:"সব {n}টি মডেল দেখান ▾",hideModels:"মডেল লুকান ▴",
-    noteLive:"লাইভ ঐকমত্য।",noteLiveBody:"সংখ্যাগুলো Open-Meteo-এর মাধ্যমে {n}টি জাতীয় আবহাওয়া মডেলের (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) গড়, প্রতিবার অবস্থান খুললে হালনাগাদ হয়।",noteOffline:"অফলাইন স্ন্যাপশট।",noteOfflineBody:"সংরক্ষিত Gliwice স্ন্যাপশট দেখানো হচ্ছে — ইন্টারনেটে সংযুক্ত হয়ে আবার খুলুন যেকোনো শহরের জন্য ৭ মডেলের লাইভ গড় পেতে।",
+    noteLive:"লাইভ ঐকমত্য।",noteLiveBody:"সংখ্যাগুলো Open-Meteo-এর মাধ্যমে {n}টি জাতীয় আবহাওয়া মডেলের (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) গড়, প্রতিবার অবস্থান খুললে হালনাগাদ হয়।",noteOffline:"অফলাইন স্ন্যাপশট।",noteOfflineBody:"সংরক্ষিত Gliwice স্ন্যাপশট দেখানো হচ্ছে — ইন্টারনেটে সংযুক্ত হয়ে আবার খুলুন যেকোনো শহরের জন্য ৭ মডেলের লাইভ গড় পেতে।",
     footLive:"লাইভ তথ্য · Open-Meteo বহু-মডেল গড়",footOffline:"অফলাইন বিকল্প",footTail:" · রিফ্রেশ করতে টানুন বা আবার খুলুন"
   },
   tr:{
@@ -1444,7 +1472,7 @@ const I18N={
     yourLocations:"Konumlarınız",addLocation:"Konum ekle",searchPh:"Şehir ara, örn. Kraków",searchBtn:"Ara",useMyLoc:"📍 Geçerli konumumu kullan",current:"geçerli",remove:"Kaldır",noMatches:"Eşleşme yok — başka bir yazım deneyin.",searching:"Aranıyor…",searchNet:"Arama için internet bağlantısı gerekir.",maxLoc:"Zaten {n} konumunuz var — önce birini kaldırın.",
     loading:"Tahmin yükleniyor…",loadingCity:"{city} yükleniyor…",findingLoc:"Konumunuz bulunuyor…",cantReach:"Hava durumu hizmetine ulaşılamadı.",cantReachSub:"Bağlantınızı kontrol edin ve yeniden denemek için aşağı çekin.",
     srcModel:"Kaynak / model",winHigh:"Pencere en yüksek",winLow:"Pencere en düşük",consensusAvg:"◆ Uzlaşı ortalaması",showAll:"{n} modelin tümünü göster ▾",hideModels:"Modelleri gizle ▴",
-    noteLive:"Canlı uzlaşı.",noteLiveBody:"Sayılar, Open-Meteo üzerinden {n} ulusal hava modelinin (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) ortalamasıdır; bir konumu her açtığınızda yenilenir.",noteOffline:"Çevrimdışı anlık görüntü.",noteOfflineBody:"Kayıtlı Gliwice anlık görüntüsü gösteriliyor — internete bağlanıp yeniden açarak herhangi bir şehir için canlı 7 model ortalaması alın.",
+    noteLive:"Canlı uzlaşı.",noteLiveBody:"Sayılar, Open-Meteo üzerinden {n} ulusal hava modelinin (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) ortalamasıdır; bir konumu her açtığınızda yenilenir.",noteOffline:"Çevrimdışı anlık görüntü.",noteOfflineBody:"Kayıtlı Gliwice anlık görüntüsü gösteriliyor — internete bağlanıp yeniden açarak herhangi bir şehir için canlı 7 model ortalaması alın.",
     footLive:"Canlı veri · Open-Meteo çok modelli ortalama",footOffline:"Çevrimdışı yedek",footTail:" · yenilemek için çekin veya yeniden açın"
   },
   te:{
@@ -1480,7 +1508,7 @@ const I18N={
     yourLocations:"మీ స్థానాలు",addLocation:"స్థానం జోడించండి",searchPh:"నగరాన్ని వెతకండి, ఉదా. Kraków",searchBtn:"వెతకండి",useMyLoc:"📍 నా ప్రస్తుత స్థానాన్ని ఉపయోగించండి",current:"ప్రస్తుత",remove:"తీసివేయండి",noMatches:"సరిపోలికలు లేవు — వేరే స్పెల్లింగ్ ప్రయత్నించండి.",searching:"వెతుకుతోంది…",searchNet:"వెతకడానికి ఇంటర్నెట్ కనెక్షన్ అవసరం.",maxLoc:"మీకు ఇప్పటికే {n} స్థానాలు ఉన్నాయి — ముందుగా ఒకటి తీసివేయండి.",
     loading:"సూచన లోడ్ అవుతోంది…",loadingCity:"{city} లోడ్ అవుతోంది…",findingLoc:"మీ స్థానాన్ని కనుగొంటోంది…",cantReach:"వాతావరణ సేవను చేరుకోలేకపోయాం.",cantReachSub:"కనెక్షన్ తనిఖీ చేసి, మళ్లీ ప్రయత్నించడానికి కిందకు లాగండి.",
     srcModel:"మూలం / మోడల్",winHigh:"విండో గరిష్ఠం",winLow:"విండో కనిష్ఠం",consensusAvg:"◆ ఏకాభిప్రాయ సగటు",showAll:"అన్ని {n} మోడళ్లను చూపు ▾",hideModels:"మోడళ్లను దాచు ▴",
-    noteLive:"లైవ్ ఏకాభిప్రాయం.",noteLiveBody:"సంఖ్యలు Open-Meteo ద్వారా {n} జాతీయ వాతావరణ మోడళ్ల (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) సగటు, మీరు స్థానాన్ని తెరిచిన ప్రతిసారి రిఫ్రెష్ అవుతుంది.",noteOffline:"ఆఫ్‌లైన్ స్నాప్‌షాట్.",noteOfflineBody:"సేవ్ చేసిన Gliwice స్నాప్‌షాట్ చూపబడుతోంది — ఇంటర్నెట్‌కు కనెక్ట్ అయి మళ్లీ తెరవడం ద్వారా ఏ నగరానికైనా 7 మోడళ్ల లైవ్ సగటు పొందండి.",
+    noteLive:"లైవ్ ఏకాభిప్రాయం.",noteLiveBody:"సంఖ్యలు Open-Meteo ద్వారా {n} జాతీయ వాతావరణ మోడళ్ల (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) సగటు, మీరు స్థానాన్ని తెరిచిన ప్రతిసారి రిఫ్రెష్ అవుతుంది.",noteOffline:"ఆఫ్‌లైన్ స్నాప్‌షాట్.",noteOfflineBody:"సేవ్ చేసిన Gliwice స్నాప్‌షాట్ చూపబడుతోంది — ఇంటర్నెట్‌కు కనెక్ట్ అయి మళ్లీ తెరవడం ద్వారా ఏ నగరానికైనా 7 మోడళ్ల లైవ్ సగటు పొందండి.",
     footLive:"లైవ్ డేటా · Open-Meteo బహుళ-మోడల్ సగటు",footOffline:"ఆఫ్‌లైన్ ప్రత్యామ్నాయం",footTail:" · రిఫ్రెష్ కోసం లాగండి లేదా మళ్లీ తెరవండి"
   },
   ro:{
@@ -1516,7 +1544,7 @@ const I18N={
     yourLocations:"Locațiile tale",addLocation:"Adaugă o locație",searchPh:"Caută orașul, ex. Kraków",searchBtn:"Caută",useMyLoc:"📍 Folosește locația mea curentă",current:"curent",remove:"Elimină",noMatches:"Nicio potrivire — încearcă altă ortografie.",searching:"Se caută…",searchNet:"Căutarea necesită conexiune la internet.",maxLoc:"Ai deja {n} locații — elimină una mai întâi.",
     loading:"Se încarcă prognoza…",loadingCity:"Se încarcă {city}…",findingLoc:"Se găsește locația ta…",cantReach:"Nu s-a putut contacta serviciul meteo.",cantReachSub:"Verifică conexiunea și trage în jos pentru a reîncerca.",
     srcModel:"Sursă / model",winHigh:"Maxim interval",winLow:"Minim interval",consensusAvg:"◆ Media consensului",showAll:"Arată toate cele {n} modele ▾",hideModels:"Ascunde modelele ▴",
-    noteLive:"Consens live.",noteLiveBody:"Valorile sunt media a {n} modele meteo naționale (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) prin Open-Meteo, reîmprospătate de fiecare dată când deschizi o locație.",noteOffline:"Instantaneu offline.",noteOfflineBody:"Se arată instantaneul salvat pentru Gliwice — conectează-te la internet și redeschide pentru o medie live a 7 modele pentru orice oraș.",
+    noteLive:"Consens live.",noteLiveBody:"Valorile sunt media a {n} modele meteo naționale (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) prin Open-Meteo, reîmprospătate de fiecare dată când deschizi o locație.",noteOffline:"Instantaneu offline.",noteOfflineBody:"Se arată instantaneul salvat pentru Gliwice — conectează-te la internet și redeschide pentru o medie live a 7 modele pentru orice oraș.",
     footLive:"Date live · media multi-model Open-Meteo",footOffline:"Rezervă offline",footTail:" · trage sau redeschide pentru reîmprospătare"
   },
   hu:{
@@ -1552,7 +1580,7 @@ const I18N={
     yourLocations:"Helyeid",addLocation:"Hely hozzáadása",searchPh:"Keress várost, pl. Kraków",searchBtn:"Keresés",useMyLoc:"📍 Jelenlegi helyem használata",current:"jelenlegi",remove:"Eltávolítás",noMatches:"Nincs találat — próbálj más írásmódot.",searching:"Keresés…",searchNet:"A kereséshez internetkapcsolat kell.",maxLoc:"Már {n} helyed van — előbb távolíts el egyet.",
     loading:"Előrejelzés betöltése…",loadingCity:"{city} betöltése…",findingLoc:"Helyed keresése…",cantReach:"Nem sikerült elérni az időjárás-szolgáltatást.",cantReachSub:"Ellenőrizd a kapcsolatot, és húzd le az újrapróbálkozáshoz.",
     srcModel:"Forrás / modell",winHigh:"Ablak max.",winLow:"Ablak min.",consensusAvg:"◆ Konszenzus átlag",showAll:"Mind a(z) {n} modell mutatása ▾",hideModels:"Modellek elrejtése ▴",
-    noteLive:"Élő konszenzus.",noteLiveBody:"A számok {n} nemzeti időjárási modell (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) átlagai az Open-Meteón keresztül, minden helymegnyitáskor frissülnek.",noteOffline:"Offline pillanatkép.",noteOfflineBody:"A mentett Gliwice pillanatkép látható — csatlakozz az internethez, és nyisd meg újra bármely város élő, 7 modelles átlagáért.",
+    noteLive:"Élő konszenzus.",noteLiveBody:"A számok {n} nemzeti időjárási modell (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) átlagai az Open-Meteón keresztül, minden helymegnyitáskor frissülnek.",noteOffline:"Offline pillanatkép.",noteOfflineBody:"A mentett Gliwice pillanatkép látható — csatlakozz az internethez, és nyisd meg újra bármely város élő, 7 modelles átlagáért.",
     footLive:"Élő adatok · Open-Meteo többmodelles átlag",footOffline:"Offline tartalék",footTail:" · húzd le vagy nyisd meg újra a frissítéshez"
   },
   fi:{
@@ -1588,7 +1616,7 @@ const I18N={
     yourLocations:"Sijaintisi",addLocation:"Lisää sijainti",searchPh:"Hae kaupunkia, esim. Kraków",searchBtn:"Hae",useMyLoc:"📍 Käytä nykyistä sijaintiani",current:"nykyinen",remove:"Poista",noMatches:"Ei osumia — kokeile toista kirjoitusasua.",searching:"Haetaan…",searchNet:"Haku vaatii internetyhteyden.",maxLoc:"Sinulla on jo {n} sijaintia — poista ensin yksi.",
     loading:"Ladataan ennustetta…",loadingCity:"Ladataan {city}…",findingLoc:"Etsitään sijaintiasi…",cantReach:"Sääpalveluun ei saatu yhteyttä.",cantReachSub:"Tarkista yhteys ja vedä alas yrittääksesi uudelleen.",
     srcModel:"Lähde / malli",winHigh:"Ikkunan ylin",winLow:"Ikkunan alin",consensusAvg:"◆ Konsensuskeskiarvo",showAll:"Näytä kaikki {n} mallia ▾",hideModels:"Piilota mallit ▴",
-    noteLive:"Live-konsensus.",noteLiveBody:"Luvut ovat {n} kansallisen säämallin (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) keskiarvo Open-Meteon kautta, päivittyvät joka kerta kun avaat sijainnin.",noteOffline:"Offline-tilannekuva.",noteOfflineBody:"Näytetään tallennettu Gliwice-tilannekuva — yhdistä internetiin ja avaa uudelleen saadaksesi minkä tahansa kaupungin live-keskiarvon 7 mallista.",
+    noteLive:"Live-konsensus.",noteLiveBody:"Luvut ovat {n} kansallisen säämallin (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) keskiarvo Open-Meteon kautta, päivittyvät joka kerta kun avaat sijainnin.",noteOffline:"Offline-tilannekuva.",noteOfflineBody:"Näytetään tallennettu Gliwice-tilannekuva — yhdistä internetiin ja avaa uudelleen saadaksesi minkä tahansa kaupungin live-keskiarvon 7 mallista.",
     footLive:"Live-data · Open-Meteo monimalikeskiarvo",footOffline:"Offline-varajärjestelmä",footTail:" · vedä tai avaa uudelleen päivittääksesi"
   },
   no:{
@@ -1624,7 +1652,7 @@ const I18N={
     yourLocations:"Dine steder",addLocation:"Legg til sted",searchPh:"Søk by, f.eks. Kraków",searchBtn:"Søk",useMyLoc:"📍 Bruk min nåværende posisjon",current:"nåværende",remove:"Fjern",noMatches:"Ingen treff — prøv en annen skrivemåte.",searching:"Søker…",searchNet:"Søk krever internettforbindelse.",maxLoc:"Du har allerede {n} steder — fjern ett først.",
     loading:"Laster varsel…",loadingCity:"Laster {city}…",findingLoc:"Finner posisjonen din…",cantReach:"Kunne ikke nå værtjenesten.",cantReachSub:"Sjekk tilkoblingen og dra ned for å prøve igjen.",
     srcModel:"Kilde / modell",winHigh:"Vindu maks",winLow:"Vindu min",consensusAvg:"◆ Konsensussnitt",showAll:"Vis alle {n} modeller ▾",hideModels:"Skjul modeller ▴",
-    noteLive:"Live konsensus.",noteLiveBody:"Tallene er et snitt av {n} nasjonale værmodeller (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, oppdatert hver gang du åpner et sted.",noteOffline:"Frakoblet øyeblikksbilde.",noteOfflineBody:"Viser det lagrede Gliwice-øyeblikksbildet — koble til internett og åpne igjen for et live snitt av 7 modeller for hvilken som helst by.",
+    noteLive:"Live konsensus.",noteLiveBody:"Tallene er et snitt av {n} nasjonale værmodeller (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, oppdatert hver gang du åpner et sted.",noteOffline:"Frakoblet øyeblikksbilde.",noteOfflineBody:"Viser det lagrede Gliwice-øyeblikksbildet — koble til internett og åpne igjen for et live snitt av 7 modeller for hvilken som helst by.",
     footLive:"Live data · Open-Meteo flermodellsnitt",footOffline:"Frakoblet reserve",footTail:" · dra eller åpne igjen for å oppdatere"
   },
   sk:{
@@ -1660,7 +1688,7 @@ const I18N={
     yourLocations:"Vaše lokality",addLocation:"Pridať lokalitu",searchPh:"Hľadať mesto, napr. Kraków",searchBtn:"Hľadať",useMyLoc:"📍 Použiť moju aktuálnu polohu",current:"aktuálna",remove:"Odstrániť",noMatches:"Žiadne výsledky — skúste iný pravopis.",searching:"Hľadám…",searchNet:"Hľadanie vyžaduje pripojenie na internet.",maxLoc:"Už máte {n} lokalít — najprv jednu odstráňte.",
     loading:"Načítava sa predpoveď…",loadingCity:"Načítava sa {city}…",findingLoc:"Zisťuje sa poloha…",cantReach:"Nepodarilo sa spojiť s meteoslužbou.",cantReachSub:"Skontrolujte pripojenie a potiahnite nadol pre opakovanie.",
     srcModel:"Zdroj / model",winHigh:"Max. okna",winLow:"Min. okna",consensusAvg:"◆ Priemer konsenzu",showAll:"Zobraziť všetkých {n} modelov ▾",hideModels:"Skryť modely ▴",
-    noteLive:"Živý konsenzus.",noteLiveBody:"Hodnoty sú priemerom {n} národných meteomodelov (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) cez Open-Meteo, obnovujú sa pri každom otvorení lokality.",noteOffline:"Offline snímka.",noteOfflineBody:"Zobrazuje sa uložená snímka Gliwice — pripojte sa na internet a otvorte znova pre živý priemer 7 modelov pre ľubovoľné mesto.",
+    noteLive:"Živý konsenzus.",noteLiveBody:"Hodnoty sú priemerom {n} národných meteomodelov (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) cez Open-Meteo, obnovujú sa pri každom otvorení lokality.",noteOffline:"Offline snímka.",noteOfflineBody:"Zobrazuje sa uložená snímka Gliwice — pripojte sa na internet a otvorte znova pre živý priemer 7 modelov pre ľubovoľné mesto.",
     footLive:"Živé dáta · priemer viacerých modelov Open-Meteo",footOffline:"Offline záloha",footTail:" · potiahnite alebo otvorte znova pre obnovenie"
   },
   sw:{
@@ -1696,7 +1724,7 @@ const I18N={
     yourLocations:"Maeneo yako",addLocation:"Ongeza eneo",searchPh:"Tafuta jiji, k.m. Kraków",searchBtn:"Tafuta",useMyLoc:"📍 Tumia eneo langu la sasa",current:"la sasa",remove:"Ondoa",noMatches:"Hakuna vinavyolingana — jaribu tahajia nyingine.",searching:"Inatafuta…",searchNet:"Utafutaji unahitaji muunganisho wa intaneti.",maxLoc:"Tayari una maeneo {n} — ondoa moja kwanza.",
     loading:"Inapakia utabiri…",loadingCity:"Inapakia {city}…",findingLoc:"Inatafuta eneo lako…",cantReach:"Imeshindwa kufikia huduma ya hali ya hewa.",cantReachSub:"Angalia muunganisho na uvute chini kujaribu tena.",
     srcModel:"Chanzo / mfano",winHigh:"Juu ya kipindi",winLow:"Chini ya kipindi",consensusAvg:"◆ Wastani wa maafikiano",showAll:"Onyesha mifano yote {n} ▾",hideModels:"Ficha mifano ▴",
-    noteLive:"Maafikiano ya moja kwa moja.",noteLiveBody:"Nambari ni wastani wa mifano {n} ya kitaifa ya hali ya hewa (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) kupitia Open-Meteo, husasishwa kila unapofungua eneo.",noteOffline:"Picha ya nje ya mtandao.",noteOfflineBody:"Inaonyesha picha iliyohifadhiwa ya Gliwice — unganisha kwenye intaneti na ufungue tena kupata wastani wa moja kwa moja wa mifano 7 kwa jiji lolote.",
+    noteLive:"Maafikiano ya moja kwa moja.",noteLiveBody:"Nambari ni wastani wa mifano {n} ya kitaifa ya hali ya hewa (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) kupitia Open-Meteo, husasishwa kila unapofungua eneo.",noteOffline:"Picha ya nje ya mtandao.",noteOfflineBody:"Inaonyesha picha iliyohifadhiwa ya Gliwice — unganisha kwenye intaneti na ufungue tena kupata wastani wa moja kwa moja wa mifano 7 kwa jiji lolote.",
     footLive:"Data ya moja kwa moja · wastani wa mifano mingi ya Open-Meteo",footOffline:"Nakala ya nje ya mtandao",footTail:" · vuta au fungua tena ili kuonyesha upya"
   },
   fa:{
@@ -1768,7 +1796,7 @@ const I18N={
     yourLocations:"Dine steder",addLocation:"Tilføj sted",searchPh:"Søg by, f.eks. Kraków",searchBtn:"Søg",useMyLoc:"📍 Brug min nuværende placering",current:"nuværende",remove:"Fjern",noMatches:"Ingen match — prøv en anden stavning.",searching:"Søger…",searchNet:"Søgning kræver internetforbindelse.",maxLoc:"Du har allerede {n} steder — fjern ét først.",
     loading:"Indlæser udsigt…",loadingCity:"Indlæser {city}…",findingLoc:"Finder din placering…",cantReach:"Kunne ikke nå vejrtjenesten.",cantReachSub:"Tjek forbindelsen og træk ned for at prøve igen.",
     srcModel:"Kilde / model",winHigh:"Vindue maks",winLow:"Vindue min",consensusAvg:"◆ Konsensusgennemsnit",showAll:"Vis alle {n} modeller ▾",hideModels:"Skjul modeller ▴",
-    noteLive:"Live konsensus.",noteLiveBody:"Tallene er et gennemsnit af {n} nationale vejrmodeller (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) via Open-Meteo, opdateres hver gang du åbner et sted.",noteOffline:"Offline øjebliksbillede.",noteOfflineBody:"Viser det gemte Gliwice-øjebliksbillede — opret forbindelse til internettet og åbn igen for et live gennemsnit af 7 modeller for enhver by.",
+    noteLive:"Live konsensus.",noteLiveBody:"Tallene er et gennemsnit af {n} nationale vejrmodeller (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) via Open-Meteo, opdateres hver gang du åbner et sted.",noteOffline:"Offline øjebliksbillede.",noteOfflineBody:"Viser det gemte Gliwice-øjebliksbillede — opret forbindelse til internettet og åbn igen for et live gennemsnit af 7 modeller for enhver by.",
     footLive:"Live data · Open-Meteo multi-model gennemsnit",footOffline:"Offline reserve",footTail:" · træk eller åbn igen for at opdatere"
   },
   th:{
@@ -1804,7 +1832,7 @@ const I18N={
     yourLocations:"ตำแหน่งของคุณ",addLocation:"เพิ่มตำแหน่ง",searchPh:"ค้นหาเมือง เช่น Kraków",searchBtn:"ค้นหา",useMyLoc:"📍 ใช้ตำแหน่งปัจจุบันของฉัน",current:"ปัจจุบัน",remove:"ลบ",noMatches:"ไม่พบผลลัพธ์ — ลองสะกดแบบอื่น.",searching:"กำลังค้นหา…",searchNet:"การค้นหาต้องใช้อินเทอร์เน็ต.",maxLoc:"คุณมี {n} ตำแหน่งแล้ว — ลบออกหนึ่งก่อน.",
     loading:"กำลังโหลดพยากรณ์…",loadingCity:"กำลังโหลด {city}…",findingLoc:"กำลังค้นหาตำแหน่งของคุณ…",cantReach:"ไม่สามารถเชื่อมต่อบริการพยากรณ์อากาศ.",cantReachSub:"ตรวจสอบการเชื่อมต่อแล้วดึงลงเพื่อลองใหม่.",
     srcModel:"แหล่งข้อมูล / โมเดล",winHigh:"สูงสุดของช่วง",winLow:"ต่ำสุดของช่วง",consensusAvg:"◆ ค่าเฉลี่ยฉันทามติ",showAll:"แสดงทั้ง {n} โมเดล ▾",hideModels:"ซ่อนโมเดล ▴",
-    noteLive:"ฉันทามติแบบสด.",noteLiveBody:"ตัวเลขเป็นค่าเฉลี่ยจาก {n} โมเดลพยากรณ์อากาศระดับชาติ (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) ผ่าน Open-Meteo อัปเดตทุกครั้งที่คุณเปิดตำแหน่ง.",noteOffline:"ภาพรวมออฟไลน์.",noteOfflineBody:"กำลังแสดงภาพรวม Gliwice ที่บันทึกไว้ — เชื่อมต่ออินเทอร์เน็ตแล้วเปิดใหม่เพื่อรับค่าเฉลี่ยสด 7 โมเดลสำหรับเมืองใดก็ได้.",
+    noteLive:"ฉันทามติแบบสด.",noteLiveBody:"ตัวเลขเป็นค่าเฉลี่ยจาก {n} โมเดลพยากรณ์อากาศระดับชาติ (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) ผ่าน Open-Meteo อัปเดตทุกครั้งที่คุณเปิดตำแหน่ง.",noteOffline:"ภาพรวมออฟไลน์.",noteOfflineBody:"กำลังแสดงภาพรวม Gliwice ที่บันทึกไว้ — เชื่อมต่ออินเทอร์เน็ตแล้วเปิดใหม่เพื่อรับค่าเฉลี่ยสด 7 โมเดลสำหรับเมืองใดก็ได้.",
     footLive:"ข้อมูลสด · ค่าเฉลี่ยหลายโมเดลจาก Open-Meteo",footOffline:"สำรองออฟไลน์",footTail:" · ดึงหรือเปิดใหม่เพื่อรีเฟรช"
   },
   vi:{
@@ -1840,7 +1868,7 @@ const I18N={
     yourLocations:"Vị trí của bạn",addLocation:"Thêm vị trí",searchPh:"Tìm thành phố, vd. Kraków",searchBtn:"Tìm",useMyLoc:"📍 Dùng vị trí hiện tại của tôi",current:"hiện tại",remove:"Xóa",noMatches:"Không có kết quả — thử cách viết khác.",searching:"Đang tìm…",searchNet:"Tìm kiếm cần kết nối internet.",maxLoc:"Bạn đã có {n} vị trí — xóa bớt một cái trước.",
     loading:"Đang tải dự báo…",loadingCity:"Đang tải {city}…",findingLoc:"Đang tìm vị trí của bạn…",cantReach:"Không thể kết nối dịch vụ thời tiết.",cantReachSub:"Kiểm tra kết nối và kéo xuống để thử lại.",
     srcModel:"Nguồn / mô hình",winHigh:"Cao nhất khoảng",winLow:"Thấp nhất khoảng",consensusAvg:"◆ Trung bình đồng thuận",showAll:"Hiện tất cả {n} mô hình ▾",hideModels:"Ẩn mô hình ▴",
-    noteLive:"Đồng thuận trực tiếp.",noteLiveBody:"Các số liệu là trung bình của {n} mô hình thời tiết quốc gia (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) qua Open-Meteo, làm mới mỗi khi bạn mở một vị trí.",noteOffline:"Ảnh chụp ngoại tuyến.",noteOfflineBody:"Đang hiển thị ảnh chụp Gliwice đã lưu — kết nối internet và mở lại để lấy trung bình trực tiếp 7 mô hình cho bất kỳ thành phố nào.",
+    noteLive:"Đồng thuận trực tiếp.",noteLiveBody:"Các số liệu là trung bình của {n} mô hình thời tiết quốc gia (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) qua Open-Meteo, làm mới mỗi khi bạn mở một vị trí.",noteOffline:"Ảnh chụp ngoại tuyến.",noteOfflineBody:"Đang hiển thị ảnh chụp Gliwice đã lưu — kết nối internet và mở lại để lấy trung bình trực tiếp 7 mô hình cho bất kỳ thành phố nào.",
     footLive:"Dữ liệu trực tiếp · trung bình đa mô hình Open-Meteo",footOffline:"Dự phòng ngoại tuyến",footTail:" · kéo hoặc mở lại để làm mới"
   },
   bg:{
@@ -1876,7 +1904,7 @@ const I18N={
     yourLocations:"Вашите места",addLocation:"Добави място",searchPh:"Търсете град, напр. Kraków",searchBtn:"Търси",useMyLoc:"📍 Използвай текущото ми местоположение",current:"текущо",remove:"Премахни",noMatches:"Няма съвпадения — опитайте друг правопис.",searching:"Търсене…",searchNet:"Търсенето изисква интернет връзка.",maxLoc:"Вече имате {n} места — първо премахнете едно.",
     loading:"Зареждане на прогнозата…",loadingCity:"Зареждане на {city}…",findingLoc:"Намиране на местоположението ви…",cantReach:"Не може да се свърже с метеоуслугата.",cantReachSub:"Проверете връзката и дръпнете надолу за нов опит.",
     srcModel:"Източник / модел",winHigh:"Макс. за периода",winLow:"Мин. за периода",consensusAvg:"◆ Консенсусна средна",showAll:"Покажи всички {n} модела ▾",hideModels:"Скрий моделите ▴",
-    noteLive:"Консенсус на живо.",noteLiveBody:"Стойностите са средно от {n} национални метеомодела (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC) чрез Open-Meteo, обновяват се при всяко отваряне на място.",noteOffline:"Офлайн снимка.",noteOfflineBody:"Показва запазената снимка на Gliwice — свържете се с интернет и отворете отново за средна на живо от 7 модела за всеки град.",
+    noteLive:"Консенсус на живо.",noteLiveBody:"Стойностите са средно от {n} национални метеомодела (ECMWF, DWD, NOAA, MET Norway, Météo-France, JMA, ECCC, UK Met Office, KNMI, DMI, KMA, CMA, BOM) чрез Open-Meteo, обновяват се при всяко отваряне на място.",noteOffline:"Офлайн снимка.",noteOfflineBody:"Показва запазената снимка на Gliwice — свържете се с интернет и отворете отново за средна на живо от 7 модела за всеки град.",
     footLive:"Данни на живо · средно от няколко модела Open-Meteo",footOffline:"Офлайн резерва",footTail:" · дръпнете или отворете отново за обновяване"
   }
 };
@@ -1918,7 +1946,7 @@ const TIPX={
 (function(){for(var _l in TIPX){if(I18N[_l])for(var _k in TIPX[_l])I18N[_l][_k]=TIPX[_l][_k];}})();
 /* Late-added strings (temperature-unit label, sandstorm label, 3-level biometeo tip), all 33 languages */
 const L10N_EXTRA={
-  en:{tempUnit:"Temperature units",cond_sand:"Sandstorm",tip_biomet_good:"Body-friendly weather — settled conditions today",tip_biomet_ok:"Fair for well-being — only mild weather stress",tip_biomet_bad:"Hard on well-being — abrupt weather swings today"},
+  en:{tempUnit:"Temperature units",cond_sand:"Sandstorm",creditData:"Weather & air data by Open-Meteo · Location by BigDataCloud",liveAvgN:"LIVE · {n}-model avg",tip_biomet_good:"Body-friendly weather — settled conditions today",tip_biomet_ok:"Fair for well-being — only mild weather stress",tip_biomet_bad:"Hard on well-being — abrupt weather swings today"},
   pl:{tempUnit:"Jednostka temperatury",cond_sand:"Burza piaskowa",tip_biomet_good:"Pogoda sprzyja — spokojne warunki dziś",tip_biomet_ok:"Umiarkowany wpływ — lekkie obciążenie pogodą",tip_biomet_bad:"Trudny dzień biometeo — gwałtowne zmiany pogody mogą pogarszać samopoczucie"},
   de:{tempUnit:"Temperatureinheit",cond_sand:"Sandsturm",tip_biomet_good:"Angenehm für den Körper — heute ruhiges Wetter",tip_biomet_ok:"Mäßiger Wettereinfluss — leichte Belastung",tip_biomet_bad:"Belastendes Biowetter — heute abrupte Wetterwechsel"},
   uk:{tempUnit:"Одиниця температури",cond_sand:"Піщана буря",tip_biomet_good:"Погода сприятлива — сьогодні спокійні умови",tip_biomet_ok:"Помірний вплив — легке навантаження погодою",tip_biomet_bad:"Складна біопогода — сьогодні різкі зміни погоди"},
@@ -1953,6 +1981,80 @@ const L10N_EXTRA={
   bg:{tempUnit:"Мерна единица за температура",cond_sand:"Пясъчна буря",tip_biomet_good:"Приятно време — спокойни условия днес",tip_biomet_ok:"Умерено влияние — леко натоварване",tip_biomet_bad:"Натоварващо време — резки промени днес"}
 };
 (function(){for(var _l in L10N_EXTRA){if(I18N[_l])for(var _k in L10N_EXTRA[_l])I18N[_l][_k]=L10N_EXTRA[_l][_k];}})();
+/* Condition intensity + dust tiers + new stat tiles, all 33 languages */
+const L10N_EXTRA2={
+  en:{cond_lrain:"Light rain",cond_hrain:"Heavy rain",cond_prain:"Possible rain",cond_lsnow:"Light snow",cond_hsnow:"Heavy snow",cond_psnow:"Possible snow",cond_dust:"Dusty air",cond_bdust:"Blowing dust",stat_gust:"Gust",stat_vis:"Visibility",stat_storm:"Storm",stat_precip:"Precip"},
+  pl:{cond_lrain:"Lekki deszcz",cond_hrain:"Ulewny deszcz",cond_prain:"Możliwy deszcz",cond_lsnow:"Lekki śnieg",cond_hsnow:"Intensywny śnieg",cond_psnow:"Możliwy śnieg",cond_dust:"Zapylenie",cond_bdust:"Pył unoszony",stat_gust:"Poryw",stat_vis:"Widoczność",stat_storm:"Burza",stat_precip:"Opady"},
+  de:{cond_lrain:"Leichter Regen",cond_hrain:"Starker Regen",cond_prain:"Möglicher Regen",cond_lsnow:"Leichter Schnee",cond_hsnow:"Starker Schnee",cond_psnow:"Möglicher Schnee",cond_dust:"Staubige Luft",cond_bdust:"Aufwirbelnder Staub",stat_gust:"Böe",stat_vis:"Sicht",stat_storm:"Gewitter",stat_precip:"Niederschlag"},
+  uk:{cond_lrain:"Слабкий дощ",cond_hrain:"Сильний дощ",cond_prain:"Можливий дощ",cond_lsnow:"Слабкий сніг",cond_hsnow:"Сильний сніг",cond_psnow:"Можливий сніг",cond_dust:"Запилене повітря",cond_bdust:"Пилова поземка",stat_gust:"Порив",stat_vis:"Видимість",stat_storm:"Гроза",stat_precip:"Опади"},
+  es:{cond_lrain:"Lluvia ligera",cond_hrain:"Lluvia fuerte",cond_prain:"Posible lluvia",cond_lsnow:"Nieve ligera",cond_hsnow:"Nieve intensa",cond_psnow:"Posible nieve",cond_dust:"Aire polvoriento",cond_bdust:"Polvo en suspensión",stat_gust:"Racha",stat_vis:"Visibilidad",stat_storm:"Tormenta",stat_precip:"Precip."},
+  fr:{cond_lrain:"Pluie légère",cond_hrain:"Forte pluie",cond_prain:"Pluie possible",cond_lsnow:"Neige légère",cond_hsnow:"Neige forte",cond_psnow:"Neige possible",cond_dust:"Air poussiéreux",cond_bdust:"Poussière soulevée",stat_gust:"Rafale",stat_vis:"Visibilité",stat_storm:"Orage",stat_precip:"Précip."},
+  ru:{cond_lrain:"Небольшой дождь",cond_hrain:"Сильный дождь",cond_prain:"Возможен дождь",cond_lsnow:"Небольшой снег",cond_hsnow:"Сильный снег",cond_psnow:"Возможен снег",cond_dust:"Пыльный воздух",cond_bdust:"Позёмок пыли",stat_gust:"Порыв",stat_vis:"Видимость",stat_storm:"Гроза",stat_precip:"Осадки"},
+  zh:{cond_lrain:"小雨",cond_hrain:"大雨",cond_prain:"可能有雨",cond_lsnow:"小雪",cond_hsnow:"大雪",cond_psnow:"可能有雪",cond_dust:"浮尘",cond_bdust:"扬沙",stat_gust:"阵风",stat_vis:"能见度",stat_storm:"雷暴",stat_precip:"降水"},
+  ja:{cond_lrain:"弱い雨",cond_hrain:"強い雨",cond_prain:"雨の可能性",cond_lsnow:"弱い雪",cond_hsnow:"強い雪",cond_psnow:"雪の可能性",cond_dust:"砂じん",cond_bdust:"風じん",stat_gust:"突風",stat_vis:"視程",stat_storm:"雷雨",stat_precip:"降水"},
+  pt:{cond_lrain:"Chuva fraca",cond_hrain:"Chuva forte",cond_prain:"Chuva possível",cond_lsnow:"Neve fraca",cond_hsnow:"Neve forte",cond_psnow:"Neve possível",cond_dust:"Ar empoeirado",cond_bdust:"Poeira levantada",stat_gust:"Rajada",stat_vis:"Visibilidade",stat_storm:"Tempestade",stat_precip:"Precip."},
+  nl:{cond_lrain:"Lichte regen",cond_hrain:"Zware regen",cond_prain:"Mogelijk regen",cond_lsnow:"Lichte sneeuw",cond_hsnow:"Zware sneeuw",cond_psnow:"Mogelijk sneeuw",cond_dust:"Stoffige lucht",cond_bdust:"Opwaaiend stof",stat_gust:"Windstoot",stat_vis:"Zicht",stat_storm:"Onweer",stat_precip:"Neerslag"},
+  it:{cond_lrain:"Pioggia debole",cond_hrain:"Pioggia forte",cond_prain:"Pioggia possibile",cond_lsnow:"Neve debole",cond_hsnow:"Neve forte",cond_psnow:"Neve possibile",cond_dust:"Aria polverosa",cond_bdust:"Polvere sollevata",stat_gust:"Raffica",stat_vis:"Visibilità",stat_storm:"Temporale",stat_precip:"Precip."},
+  hi:{cond_lrain:"हल्की बारिश",cond_hrain:"भारी बारिश",cond_prain:"संभावित बारिश",cond_lsnow:"हल्की बर्फ",cond_hsnow:"भारी बर्फ",cond_psnow:"संभावित बर्फ",cond_dust:"धूल भरी हवा",cond_bdust:"उड़ती धूल",stat_gust:"झोंका",stat_vis:"दृश्यता",stat_storm:"तूफ़ान",stat_precip:"वर्षा"},
+  ar:{cond_lrain:"مطر خفيف",cond_hrain:"مطر غزير",cond_prain:"احتمال مطر",cond_lsnow:"ثلج خفيف",cond_hsnow:"ثلج كثيف",cond_psnow:"احتمال ثلج",cond_dust:"هواء مُغبر",cond_bdust:"غبار متطاير",stat_gust:"هبّة",stat_vis:"الرؤية",stat_storm:"عاصفة رعدية",stat_precip:"هطول"},
+  el:{cond_lrain:"Ασθενής βροχή",cond_hrain:"Ισχυρή βροχή",cond_prain:"Πιθανή βροχή",cond_lsnow:"Ασθενές χιόνι",cond_hsnow:"Πυκνό χιόνι",cond_psnow:"Πιθανό χιόνι",cond_dust:"Σκονισμένος αέρας",cond_bdust:"Σκόνη",stat_gust:"Ριπή",stat_vis:"Ορατότητα",stat_storm:"Καταιγίδα",stat_precip:"Υετός"},
+  cs:{cond_lrain:"Slabý déšť",cond_hrain:"Silný déšť",cond_prain:"Možný déšť",cond_lsnow:"Slabé sněžení",cond_hsnow:"Silné sněžení",cond_psnow:"Možný sníh",cond_dust:"Prašný vzduch",cond_bdust:"Zvířený prach",stat_gust:"Náraz",stat_vis:"Viditelnost",stat_storm:"Bouřka",stat_precip:"Srážky"},
+  sv:{cond_lrain:"Lätt regn",cond_hrain:"Kraftigt regn",cond_prain:"Möjligt regn",cond_lsnow:"Lätt snö",cond_hsnow:"Kraftig snö",cond_psnow:"Möjlig snö",cond_dust:"Dammig luft",cond_bdust:"Yrande damm",stat_gust:"By",stat_vis:"Sikt",stat_storm:"Åska",stat_precip:"Nederbörd"},
+  ko:{cond_lrain:"약한 비",cond_hrain:"강한 비",cond_prain:"비 가능성",cond_lsnow:"약한 눈",cond_hsnow:"강한 눈",cond_psnow:"눈 가능성",cond_dust:"먼지 낀 공기",cond_bdust:"날린 먼지",stat_gust:"돌풍",stat_vis:"시정",stat_storm:"뇌우",stat_precip:"강수"},
+  id:{cond_lrain:"Hujan ringan",cond_hrain:"Hujan lebat",cond_prain:"Kemungkinan hujan",cond_lsnow:"Salju ringan",cond_hsnow:"Salju lebat",cond_psnow:"Kemungkinan salju",cond_dust:"Udara berdebu",cond_bdust:"Debu beterbangan",stat_gust:"Embusan",stat_vis:"Jarak pandang",stat_storm:"Badai petir",stat_precip:"Presipitasi"},
+  bn:{cond_lrain:"হালকা বৃষ্টি",cond_hrain:"ভারী বৃষ্টি",cond_prain:"সম্ভাব্য বৃষ্টি",cond_lsnow:"হালকা তুষার",cond_hsnow:"ভারী তুষার",cond_psnow:"সম্ভাব্য তুষার",cond_dust:"ধুলোময় বাতাস",cond_bdust:"উড়ন্ত ধুলো",stat_gust:"দমকা",stat_vis:"দৃশ্যমানতা",stat_storm:"বজ্রঝড়",stat_precip:"বৃষ্টিপাত"},
+  tr:{cond_lrain:"Hafif yağmur",cond_hrain:"Şiddetli yağmur",cond_prain:"Olası yağmur",cond_lsnow:"Hafif kar",cond_hsnow:"Yoğun kar",cond_psnow:"Olası kar",cond_dust:"Tozlu hava",cond_bdust:"Savrulan toz",stat_gust:"Ani rüzgar",stat_vis:"Görüş",stat_storm:"Gök gürültülü fırtına",stat_precip:"Yağış"},
+  te:{cond_lrain:"తేలికపాటి వర్షం",cond_hrain:"భారీ వర్షం",cond_prain:"వర్షం అవకాశం",cond_lsnow:"తేలికపాటి మంచు",cond_hsnow:"భారీ మంచు",cond_psnow:"మంచు అవకాశం",cond_dust:"ధూళి గాలి",cond_bdust:"ఎగిరే ధూళి",stat_gust:"గాలివాటు",stat_vis:"దృశ్యత",stat_storm:"ఉరుములతో తుఫాను",stat_precip:"అవపాతం"},
+  ro:{cond_lrain:"Ploaie slabă",cond_hrain:"Ploaie puternică",cond_prain:"Posibilă ploaie",cond_lsnow:"Ninsoare slabă",cond_hsnow:"Ninsoare puternică",cond_psnow:"Posibilă ninsoare",cond_dust:"Aer prăfuit",cond_bdust:"Praf spulberat",stat_gust:"Rafală",stat_vis:"Vizibilitate",stat_storm:"Furtună",stat_precip:"Precip."},
+  hu:{cond_lrain:"Gyenge eső",cond_hrain:"Erős eső",cond_prain:"Lehet eső",cond_lsnow:"Gyenge hó",cond_hsnow:"Erős havazás",cond_psnow:"Lehet hó",cond_dust:"Poros levegő",cond_bdust:"Felkavart por",stat_gust:"Széllökés",stat_vis:"Látótávolság",stat_storm:"Zivatar",stat_precip:"Csapadék"},
+  fi:{cond_lrain:"Heikkoa sadetta",cond_hrain:"Voimakasta sadetta",cond_prain:"Mahdollista sadetta",cond_lsnow:"Heikkoa lunta",cond_hsnow:"Runsasta lunta",cond_psnow:"Mahdollista lunta",cond_dust:"Pölyinen ilma",cond_bdust:"Pölyä ilmassa",stat_gust:"Puuska",stat_vis:"Näkyvyys",stat_storm:"Ukkonen",stat_precip:"Sade"},
+  no:{cond_lrain:"Lett regn",cond_hrain:"Kraftig regn",cond_prain:"Mulig regn",cond_lsnow:"Lett snø",cond_hsnow:"Kraftig snø",cond_psnow:"Mulig snø",cond_dust:"Støvete luft",cond_bdust:"Oppvirvlet støv",stat_gust:"Vindkast",stat_vis:"Sikt",stat_storm:"Torden",stat_precip:"Nedbør"},
+  sk:{cond_lrain:"Slabý dážď",cond_hrain:"Silný dážď",cond_prain:"Možný dážď",cond_lsnow:"Slabé sneženie",cond_hsnow:"Silné sneženie",cond_psnow:"Možný sneh",cond_dust:"Prašný vzduch",cond_bdust:"Zvírený prach",stat_gust:"Náraz",stat_vis:"Viditeľnosť",stat_storm:"Búrka",stat_precip:"Zrážky"},
+  sw:{cond_lrain:"Mvua nyepesi",cond_hrain:"Mvua kubwa",cond_prain:"Mvua yawezekana",cond_lsnow:"Theluji nyepesi",cond_hsnow:"Theluji nzito",cond_psnow:"Theluji yawezekana",cond_dust:"Hewa yenye vumbi",cond_bdust:"Vumbi lililoinuka",stat_gust:"Kimbunga",stat_vis:"Uonekano",stat_storm:"Dhoruba ya radi",stat_precip:"Mvua"},
+  fa:{cond_lrain:"باران سبک",cond_hrain:"باران شدید",cond_prain:"احتمال باران",cond_lsnow:"برف سبک",cond_hsnow:"برف سنگین",cond_psnow:"احتمال برف",cond_dust:"هوای غبارآلود",cond_bdust:"گرد و خاک",stat_gust:"تندباد",stat_vis:"دید",stat_storm:"رعد و برق",stat_precip:"بارش"},
+  da:{cond_lrain:"Let regn",cond_hrain:"Kraftig regn",cond_prain:"Mulig regn",cond_lsnow:"Let sne",cond_hsnow:"Kraftig sne",cond_psnow:"Mulig sne",cond_dust:"Støvet luft",cond_bdust:"Ophvirvlet støv",stat_gust:"Vindstød",stat_vis:"Sigt",stat_storm:"Torden",stat_precip:"Nedbør"},
+  th:{cond_lrain:"ฝนเล็กน้อย",cond_hrain:"ฝนหนัก",cond_prain:"อาจมีฝน",cond_lsnow:"หิมะเล็กน้อย",cond_hsnow:"หิมะหนัก",cond_psnow:"อาจมีหิมะ",cond_dust:"อากาศมีฝุ่น",cond_bdust:"ฝุ่นฟุ้ง",stat_gust:"ลมกระโชก",stat_vis:"ทัศนวิสัย",stat_storm:"พายุฝนฟ้าคะนอง",stat_precip:"หยาดน้ำฟ้า"},
+  vi:{cond_lrain:"Mưa nhẹ",cond_hrain:"Mưa to",cond_prain:"Có thể mưa",cond_lsnow:"Tuyết nhẹ",cond_hsnow:"Tuyết dày",cond_psnow:"Có thể tuyết",cond_dust:"Không khí bụi",cond_bdust:"Bụi cuốn",stat_gust:"Gió giật",stat_vis:"Tầm nhìn",stat_storm:"Dông",stat_precip:"Lượng mưa"},
+  bg:{cond_lrain:"Слаб дъжд",cond_hrain:"Силен дъжд",cond_prain:"Възможен дъжд",cond_lsnow:"Слаб сняг",cond_hsnow:"Силен сняг",cond_psnow:"Възможен сняг",cond_dust:"Прашен въздух",cond_bdust:"Носещ се прах",stat_gust:"Порив",stat_vis:"Видимост",stat_storm:"Гръмотевична буря",stat_precip:"Валежи"}
+};
+(function(){for(var _l in L10N_EXTRA2){if(I18N[_l])for(var _k in L10N_EXTRA2[_l])I18N[_l][_k]=L10N_EXTRA2[_l][_k];}})();
+/* CAPE (thunderstorm potential) + low-visibility lifestyle tips, all 33 languages */
+const L10N_EXTRA3={
+  en:{tip_cape:"Unstable air — thunderstorms may develop later",tip_lowvis:"Low visibility — take extra care on the road"},
+  pl:{tip_cape:"Niestabilne powietrze — możliwe burze",tip_lowvis:"Słaba widoczność — uważaj na drodze"},
+  de:{tip_cape:"Labile Luft — später Gewitter möglich",tip_lowvis:"Schlechte Sicht — im Verkehr aufpassen"},
+  uk:{tip_cape:"Нестабільне повітря — можливі грози",tip_lowvis:"Погана видимість — обережно на дорозі"},
+  es:{tip_cape:"Aire inestable — posibles tormentas",tip_lowvis:"Baja visibilidad — precaución al conducir"},
+  fr:{tip_cape:"Air instable — orages possibles plus tard",tip_lowvis:"Faible visibilité — prudence sur la route"},
+  ru:{tip_cape:"Неустойчивый воздух — возможны грозы",tip_lowvis:"Плохая видимость — осторожно на дороге"},
+  zh:{tip_cape:"大气不稳定 — 稍后可能有雷暴",tip_lowvis:"能见度低 — 驾车请小心"},
+  ja:{tip_cape:"不安定な大気 — 後で雷雨の可能性",tip_lowvis:"視界不良 — 運転注意"},
+  pt:{tip_cape:"Ar instável — trovoadas possíveis",tip_lowvis:"Baixa visibilidade — cuidado na estrada"},
+  nl:{tip_cape:"Onstabiele lucht — onweer mogelijk",tip_lowvis:"Slecht zicht — voorzichtig op de weg"},
+  it:{tip_cape:"Aria instabile — possibili temporali",tip_lowvis:"Scarsa visibilità — prudenza alla guida"},
+  hi:{tip_cape:"अस्थिर वायु — बाद में तूफ़ान संभव",tip_lowvis:"कम दृश्यता — गाड़ी चलाते समय सावधानी"},
+  ar:{tip_cape:"هواء غير مستقر — عواصف رعدية محتملة",tip_lowvis:"رؤية منخفضة — احذر أثناء القيادة"},
+  el:{tip_cape:"Ασταθής αέρας — πιθανές καταιγίδες",tip_lowvis:"Χαμηλή ορατότητα — προσοχή στον δρόμο"},
+  cs:{tip_cape:"Nestabilní vzduch — možné bouřky",tip_lowvis:"Nízká viditelnost — pozor na silnici"},
+  sv:{tip_cape:"Instabil luft — åska kan bildas",tip_lowvis:"Dålig sikt — kör försiktigt"},
+  ko:{tip_cape:"대기 불안정 — 뇌우 발생 가능",tip_lowvis:"시야 불량 — 운전 주의"},
+  id:{tip_cape:"Udara labil — badai petir mungkin terjadi",tip_lowvis:"Jarak pandang rendah — hati-hati berkendara"},
+  bn:{tip_cape:"অস্থির বাতাস — পরে বজ্রঝড় হতে পারে",tip_lowvis:"কম দৃশ্যমানতা — সাবধানে গাড়ি চালান"},
+  tr:{tip_cape:"Kararsız hava — gök gürültülü fırtına olabilir",tip_lowvis:"Düşük görüş — yolda dikkatli olun"},
+  te:{tip_cape:"అస్థిర గాలి — తర్వాత ఉరుములు రావచ్చు",tip_lowvis:"తక్కువ దృశ్యత — డ్రైవింగ్‌లో జాగ్రత్త"},
+  ro:{tip_cape:"Aer instabil — posibile furtuni",tip_lowvis:"Vizibilitate redusă — atenție la volan"},
+  hu:{tip_cape:"Instabil levegő — zivatarok alakulhatnak ki",tip_lowvis:"Rossz látótávolság — óvatosan vezess"},
+  fi:{tip_cape:"Epävakaa ilma — ukkosta voi kehittyä",tip_lowvis:"Huono näkyvyys — aja varovasti"},
+  no:{tip_cape:"Ustabil luft — torden kan utvikle seg",tip_lowvis:"Dårlig sikt — kjør forsiktig"},
+  sk:{tip_cape:"Nestabilný vzduch — možné búrky",tip_lowvis:"Nízka viditeľnosť — pozor na ceste"},
+  sw:{tip_cape:"Hewa isiyo thabiti — huenda dhoruba za radi",tip_lowvis:"Uonekano hafifu — endesha kwa tahadhari"},
+  fa:{tip_cape:"هوای ناپایدار — احتمال رعد و برق",tip_lowvis:"دید کم — در رانندگی احتیاط کنید"},
+  da:{tip_cape:"Ustabil luft — torden kan opstå",tip_lowvis:"Dårlig sigt — kør forsigtigt"},
+  th:{tip_cape:"อากาศไม่เสถียร — อาจมีพายุฝนฟ้าคะนอง",tip_lowvis:"ทัศนวิสัยต่ำ — ขับขี่ด้วยความระมัดระวัง"},
+  vi:{tip_cape:"Không khí bất ổn — có thể có dông",tip_lowvis:"Tầm nhìn kém — lái xe cẩn thận"},
+  bg:{tip_cape:"Нестабилен въздух — възможни гръмотевични бури",tip_lowvis:"Ниска видимост — внимавайте на пътя"}
+};
+(function(){for(var _l in L10N_EXTRA3){if(I18N[_l])for(var _k in L10N_EXTRA3[_l])I18N[_l][_k]=L10N_EXTRA3[_l][_k];}})();
 let LANG=(function(){try{var s=localStorage.getItem('cw_lang');if(s&&LANG_NAMES[s])return s;}catch(e){}var n=(navigator.language||'en').slice(0,2).toLowerCase();return LANG_NAMES[n]?n:'en';})();
 function t(k){var d=I18N[LANG]||I18N.en;var v=(d&&d[k]!=null)?d[k]:(I18N.en[k]!=null?I18N.en[k]:k);return v;}
 function tf(k,vars){var s=t(k);if(vars)for(var p in vars)s=s.split('{'+p+'}').join(vars[p]);return s;}
@@ -1970,7 +2072,10 @@ const MODELS=[
   {id:'ecmwf_ifs025',name:'ECMWF'},{id:'icon_seamless',name:'DWD ICON'},
   {id:'gfs_seamless',name:'NOAA GFS'},{id:'metno_seamless',name:'MET Norway'},
   {id:'meteofrance_seamless',name:'Météo-France'},{id:'jma_seamless',name:'JMA'},
-  {id:'gem_seamless',name:'ECCC GEM'}
+  {id:'gem_seamless',name:'ECCC GEM'},{id:'ukmo_seamless',name:'UK Met Office'},
+  {id:'knmi_seamless',name:'KNMI'},{id:'dmi_seamless',name:'DMI'},
+  {id:'kma_seamless',name:'KMA'},{id:'cma_grapes_global',name:'CMA'},
+  {id:'bom_access_global',name:'BOM'}
 ];
 let WD=(I18N[LANG]||I18N.en).days;
 const pad=n=>String(n).padStart(2,'0');
@@ -2007,7 +2112,7 @@ function buildFallback(){
 
 /* ============ LIVE FETCH (Open-Meteo, 7-model average) ============ */
 async function fetchWeather(loc){
-  const hv='temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,is_day,wind_speed_10m,dew_point_2m,cloud_cover';
+  const hv='temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,is_day,wind_speed_10m,wind_gusts_10m,visibility,cape,dew_point_2m,cloud_cover';
   const dv='weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset,uv_index_max';
   const ids=MODELS.map(m=>m.id).join(',');
   const cb='&_='+Date.now(); // cache-buster so pull-to-refresh always re-fetches (was hitting a ~15 min cache)
@@ -2027,18 +2132,18 @@ async function fetchWeather(loc){
   const hourly=[];
   for(let i=si;i<Math.min(si+37,n);i++){
     const d=new Date(times[i]);const isDay=(avg('is_day',i)||0)>=0.5;const code=Math.round(mode('weather_code',i));
-    const mmv=avg('precipitation',i);
-    hourly.push({date:d,h:pad(d.getHours()),temp:R(avg('temperature_2m',i)),feels:R(avg('apparent_temperature',i)),
-      precip:R(avg('precipitation_probability',i)),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),key:codeKey(code,isDay,avg('cloud_cover',i)),isDay,
+    const mmv=avg('precipitation',i), tv=avg('temperature_2m',i), pv=avg('precipitation_probability',i), visv=avg('visibility',i);
+    hourly.push({date:d,h:pad(d.getHours()),temp:R(tv),feels:R(avg('apparent_temperature',i)),
+      precip:R(pv),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),gust:R(avg('wind_gusts_10m',i)),vis:(visv==null?null:Math.round(visv/100)/10),cape:R(avg('cape',i)),key:wxKey(code,isDay,avg('cloud_cover',i),mmv,pv,tv),isDay,
       dew:R(avg('dew_point_2m',i)),cloud:R(avg('cloud_cover',i))});
   }
   // two hours before now, for a premium left lead-in on the hourly strip
   const past=[];
   for(let i=Math.max(0,si-2);i<si;i++){
     const d=new Date(times[i]);const isDay=(avg('is_day',i)||0)>=0.5;const code=Math.round(mode('weather_code',i));
-    const mmv=avg('precipitation',i);
-    past.push({date:d,h:pad(d.getHours()),temp:R(avg('temperature_2m',i)),feels:R(avg('apparent_temperature',i)),
-      precip:R(avg('precipitation_probability',i)),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),key:codeKey(code,isDay,avg('cloud_cover',i)),isDay,
+    const mmv=avg('precipitation',i), tv=avg('temperature_2m',i), pv=avg('precipitation_probability',i);
+    past.push({date:d,h:pad(d.getHours()),temp:R(tv),feels:R(avg('apparent_temperature',i)),
+      precip:R(pv),mm:mmv==null?0:Math.round(mmv*10)/10,wind:R(avg('wind_speed_10m',i)),key:wxKey(code,isDay,avg('cloud_cover',i),mmv,pv,tv),isDay,
       dew:R(avg('dew_point_2m',i)),cloud:R(avg('cloud_cover',i)),past:true});
   }
   // daily averaged across models
@@ -2085,20 +2190,26 @@ async function fetchWeather(loc){
   const aqi=useUS?num(aqc.us_aqi):num(aqc.european_aqi), aqiScale=useUS?'us':'eu';
   const uvNow=num(aqc.uv_index)!=null?Math.round(aqc.uv_index):(C.daily&&C.daily.uv_index_max!=null?R(C.daily.uv_index_max[0]):null);
   const now0=hourly[0]||{}; // headline = the 7-model consensus, consistent with the rest of the card
-  // current condition key, with a sandstorm override: strong airborne dust + wind, when not precipitating
   const isDayNow=cur.is_day===undefined?true:cur.is_day>=0.5;
+  const dn=isDayNow?'-day':'-night';
   const curWind=now0.wind!=null?now0.wind:R(cur.wind_speed_10m);
   let curKey=now0.key||codeKey(cur.weather_code||0,isDayNow);
-  const dust=num(aqc.dust);
-  if(dust!=null&&dust>=225&&curWind!=null&&curWind>=22){
-    const kb=curKey.replace('-day','').replace('-night','');
-    if(['rain','hrain','sleet','snow','rshowers','sshowers','thunder','tstorm','hail'].indexOf(kb)<0) curKey='sand'+(isDayNow?'-day':'-night');
+  // tiered dust/sandstorm: dusty air → blowing dust → sandstorm (only when not already wet/stormy)
+  const dust=num(aqc.dust), curVis=now0.vis;
+  const kb=curKey.replace('-day','').replace('-night','');
+  const busy=['rain','hrain','lrain','prain','sleet','snow','hsnow','lsnow','psnow','rshowers','sshowers','thunder','tstorm','hail'].indexOf(kb)>=0;
+  if(!busy&&dust!=null){
+    const w=curWind||0;
+    if(dust>=350&&w>=30&&(curVis==null||curVis<2)) curKey='sand'+dn;        // sandstorm
+    else if(dust>=200&&w>=20) curKey='bdust'+dn;                            // blowing dust
+    else if(dust>=120) curKey='dust'+dn;                                   // dusty air / haze
   }
   return {place:loc, tzOffset:H.utc_offset_seconds||0,
     current:{temp: now0.temp!=null?now0.temp:R(cur.temperature_2m),
       feels: now0.feels!=null?now0.feels:R(cur.apparent_temperature),
       key: curKey,
       humidity:R(cur.relative_humidity_2m), wind: curWind,
+      gust: now0.gust!=null?now0.gust:null, vis: now0.vis!=null?now0.vis:null, cape: now0.cape!=null?now0.cape:null, mm: now0.mm!=null?now0.mm:null,
       uv:uvNow, sunrise:sr, sunset:ss, pressure:cur.surface_pressure!=null?Math.round(cur.surface_pressure):null, pressureTrend:ptrend,
       dew: now0.dew!=null?now0.dew:null, cloud: now0.cloud!=null?now0.cloud:null},
     hourly,daily,sources,rainSplit,past,pollen:hasP?pollen:null,aqi:aqi,aqiScale:aqiScale,live:true,updated:pad(new Date().getHours())+':'+pad(new Date().getMinutes())};
@@ -2326,6 +2437,21 @@ function buildTips(D){
     else T.push({ic:'pressure',tx:t('tip_biomet_good'),pri:24});
   })();
 
+  // — Thunderstorm potential from CAPE (atmospheric instability), a few hours ahead —
+  (function(){
+    var kb=(c.key||'').replace('-day','').replace('-night','');
+    if(kb==='thunder'||kb==='tstorm'||kb==='hail') return;                 // already stormy → skip
+    var caps=hrs.slice(0,12).map(function(x){return x.cape;}).filter(function(v){return v!=null;});
+    var mx=caps.length?Math.max.apply(null,caps):(c.cape!=null?c.cape:0);
+    if(mx>=1000) T.push({ic:'storm',tx:t('tip_cape'),pri:70});
+  })();
+  // — Low visibility (fog / haze / dust): driving caution —
+  (function(){
+    var vs=hrs.slice(0,6).map(function(x){return x.vis;}).filter(function(v){return v!=null;});
+    var mn=vs.length?Math.min.apply(null,vs):(c.vis!=null?c.vis:null);
+    if(mn!=null&&mn<1) T.push({ic:'vis',tx:t('tip_lowvis'),pri:72});
+  })();
+
   // rank by relevance, keep an even 8–12
   T.sort((a,b)=>b.pri-a.pri);
   let n=Math.min(12,T.length); if(n<8) n=T.length; n=n-(n%2);
@@ -2464,10 +2590,11 @@ const SkyFX=(function(){
     if(b==='tstorm'||b==='thunder'){m='thunder';}
     else if(b==='hail'){m='hail';}
     else if(b==='hrain'){m='rain';intn=1.8;}
+    else if(b==='lrain'||b==='prain'){m='rain';intn=0.6;}
     else if(b==='rain'||b==='rshowers'){m='rain';intn=1;}
-    else if(b==='snow'||b==='sshowers'||b==='sleet'){m='snow';}
+    else if(b==='snow'||b==='sshowers'||b==='sleet'||b==='lsnow'||b==='hsnow'||b==='psnow'){m='snow';}
     else if(b==='fog'){m='fog';}
-    else if(b==='sand'){m='sand';}
+    else if(b==='sand'||b==='dust'||b==='bdust'){m='sand';}
     const changed=(m!==MODE)||(intn!==INT);
     MODE=m; INT=intn;
     if(m==='none'){ stop(); ctx&&ctx.clearRect(0,0,W,H); return; }
@@ -2510,7 +2637,7 @@ function render(D,root,ai){
       <div class="logo-row">
         <button class="hhbtn" onclick="event.stopPropagation();openMenu()" aria-label="Menu">${icoMenu()}</button>
         <div class="applogo" onclick="event.stopPropagation();spinLogo(this);refreshWeather()" role="button" aria-label="Refresh"><img class="logo-badge" src="emblem.png" alt=""><div class="logo-word"><span class="lw1">Consensus</span><span class="lw2">Weather</span></div></div>
-        <div class="time-pill" title="${D.live?t('liveAvg'):t('offline')}"><div class="tp-now">${D.updated||'--:--'}</div><div class="tp-loc"><span id="locClock">${locNow}</span></div></div>
+        <div class="time-pill" title="${D.live?tf('liveAvgN',{n:(D.sources&&D.sources.length)||MODELS.length}):t('offline')}"><div class="tp-now">${D.updated||'--:--'}</div><div class="tp-loc"><span id="locClock">${locNow}</span></div></div>
       </div>
       <div class="locsel" id="tiles" onclick="event.stopPropagation();openManage()"></div>
     </div>
@@ -2884,6 +3011,9 @@ function IC3(name,size){size=size||30;var S={
   frost:'<g filter="url(#softsh)" stroke="url(#gWind)" stroke-width="2.6" stroke-linecap="round"><line x1="20" y1="5" x2="20" y2="35"/><line x1="7.5" y1="12.5" x2="32.5" y2="27.5"/><line x1="32.5" y1="12.5" x2="7.5" y2="27.5"/><g stroke-width="2.2"><path d="M20 5 l-3 3M20 5 l3 3M20 35 l-3-3M20 35 l3-3"/><path d="M7.5 12.5 l.3 4.2M7.5 12.5 l4.1-.6M32.5 27.5 l-.3-4.2M32.5 27.5 l-4.1 .6"/><path d="M32.5 12.5 l-4.1-.6M32.5 12.5 l-.3 4.2M7.5 27.5 l4.1 .6M7.5 27.5 l.3-4.2"/></g></g>',
   pressure:'<g filter="url(#softsh)"><circle cx="20" cy="21" r="12" fill="url(#gSteel)"/><circle cx="20" cy="21" r="12" fill="none" stroke="#5f6b88" stroke-width="1.1" opacity=".45"/><path d="M20 21 L27 15" stroke="#3a2e6e" stroke-width="2.6" stroke-linecap="round"/><circle cx="20" cy="21" r="2.2" fill="#3a2e6e"/><ellipse cx="15.5" cy="15.5" rx="4" ry="2.4" fill="#fff" opacity=".5"/></g>',
   wind:'<g filter="url(#softsh)" fill="none" stroke="url(#gWind)" stroke-width="4.4" stroke-linecap="round"><path d="M5 15h16a4.5 4.5 0 1 0-4.5-4.5"/><path d="M5 24h11a4 4 0 1 1-4 4"/></g>',
+  gust:'<g filter="url(#softsh)" fill="none" stroke="url(#gWind)" stroke-width="4.2" stroke-linecap="round"><path d="M4 12h15a3.8 3.8 0 1 0-3.8-3.8"/><path d="M4 20h20a4.4 4.4 0 1 1-4.4 4.4"/><path d="M4 28h10a3.2 3.2 0 1 1-3.2 3.2"/></g>',
+  vis:'<g filter="url(#softsh)"><path d="M4 20 C9 12 31 12 36 20 C31 28 9 28 4 20Z" fill="url(#gSteel)"/><circle cx="20" cy="20" r="5.6" fill="#3a2e6e"/><circle cx="20" cy="20" r="2.4" fill="#dff0ff"/><ellipse cx="16" cy="16.4" rx="3" ry="1.6" fill="#fff" opacity=".5"/></g>',
+  storm:'<g filter="url(#softsh)"><g fill="url(#gCloud)"><circle cx="15" cy="16" r="6.5"/><circle cx="26" cy="15" r="8"/><rect x="10" y="14" width="21" height="9.5" rx="4.75"/></g><path d="M22 22 l-6 9 h4.5 l-2 7 8-11 h-5 l3-5Z" fill="url(#gOrange)"/></g>',
   flower:'<g filter="url(#softsh)"><g fill="url(#gPink)"><circle cx="20" cy="10" r="4.4"/><circle cx="10" cy="17" r="4.4"/><circle cx="30" cy="17" r="4.4"/><circle cx="14" cy="29" r="4.4"/><circle cx="26" cy="29" r="4.4"/></g><circle cx="20" cy="20" r="4.6" fill="url(#gSun)"/></g>',
   car:'<g filter="url(#softsh)"><path d="M11 20 l3.5-7 h11 l3.5 7 Z" fill="url(#gRed)"/><rect x="6" y="19" width="28" height="9" rx="3.5" fill="url(#gRed)"/><circle cx="13" cy="29" r="3.6" fill="#2b2b3a"/><circle cx="27" cy="29" r="3.6" fill="#2b2b3a"/><rect x="15.5" y="14.5" width="9" height="4.5" rx="1.4" fill="#dff0ff" opacity=".85"/><rect x="8" y="20.5" width="9" height="1.6" rx=".8" fill="#fff" opacity=".5"/></g>',
   run:'<g filter="url(#softsh)" fill="none" stroke="url(#gOrange)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="15" r="3.2" fill="url(#gOrange)" stroke="none"/><path d="M20 18 L20 26"/><path d="M20 26 L15 33M20 26 L25 33"/><path d="M17 20 L15 10M23 20 L25 10"/></g><g filter="url(#softsh)"><rect x="6" y="8.5" width="28" height="3" rx="1.5" fill="url(#gOrange)"/><rect x="5" y="5.5" width="4.5" height="9" rx="1.6" fill="url(#gOrange)"/><rect x="30.5" y="5.5" width="4.5" height="9" rx="1.6" fill="url(#gOrange)"/></g>',
@@ -2955,7 +3085,7 @@ function renderMenu(){
     `<div class="drawer-row" onclick="event.stopPropagation()"><div class="dr-l"><span class="dr-ic">${icoTherm()}</span><span>${t('tempUnit')}</span></div><div class="unit-toggle"><button class="${UNIT==='C'?'on':''}" onclick="setUnit('C');renderMenu()">°C</button><button class="${UNIT==='F'?'on':''}" onclick="setUnit('F');renderMenu()">°F</button></div></div>`+
     `<div class="drawer-row" onclick="closeMenu();openLangSheet()"><div class="dr-l"><span class="dr-ic">${icoGlobe()}</span><span>${t('langTitle')}</span></div><div class="dr-l"><span class="dr-val">${LANG_NAMES[LANG]||LANG.toUpperCase()}</span><span class="dr-cev">›</span></div></div>`+
     `<div class="drawer-row" onclick="closeMenu();openNotifSheet()"><div class="dr-l"><span class="dr-ic">${icoBell(NOTIF)}</span><span>${t('notifTitle')}</span></div><div class="dr-l"><span class="dr-val">${NOTIF?t('onLbl'):t('offLbl')}</span><span class="dr-cev">›</span></div></div>`+
-    `<div class="menu-foot"><div class="live-pill"><span class="lp1">${(LAST_DATA&&LAST_DATA.live)?t('liveAvg'):t('offline')}</span><span class="lp2">${(LAST_DATA&&LAST_DATA.updated)||'--:--'}</span></div></div>`;
+    `<div class="menu-foot"><div class="live-pill"><span class="lp1">${(LAST_DATA&&LAST_DATA.live)?tf('liveAvgN',{n:(LAST_DATA&&LAST_DATA.sources&&LAST_DATA.sources.length)||MODELS.length}):t('offline')}</span><span class="lp2">${(LAST_DATA&&LAST_DATA.updated)||'--:--'}</span></div><div class="mf-credit">${t('creditData')}</div></div>`;
 }
 function openMenu(){renderMenu();document.getElementById('menuDrawer').classList.add('open');setRefresh(false);}
 function closeMenu(){var d=document.getElementById('menuDrawer');if(d)d.classList.remove('open');if(!document.querySelector('.sheet.open'))setRefresh(true);}
