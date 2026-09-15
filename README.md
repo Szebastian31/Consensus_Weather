@@ -13,6 +13,8 @@ The app is a self-contained web app. It runs two ways from the same file:
 
 You never need Android Studio, Gradle, or a Mac/PC toolchain — **GitHub builds the APK for you in the cloud.**
 
+You can support me and [Buy me a coffee](https://buycoffee.to/szebastian) ☕️
+
 ## Screenshots
 
 <table>
