@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import androidx.core.app. NotificationCompat;
+import androidx.core.app.NotificationCompat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -125,80 +125,125 @@ public class WeatherNotifier extends BroadcastReceiver {
         }}).start();
     }
 
-    // ---- daily summary (7-model consensus) ----
-static void doDaily(Context c, int hour) throws Exception {
-    SharedPreferences p = prefs(c);
-    double lat = p.getFloat("lat", Float.NaN), lon = p.getFloat("lon", Float.NaN);
-    if(Double.isNaN(lat) || Double.isNaN(lon)) return;
-    StringBuilder models = new StringBuilder();
-    for(int i=0;i<MODELS.length;i++){ if(i>0) models.append(","); models.append(MODELS[i]); }
-    String url = "https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon
-        + "&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,wind_speed_10m_max,wind_direction_10m_dominant"
-        + "&models="+models + "&past_days=1&forecast_days=2&timezone=auto";
-    JSONObject daily = new JSONObject(httpGet(url)).getJSONObject("daily");
+    // ---- daily summary (consensus over the next 14 h) ----
+    static void doDaily(Context c, int hour) throws Exception {
+        SharedPreferences p = prefs(c);
+        double lat = p.getFloat("lat", Float.NaN), lon = p.getFloat("lon", Float.NaN);
+        if(Double.isNaN(lat) || Double.isNaN(lon)) return;
 
-    // how many daily notifications are configured?
-    int count = prefs(c).getString("times","07:00,19:00").split(",").length;
-    boolean single   = count <= 1;
-    boolean tomorrow = single ? (hour >= 18) : (hour >= 16);
-    int idx = tomorrow ? 2 : 1;
-    int ref = idx - 1;
+        StringBuilder models = new StringBuilder();
+        for(int i=0;i<MODELS.length;i++){ if(i>0) models.append(","); models.append(MODELS[i]); }
 
-    double hi    = avgDaily(daily, "temperature_2m_max", idx);
-    double lo    = avgDaily(daily, "temperature_2m_min", idx);
-    double hiRef = avgDaily(daily, "temperature_2m_max", ref);
-    double pop   = avgDaily(daily, "precipitation_probability_max", idx);
-    double wspd  = avgDaily(daily, "wind_speed_10m_max", idx);
-    int    wdir  = firstCode(daily, "wind_direction_10m_dominant", idx);
-    int    code  = firstCode(daily, "weather_code", idx);
-    if(Double.isNaN(hi)) return;
+        // hourly for the 14 h window + daily max (past_days=1) for the yesterday comparison
+        String url = "https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon
+            + "&hourly=temperature_2m,weather_code,precipitation_probability,wind_speed_10m,wind_direction_10m"
+            + "&daily=temperature_2m_max&models="+models
+            + "&past_days=1&forecast_days=2&timezone=auto";
+        JSONObject root = new JSONObject(httpGet(url));
+        JSONObject H = root.getJSONObject("hourly");
+        JSONArray tarr = H.getJSONArray("time");
 
-    JSONObject S = loadStrings(c);
-    String unit = S.optString("unit","C"), lang = S.optString("lang","en");
-    String cond = condText(S, code);
+        // locate the current hour in the timeline
+        Calendar now = Calendar.getInstance();
+        String stamp = String.format("%04d-%02d-%02dT%02d", now.get(Calendar.YEAR), now.get(Calendar.MONTH)+1,
+                now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY));
+        int start = -1;
+        for(int i=0;i<tarr.length();i++){ if(tarr.optString(i).startsWith(stamp)){ start=i; break; } }
+        if(start < 0) start = 0;
+        int end = Math.min(start+14, tarr.length());
+        if(end <= start) return;
 
-    // title = report name
-    String title;
-    if(single)          title = tomorrow ? S.optString("repN","Tomorrow's Report") : S.optString("repD","Today's Report");
-    else if(hour < 12)  title = S.optString("repM","Morning Report");
-    else if(hour < 17)  title = S.optString("repA","Afternoon Report");
-    else                title = S.optString("repE","Evening Report");
+        // consensus across the next 14 h
+        double hi = Double.NEGATIVE_INFINITY, lo = Double.POSITIVE_INFINITY;
+        double popMax = 0; boolean havePop = false;
+        double windMax = 0; int windDirAtMax = 0;
+        int rainFromHr = -1;
+        int headCode = 0; // most significant WMO code seen (higher code ≈ more notable)
+        for(int i=start;i<end;i++){
+            double t = avgDaily(H, "temperature_2m", i);
+            if(!Double.isNaN(t)){ if(t>hi) hi=t; if(t<lo) lo=t; }
+            double pp = avgDaily(H, "precipitation_probability", i);
+            if(!Double.isNaN(pp)){ havePop=true; if(pp>popMax) popMax=pp; if(rainFromHr<0 && pp>=50) rainFromHr=i-start; }
+            double w = avgDaily(H, "wind_speed_10m", i);
+            if(!Double.isNaN(w) && w>windMax){ windMax=w; windDirAtMax=firstCode(H,"wind_direction_10m",i); }
+            int wc = worstCodeAt(H, i);
+            if(wc>headCode) headCode=wc;
+        }
+        if(hi == Double.NEGATIVE_INFINITY) return;
 
-    // body
-    String dayWord = tomorrow ? S.optString("tomorrow","Tomorrow") : S.optString("today","Today");
-    StringBuilder body = new StringBuilder();
-    body.append(dayWord).append(": ")
-        .append(fmtTemp(hi, unit)).append("\u00B0\u2191 ")
-        .append(fmtTemp(lo, unit)).append("\u00B0\u2193  ")
-        .append(cap(cond)).append(" ").append(S.optString("allday","throughout the day")).append(".");
-    body.append(" ").append(windSentence(S, wspd, wdir));
-    if(!Double.isNaN(pop))
-        body.append(" ").append(S.optString("precip","Chance of precip {p}%.")
-            .replace("{p}", String.valueOf((int)Math.round(pop))));
-    if(!Double.isNaN(hiRef)){
-        double diff = hi - hiRef;
-        String cmp = diff >= 1.5  ? S.optString("warmer","a bit warmer than yesterday")
-                   : diff <= -1.5 ? S.optString("colder","a bit colder than yesterday")
-                   :                S.optString("same","about the same as yesterday");
-        body.append("\n").append(cap(cmp)).append(".");
+        JSONObject D = root.optJSONObject("daily");
+        double hiRef = D!=null ? avgDaily(D, "temperature_2m_max", 0) : Double.NaN; // idx 0 = yesterday
+
+        JSONObject S = loadStrings(c);
+        String unit = S.optString("unit","C");
+        double windFactor = S.optDouble("windFactor", 1);
+        int    windDec    = S.optInt("windDec", 0);
+        String windUnit   = S.optString("windUnit","km/h");
+        String cond = condText(S, headCode);
+
+        // title = report name (respects single vs multi schedule, as before)
+        int count = prefs(c).getString("times","07:00,19:00").split(",").length;
+        boolean single   = count <= 1;
+        boolean tomorrow = single ? (hour >= 18) : (hour >= 16);
+        String title;
+        if(single)         title = tomorrow ? S.optString("repN","Tomorrow's Report") : S.optString("repD","Today's Report");
+        else if(hour < 12) title = S.optString("repM","Morning Report");
+        else if(hour < 17) title = S.optString("repA","Afternoon Report");
+        else               title = S.optString("repE","Evening Report");
+
+        // concise body: headline · rain timing · wind · vs yesterday
+        java.util.ArrayList<String> parts = new java.util.ArrayList<String>();
+        parts.add(cap(cond) + " " + fmtTemp(hi, unit) + "\u00B0/" + fmtTemp(lo, unit) + "\u00B0");
+
+        if(rainFromHr == 0)      parts.add(S.optString("rainNow","rain now"));
+        else if(rainFromHr > 0)  parts.add(S.optString("rainFrom","rain from ~{h}h").replace("{h}", String.valueOf(rainFromHr)));
+        else if(havePop && popMax >= 30)
+            parts.add(S.optString("popShort","{p}% chance of rain").replace("{p}", String.valueOf((int)Math.round(popMax))));
+
+        if(windMax >= 25){
+            String wv = windDec > 0
+                ? String.format(java.util.Locale.US, "%."+windDec+"f", windMax*windFactor)
+                : String.valueOf(Math.round(windMax*windFactor));
+            parts.add(S.optString("windShort","wind {d} {s} {u}")
+                .replace("{d}", compass(windDirAtMax)).replace("{s}", wv).replace("{u}", windUnit));
+        }
+
+        if(!Double.isNaN(hiRef)){
+            double diff = hi - hiRef;
+            if(diff >= 1.5)       parts.add(S.optString("warmer","a bit warmer than yesterday"));
+            else if(diff <= -1.5) parts.add(S.optString("colder","a bit colder than yesterday"));
+        }
+
+        StringBuilder body = new StringBuilder();
+        for(int i=0;i<parts.size();i++){ if(i>0) body.append(" \u00B7 "); body.append(parts.get(i)); }
+        postNotification(c, CH_DAILY, 1, title, body.toString(), false);
     }
-    postNotification(c, CH_DAILY, 1, title, body.toString(), false);
-}
 
-static String windSentence(JSONObject S, double spd, int dir){
-    if(Double.isNaN(spd) || spd < 8) return S.optString("windCalm","Winds light and variable.");
-    return S.optString("windAt","Winds {d} at {s} km/h.")
-             .replace("{d}", compass(dir)).replace("{s}", String.valueOf((int)Math.round(spd)));
-}
-static String compass(int deg){
-    String[] pts = {"N","NE","E","SE","S","SW","W","NW"};
-    return pts[(int)Math.round((((deg%360)+360)%360)/45.0)%8];
-}
+    // most significant WMO code across all models at one hour
+    static int worstCodeAt(JSONObject h, int idx){
+        int worst = 0;
+        for(Iterator<String> it=h.keys(); it.hasNext();){
+            String k = it.next();
+            if(k.startsWith("weather_code")){
+                JSONArray a = h.optJSONArray(k);
+                if(a!=null && idx>=0 && idx<a.length() && !a.isNull(idx)){
+                    int v = a.optInt(idx,0);
+                    if(v>worst) worst=v;
+                }
+            }
+        }
+        return worst;
+    }
+
+    static String compass(int deg){
+        String[] pts = {"N","NE","E","SE","S","SW","W","NW"};
+        return pts[(int)Math.round((((deg%360)+360)%360)/45.0)%8];
+    }
 
     // ---- severe weather watch ----
     static void doSevere(Context c) throws Exception {
         SharedPreferences p = prefs(c);
-        double lat = p.getFloat("lat", Float. NaN), lon = p.getFloat("lon", Float.NaN);
+        double lat = p.getFloat("lat", Float.NaN), lon = p.getFloat("lon", Float.NaN);
         if(Double.isNaN(lat) || Double.isNaN(lon)) return;
         String url = "https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon
             + "&hourly=weather_code&forecast_days=1&timezone=auto";
