@@ -1,7 +1,7 @@
 package com.consensus.weather;
 
 import android.app.AlarmManager;
-import android.app.NotificationChannel;
+import android.app. NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -29,7 +29,9 @@ public class WeatherNotifier extends BroadcastReceiver {
     static final long SEVERE_INTERVAL = 3 * 60 * 60 * 1000L; // check every ~3 h
     static final String[] MODELS = {
         "ecmwf_ifs025","icon_seamless","gfs_seamless","metno_seamless",
-        "meteofrance_seamless","jma_seamless","gem_seamless"
+        "meteofrance_seamless","jma_seamless","gem_seamless","ukmo_seamless",
+        "knmi_seamless","dmi_seamless","kma_seamless","cma_grapes_global",
+        "bom_access_global"
     };
 
     static SharedPreferences prefs(Context c){ return c.getSharedPreferences(PREFS, Context.MODE_PRIVATE); }
@@ -125,7 +127,7 @@ public class WeatherNotifier extends BroadcastReceiver {
         }}).start();
     }
 
-    // ---- daily summary (consensus over the next 14 h) ----
+    // ---- daily summary: current conditions + next-14 h consensus ----
     static void doDaily(Context c, int hour) throws Exception {
         SharedPreferences p = prefs(c);
         double lat = p.getFloat("lat", Float.NaN), lon = p.getFloat("lon", Float.NaN);
@@ -134,7 +136,6 @@ public class WeatherNotifier extends BroadcastReceiver {
         StringBuilder models = new StringBuilder();
         for(int i=0;i<MODELS.length;i++){ if(i>0) models.append(","); models.append(MODELS[i]); }
 
-        // hourly for the 14 h window + daily max (past_days=1) for the yesterday comparison
         String url = "https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon
             + "&hourly=temperature_2m,weather_code,precipitation_probability,wind_speed_10m,wind_direction_10m"
             + "&daily=temperature_2m_max&models="+models
@@ -143,7 +144,7 @@ public class WeatherNotifier extends BroadcastReceiver {
         JSONObject H = root.getJSONObject("hourly");
         JSONArray tarr = H.getJSONArray("time");
 
-        // locate the current hour in the timeline
+        // locate the current hour
         Calendar now = Calendar.getInstance();
         String stamp = String.format("%04d-%02d-%02dT%02d", now.get(Calendar.YEAR), now.get(Calendar.MONTH)+1,
                 now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY));
@@ -157,13 +158,12 @@ public class WeatherNotifier extends BroadcastReceiver {
         double hi = Double.NEGATIVE_INFINITY, lo = Double.POSITIVE_INFINITY;
         double popMax = 0; boolean havePop = false;
         double windMax = 0; int windDirAtMax = 0;
-        int rainFromHr = -1;
-        int headCode = 0; // most significant WMO code seen (higher code ≈ more notable)
+        int headCode = 0;
         for(int i=start;i<end;i++){
             double t = avgDaily(H, "temperature_2m", i);
             if(!Double.isNaN(t)){ if(t>hi) hi=t; if(t<lo) lo=t; }
             double pp = avgDaily(H, "precipitation_probability", i);
-            if(!Double.isNaN(pp)){ havePop=true; if(pp>popMax) popMax=pp; if(rainFromHr<0 && pp>=50) rainFromHr=i-start; }
+            if(!Double.isNaN(pp)){ havePop=true; if(pp>popMax) popMax=pp; }
             double w = avgDaily(H, "wind_speed_10m", i);
             if(!Double.isNaN(w) && w>windMax){ windMax=w; windDirAtMax=firstCode(H,"wind_direction_10m",i); }
             int wc = worstCodeAt(H, i);
@@ -171,6 +171,8 @@ public class WeatherNotifier extends BroadcastReceiver {
         }
         if(hi == Double.NEGATIVE_INFINITY) return;
 
+        // current conditions (this hour) + yesterday's high
+        int    curCode = worstCodeAt(H, start);
         JSONObject D = root.optJSONObject("daily");
         double hiRef = D!=null ? avgDaily(D, "temperature_2m_max", 0) : Double.NaN; // idx 0 = yesterday
 
@@ -179,9 +181,12 @@ public class WeatherNotifier extends BroadcastReceiver {
         double windFactor = S.optDouble("windFactor", 1);
         int    windDec    = S.optInt("windDec", 0);
         String windUnit   = S.optString("windUnit","km/h");
-        String cond = condText(S, headCode);
+        String lang       = S.optString("lang","en");
+        String city       = reverseGeocode(lat, lon, lang);
+        String curCond    = condText(S, curCode);
+        String fcCond     = condText(S, headCode);
 
-        // title = report name (respects single vs multi schedule, as before)
+        // title = report name, with city appended
         int count = prefs(c).getString("times","07:00,19:00").split(",").length;
         boolean single   = count <= 1;
         boolean tomorrow = single ? (hour >= 18) : (hour >= 16);
@@ -190,32 +195,42 @@ public class WeatherNotifier extends BroadcastReceiver {
         else if(hour < 12) title = S.optString("repM","Morning Report");
         else if(hour < 17) title = S.optString("repA","Afternoon Report");
         else               title = S.optString("repE","Evening Report");
+        if(city != null && !city.isEmpty()) title = title + " (" + city + ")";
 
-        // concise body: headline · rain timing · wind · vs yesterday
-        java.util.ArrayList<String> parts = new java.util.ArrayList<String>();
-        parts.add(cap(cond) + " " + fmtTemp(hi, unit) + "\u00B0/" + fmtTemp(lo, unit) + "\u00B0");
+        // body: current line + 14 h forecast + optional rain/wind + vs yesterday
+        StringBuilder body = new StringBuilder();
+        String nowLine = (city==null || city.isEmpty())
+            ? S.optString("notifNowNC","Currently: {cond}, {t}\u00B0.")
+            : S.optString("notifNow","Currently in {city}: {cond}, {t}\u00B0.").replace("{city}", city);
+        nowLine = nowLine.replace("{cond}", curCond)
+                         .replace("{t}", String.valueOf(fmtTemp(avgDaily(H,"temperature_2m",start), unit)));
+        body.append(nowLine);
 
-        if(rainFromHr == 0)      parts.add(S.optString("rainNow","rain now"));
-        else if(rainFromHr > 0)  parts.add(S.optString("rainFrom","rain from ~{h}h").replace("{h}", String.valueOf(rainFromHr)));
-        else if(havePop && popMax >= 30)
-            parts.add(S.optString("popShort","{p}% chance of rain").replace("{p}", String.valueOf((int)Math.round(popMax))));
+        body.append(" ").append(S.optString("notifFc","Next 14 h: {cond} with a high of {hi}\u00B0 and a low of {lo}\u00B0.")
+            .replace("{cond}", fcCond)
+            .replace("{hi}", String.valueOf(fmtTemp(hi, unit)))
+            .replace("{lo}", String.valueOf(fmtTemp(lo, unit))));
+
+        if(havePop && popMax >= 20)
+            body.append(" ").append(cap(S.optString("popShort","{p}% chance of rain")
+                .replace("{p}", String.valueOf((int)Math.round(popMax))))).append(".");
 
         if(windMax >= 25){
             String wv = windDec > 0
                 ? String.format(java.util.Locale.US, "%."+windDec+"f", windMax*windFactor)
                 : String.valueOf(Math.round(windMax*windFactor));
-            parts.add(S.optString("windShort","wind {d} {s} {u}")
-                .replace("{d}", compass(windDirAtMax)).replace("{s}", wv).replace("{u}", windUnit));
+            body.append(" ").append(cap(S.optString("windShort","wind {d} {s} {u}")
+                .replace("{d}", compass(windDirAtMax)).replace("{s}", wv).replace("{u}", windUnit))).append(".");
         }
 
         if(!Double.isNaN(hiRef)){
             double diff = hi - hiRef;
-            if(diff >= 1.5)       parts.add(S.optString("warmer","a bit warmer than yesterday"));
-            else if(diff <= -1.5) parts.add(S.optString("colder","a bit colder than yesterday"));
+            String cmp = diff >= 1.5  ? S.optString("warmer","a bit warmer than yesterday")
+                       : diff <= -1.5 ? S.optString("colder","a bit colder than yesterday")
+                       :                S.optString("same","about the same as yesterday");
+            body.append(" ").append(cap(cmp)).append(".");
         }
 
-        StringBuilder body = new StringBuilder();
-        for(int i=0;i<parts.size();i++){ if(i>0) body.append(" \u00B7 "); body.append(parts.get(i)); }
         postNotification(c, CH_DAILY, 1, title, body.toString(), false);
     }
 
