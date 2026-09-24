@@ -31,6 +31,19 @@ You can support me and [Buy me a coffee](https://buycoffee.to/szebastian) ☕️
 
 ## Download & install (Android)
 
+<p align="center">
+  <a href="https://github.com/Szebastian31/Consensus_Weather/releases/latest/download/app-debug.apk">
+    <img src="https://img.shields.io/badge/Android-Download%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Download Android APK">
+  </a>
+  <a href="https://szebastian31.github.io/Consensus_Weather/ios.html">
+    <img src="https://img.shields.io/badge/iOS-Get%20the%20app-2E7CF6?style=for-the-badge&logo=apple&logoColor=white" alt="Get the iOS app">
+  </a>
+</p>
+
+- **Android:** tap the APK, allow "install unknown apps," and open it.
+- **iOS:** unsigned build — install with **AltStore** or **Sideloadly** and a free Apple ID (re-sign every 7 days). Full steps on the install guide above.
+
+
 Grab the latest APK from either:
 - **Actions** tab → the most recent green run → **Artifacts** → `ConsensusWeather-debug-apk`, or
 - the **Releases** page (right sidebar) → latest release → `app-debug.apk`.
@@ -51,6 +64,18 @@ It's a debug-signed APK, which is fine for installing on your own phone (it just
 It's a debug-signed APK, which is fine for installing on your own phone (it just can't be published to the Play Store as-is).
 
 ## Install on iPhone (or any phone, via the web link)
+
+<p align="center">
+  <a href="https://szebastian31.github.io/Consensus_Weather/ios.html">
+    <img src="https://img.shields.io/badge/Get%20the%20iOS%20app-Install%20guide-2E7CF6?style=for-the-badge&logo=apple&logoColor=white" alt="Get the iOS app">
+  </a>
+  <a href="https://github.com/Szebastian31/Consensus_Weather/releases/download/ios-latest/ConsensusWeather-unsigned.ipa">
+    <img src="https://img.shields.io/badge/Download-.ipa-24406E?style=for-the-badge&logo=github&logoColor=white" alt="Download .ipa">
+  </a>
+</p>
+
+Native SwiftUI build. iOS can't install a `.ipa` directly like Android — install it with **AltStore** or **Sideloadly** using a free Apple ID (re-sign every 7 days). Full steps are on the install guide above.
+
 
 iOS can't install APKs, but the same app runs as a full-screen home-screen app:
 
