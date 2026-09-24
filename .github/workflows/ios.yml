@@ -1,0 +1,63 @@
+name: Build iOS (unsigned IPA)
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+
+      - name: Build unsigned archive
+        working-directory: ios
+        run: |
+          xcodebuild archive \
+            -project ConsensusWeather.xcodeproj \
+            -scheme ConsensusWeather \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/build/ConsensusWeather.xcarchive" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            DEVELOPMENT_TEAM=""
+
+      - name: Package unsigned IPA
+        working-directory: ios
+        run: |
+          APP="build/ConsensusWeather.xcarchive/Products/Applications/ConsensusWeather.app"
+          if [ ! -d "$APP" ]; then echo "App not found at $APP"; exit 1; fi
+          mkdir -p build/Payload
+          cp -R "$APP" build/Payload/
+          (cd build && zip -qry ConsensusWeather-unsigned.ipa Payload)
+          ls -lh build/ConsensusWeather-unsigned.ipa
+
+      - name: Publish unsigned IPA release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ios-latest
+          name: Consensus Weather iOS (unsigned) — build ${{ github.run_number }}
+          files: ios/build/ConsensusWeather-unsigned.ipa
+          make_latest: false
+          body: |
+            **Unsigned IPA** — iOS won't install this directly.
+            Install it with **AltStore** or **Sideloadly** using your own free Apple ID.
+            Apps signed with a free Apple ID expire after **7 days**; just re-install to refresh.
+            Requires iOS 16 or later. See the install guide on the GitHub Pages site.
