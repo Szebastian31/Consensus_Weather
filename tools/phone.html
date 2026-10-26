@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Consensus Weather phone screen</title>
+<!-- Used by tools/screenshots.sh. Chrome won't make a window narrower than about 500 px, so the app is shown
+     here in an exact 390 × 844 phone-sized frame, drawn twice as big to fill a 780 × 1688 window.
+     Everything after "?" is passed to the app, e.g. phone.html?demo&city=2&lang=pl -->
+<style>
+  html,body{margin:0;width:780px;height:1688px;overflow:hidden;background:#0a0f26}
+  iframe{display:block;width:390px;height:844px;border:0;transform:scale(2);transform-origin:0 0}
+</style>
+</head>
+<body>
+<iframe id="f" title="Consensus Weather"></iframe>
+<script>document.getElementById('f').src = '../docs/index.html' + location.search;</script>
+</body>
+</html>

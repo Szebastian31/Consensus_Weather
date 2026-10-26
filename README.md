@@ -1,180 +1,134 @@
 # Consensus Weather
+
 <p align="center">
-  <img src="docs/logo.png" alt="Consensus Weather" width="560">
+  <img src="screenshots/banner.png" alt="Consensus Weather on five phones: the part-by-part breakdown, lifestyle tips, a night storm in Singapore, the week ahead and a clear night in Tokyo">
 </p>
 
-A playful weather app that shows a 36-hour forecast, a part-by-part day/night breakdown, and a 7-day outlook for any city you add. Every number is a live average of 7 national weather models — ECMWF, DWD ICON, NOAA GFS, MET Norway (Yr), Météo-France, JMA and ECCC GEM — fetched from the free [Open-Meteo](https://open-meteo.com) API (no API key, no account). It also shows sun/moon rise & set with the current moon phase, a live pollen count, air quality, and lifestyle tips (including a biometeorological well-being read-out).
-
-The background is a living sky that shifts with the time of day and conditions, with hand-rolled animated weather effects layered on top — falling rain, drifting snow, lightning flashes, fog banks and blowing dust — all drawn on a canvas, so nothing is loaded from the network. Gliwice ships as an offline fallback so the app shows something even with no connection.
-
-The app is a self-contained web app. It runs two ways from the same file:
-- wrapped in a native Android **WebView** and installed as a normal **APK**, and
-- as a **home-screen web app** on iPhone/Android via a hosted link (GitHub Pages).
-
-You never need Android Studio, Gradle, or a Mac/PC toolchain — **GitHub builds the APK for you in the cloud.**
-
-You can support me and [Buy me a coffee](https://buycoffee.to/szebastian) ☕️
-
-## Screenshots
-
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/hero.jpg" width="260"><br><sub>Live 7-model hero & Houerly breakdown</sub></td>
-    <td align="center"><img src="docs/screenshots/week.jpg" width="260"><br><sub>Temperature curve & 7-day outlook</sub></td>
-    <td align="center"><img src="docs/screenshots/breakdown.jpg" width="260"><br><sub>Sun/Moon & Lifestyle Tips</sub></td>
-    <td align="center"><img src="docs/screenshots/partbypart.jpg" width="260"><br><sub>Part-by-Part Pop-Up Breakdown</sub></td>
-    <td align="center"><img src="docs/screenshots/language.jpg" width="260"><br><sub>Language Selector (33 languages to choose from)</sub></td>
-  </tr>
-</table>
-
----
-
-## Download & install (Android)
+**Thirteen weather models, and where they agree.**
 
 <p align="center">
-  <a href="https://github.com/Szebastian31/Consensus_Weather/releases/latest/download/app-debug.apk">
-    <img src="https://img.shields.io/badge/Android-Download%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Download Android APK">
+  <a href="https://github.com/Szebastian31/Consensus_Weather/releases/latest">
+    <img src="https://img.shields.io/badge/Android-Download%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Download the Android APK">
+  </a>
+  <a href="https://szebastian31.github.io/Consensus_Weather/">
+    <img src="https://img.shields.io/badge/Web-Open%20the%20app-7C5CFF?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open Consensus Weather in the browser">
   </a>
   <a href="https://szebastian31.github.io/Consensus_Weather/ios.html">
     <img src="https://img.shields.io/badge/iOS-Get%20the%20app-2E7CF6?style=for-the-badge&logo=apple&logoColor=white" alt="Get the iOS app">
   </a>
 </p>
 
-- **Android:** tap the APK, allow "install unknown apps," and open it.
-- **iOS:** unsigned build — install with **AltStore** or **Sideloadly** and a free Apple ID (re-sign every 7 days). Full steps on the install guide above.
-
-
-Grab the latest APK from either:
-- **Actions** tab → the most recent green run → **Artifacts** → `ConsensusWeather-debug-apk`, or
-- the **Releases** page (right sidebar) → latest release → `app-debug.apk`.
-
-Then on the phone:
-- Download `app-debug.apk` (open the page in the phone's browser, or transfer the file over).
-- Tap it. OS will ask to **allow installing unknown apps** from that source — enable it, then tap **Install**.
-- Open **Consensus Weather** from your app drawer.
-
-It's a debug-signed APK, which is fine for installing on your own phone (it just can't be published to the Play Store as-is).
-
-## Install on Android
-
-- Download `app-debug.apk` to the phone (open the Actions/Releases page in the phone's browser, or transfer the file).
-- Tap the file. OS will ask to **allow installing unknown apps** from that source — enable it, then tap **Install**.
-- Open **Consensus Weather** from your app drawer.
-
-It's a debug-signed APK, which is fine for installing on your own phone (it just can't be published to the Play Store as-is).
-
-## Install on iPhone (or any phone, via the web link)
-
-<p align="center">
-  <a href="https://szebastian31.github.io/Consensus_Weather/ios.html">
-    <img src="https://img.shields.io/badge/Get%20the%20iOS%20app-Install%20guide-2E7CF6?style=for-the-badge&logo=apple&logoColor=white" alt="Get the iOS app">
-  </a>
-  <a href="https://github.com/Szebastian31/Consensus_Weather/releases/download/ios-latest/ConsensusWeather-unsigned.ipa">
-    <img src="https://img.shields.io/badge/Download-.ipa-24406E?style=for-the-badge&logo=github&logoColor=white" alt="Download .ipa">
-  </a>
-</p>
-
-Native SwiftUI build. iOS can't install a `.ipa` directly like Android — install it with **AltStore** or **Sideloadly** using a free Apple ID (re-sign every 7 days). Full steps are on the install guide above.
-
-
-iOS can't install APKs, but the same app runs as a full-screen home-screen app:
-
-- Open the hosted link in **Safari**: `https://szebastian31.github.io/Consensus_Weather/`
-- Tap **Share** → **Add to Home Screen** → **Add**.
-- It launches full-screen with the app icon, and updates whenever you push to the `docs/` folder.
+No app store, no account, no API key, no ads. Get the **Android app**, use it in any phone's browser, or sideload the **native iOS app**.
 
 ---
 
-## Using the app
+☕️ You can support me and Buy me a coffee ☕️
 
-- Top bar: a ☰ menu (top-left), the app logo in the centre, and a time pill (top-right) that shows the last-refresh time on top and the viewed location’s live local time below it.
+https://buycoffee.to/szebastian
 
-- ☰ Menu opens a side drawer with Language (33 languages), Notifications, and the °C / °F temperature-unit toggle. The “LIVE · 7-model avg” status and refresh time sit pinned at the bottom of the drawer.
+---
 
-- Location selector: a centered pill under the logo shows the city you’re viewing. Tap it to open the manage popup, where you can search and add any city (up to 10), remove saved cities, or use your current GPS location. Your current-location entry can’t be removed.
+## What's inside
 
-- With more than one city saved, faint previews of the previous/next city sit on either side of the pill — tap them to jump, or swipe left/right anywhere on the screen to switch cities.
+- **🌍 One forecast from thirteen.** Every number is a live average of ECMWF, DWD ICON, NOAA GFS, MET Norway, Météo-France, JMA, ECCC GEM, the UK Met Office, KNMI, DMI, KMA, CMA and BOM, fetched from the free [Open-Meteo](https://open-meteo.com) API. Where a model doesn't cover your area, it simply sits out.
+- **◆ How sure is it?** A badge under the temperature says whether the models agree, are roughly aligned or diverge. Tap it to see the warmest and coldest model and how far apart they are, or open the table of all thirteen.
+- **⏱ The next 36 hours,** hour by hour: temperature, feels-like, rain chance and millimetres, with day and night shaded differently. Then a temperature curve and a **7-day outlook**.
+- **🌗 Part-by-part.** Tap the main card for the night, morning, afternoon and evening, each in a sentence.
+- **☀️ Sun & Moon:** daylight length, sunrise and sunset, moonrise, moonset and the moon's phase.
+- **🌼 Pollen and air quality:** a live pollen count (alder, birch, grass, mugwort, olive, ragweed) and the European or US air-quality index, depending on where you are.
+- **🧭 Lifestyle tips:** what to wear, UV, golden hour, whether to wash the car, storms brewing, poor visibility, and a biometeorological read-out of how the weather may feel on your body.
+- **🌦 A living sky.** The background follows the time of day and the weather, with rain, snow, lightning, fog and blowing dust drawn on top. Light rain, downpours, showers, sleet, hail, thunderstorms, dust and sandstorms each get their own icon and sky.
+- **📍 Up to 15 places.** Your GPS location plus any city you search for. Swipe left or right to switch.
+- **📏 Your units:** °C or °F, km/h, m/s, mph or knots, and hPa or inHg.
+- **🔔 Reports, not alarms (Android).** Up to three a day at times you choose, such as *Morning Report (Gliwice)*: what it's like now, the next 14 hours, rain and wind if they matter, and whether it's warmer or colder than yesterday. Plus a warning when a storm is on its way. They arrive even when the app is closed.
+- **🗣 33 languages:** English, Polski, Deutsch, Українська, Español, Français, Русский, 中文, 日本語, Português, Nederlands, Italiano, हिन्दी, العربية, Ελληνικά, Čeština, Svenska, 한국어, Bahasa Indonesia, বাংলা, Türkçe, తెలుగు, Română, Magyar, Suomi, Norsk, Slovenčina, Kiswahili, فارسی, Dansk, ไทย, Tiếng Việt and Български. It opens in your phone's language; Arabic and Persian read right to left.
 
-- 📍 My location: on first launch the app asks for location permission and sets the view to your GPS location automatically (falling back to Gliwice if you decline or it’s unavailable).
+## Screens
 
-- Tap the main weather card for the part-by-part day/night breakdown popup.
+<p align="center">
+  <img src="screenshots/rain.png" width="19%" alt="Afternoon rain in Gliwice">
+  <img src="screenshots/storm.png" width="19%" alt="A night thunderstorm in Singapore">
+  <img src="screenshots/snow.png" width="19%" alt="Midday snow in Reykjavík">
+  <img src="screenshots/sand.png" width="19%" alt="A sandstorm in Dubai before sunset">
+  <img src="screenshots/night.png" width="19%" alt="A clear night in Tokyo">
+</p>
+<p align="center">
+  <img src="screenshots/fog.png" width="19%" alt="Fog before dawn in San Francisco">
+  <img src="screenshots/week.png" width="19%" alt="The temperature curve and 7-day outlook in Cape Town">
+  <img src="screenshots/tips.png" width="19%" alt="Sun and Moon, pollen and lifestyle tips">
+  <img src="screenshots/parts.png" width="19%" alt="The part-by-part breakdown">
+  <img src="screenshots/menu.png" width="19%" alt="The menu: language, notifications and units">
+</p>
 
-- Refresh: tap the logo, or pull down at the top. The app also auto-refreshes every 15 minutes while it’s open in the foreground.
+<p align="center"><sub>Rain · Storm · Snow · Sandstorm · Clear night · Fog · Week ahead · Sun, Moon &amp; tips · Part-by-part · Menu</sub></p>
 
-- Your saved cities and last-viewed city persist on the device.
+## Getting started
 
+### Android app (recommended)
 
-### When it fetches data (and when it doesn't)
+1. Open **[Releases](https://github.com/Szebastian31/Consensus_Weather/releases/latest)** on your phone and download **Consensus_Weather_v….apk**.
+2. Open the file. If Android asks, allow your browser to **install unknown apps**.
+3. Open Consensus Weather and allow **location** (optional) and **notifications**.
 
-Data is fetched from Open-Meteo at these moments:
+Works on Android 7 and newer, up to Android 16.
 
-- when you open the app (and when you bring it back to the foreground),
+### iPhone or any browser
 
-- when you add, switch, or GPS-locate a city,
+1. Open **[szebastian31.github.io/Consensus_Weather](https://szebastian31.github.io/Consensus_Weather/)**.
+2. **iPhone (Safari):** tap **Share**, then **Add to Home Screen**. **Android (Chrome):** tap **⋮**, then **Install app**.
 
-- when you tap the logo or pull down to refresh, and
+Notifications are only in the Android app.
 
-- automatically every 15 minutes while the app stays open in the foreground (it pauses while the app is hidden, so it never polls in the background).
+### Native iOS app
 
-Adding a city or using GPS needs an internet connection. Everything is served over HTTPS with no API key. Location permission is optional — the app works fully without it; you just won’t have the 📍 shortcut.
+A SwiftUI version lives in [`ios/`](ios). GitHub builds it as an **unsigned .ipa**, which iPhones won't open on their own: install it with **AltStore** or **Sideloadly** and a free Apple ID, and re-install every 7 days. The [install guide](https://szebastian31.github.io/Consensus_Weather/ios.html) has the steps and the download.
 
+## An honest note about accuracy
 
-## Rebuilding after edits
+- **An average isn't magic.** Averaging thirteen models usually beats any single one, but when they disagree the average can describe weather none of them expects. That's why the agreement badge is there: when it says the models diverge, trust the forecast less.
+- **The headline condition** is the one most models vote for, so a storm that only three models see won't take over the screen. The source table shows each model's own high and low.
+- **Rain chance** is the models' average probability, not the share of the day it rains.
+- **Pollen and air quality** come from Open-Meteo's CAMS-based model, not from a sensor near you, and pollen data only covers Europe well.
+- **No connection?** Gliwice ships as an offline snapshot so the app still shows something; every other city needs internet.
 
-Change anything (e.g. `app/src/main/assets/index.html` to tweak the UI), commit, and GitHub rebuilds a new APK automatically. Bump `versionCode`/`versionName` in `app/build.gradle` if you want Android to treat it as an update. For the web/iPhone version, update the copy in `docs/` too.
+## Privacy
 
-## Project layout
+There's no account and no server of mine. Your cities, units and language are saved on your phone only. The app asks Open-Meteo for the forecast of the places you add, and BigDataCloud for the name of the town you're in when you use GPS. Location is optional: without it you just won't have the 📍 shortcut.
 
-```
-Consensus_Weather/
+## Questions or ideas?
 
-├─ app/
+Found a bug? [Open an issue](https://github.com/Szebastian31/Consensus_Weather/issues) and describe what happened, which phone you use and which browser.
 
-│  ├─ build.gradle
+---
 
-│  └─ src/main/
+_Consensus is Latin for agreement, literally "feeling together". It's a sibling to Kalendae, Augur, Fidelis, Vestis, Caelum and Hora._
 
-│     ├─ AndroidManifest.xml
+<details>
+<summary>For developers</summary>
 
-│     ├─ assets/index.html            ← the whole weather app (UI + live data)
+The whole app is one self-contained file, `docs/index.html`: HTML, CSS and JavaScript with no libraries and nothing loaded from a CDN. The chart, every icon, the sun and moon maths (a trimmed SunCalc) and the weather effects (a small canvas particle engine) are hand-rolled, so it renders offline. The effects respect reduced motion and pause when the app is hidden.
 
-│     ├─ java/com/consensus/weather/MainActivity.java
+The Android app (`app/`) loads the same file from `app/src/main/assets/index.html` in a native WebView shell that draws edge to edge, adds pull-to-refresh, GPS and the daily reports. Reports are composed natively by `WeatherNotifier.java` with an inexact daily alarm, re-planned after a restart, so they work while the app is closed. It targets Android 16 (API 36) with AGP 8.13 and Gradle 8.13, handles back through the new back callback (keeping `onBackPressed` for Android 15 and older), and if it ever crashes it shows the error on the next start so it can be shared. GitHub Actions builds the APK on every push and publishes it as a release.
 
-│     └─ res/…                        ← icon, theme, strings
+| Where | What it is |
+| --- | --- |
+| `docs/index.html` | The app: layout, styles, data, all 33 languages. GitHub Pages serves it |
+| `app/src/main/assets/index.html` | The same file, bundled into the APK |
+| `app/src/main/java/com/consensus/weather/MainActivity.java` | WebView shell: edge to edge, insets, back, GPS, crash screen |
+| `app/src/main/java/com/consensus/weather/WeatherNotifier.java` | Daily reports and storm warnings, composed natively |
+| `ios/` | The SwiftUI app (XcodeGen project, built unsigned by `.github/workflows/ios.yml`) |
+| `docs/ios.html` | The iOS install guide |
+| `tools/screenshots.sh` | Makes everything in `screenshots/` from the real app in demo mode |
+| `.github/workflows/build.yml` | Builds the APK and publishes it as a release |
 
-├─ docs/                              ← web/home-screen version (GitHub Pages)
+After changing the app, copy `docs/index.html` over `app/src/main/assets/index.html` so both stay the same, and bump `versionName` + `versionCode` in `app/build.gradle` for a new APK release (the release and the APK name come from `versionName`).
 
-│  ├─ index.html
+**Screenshots:** `tools/screenshots.sh` (or `tools/screenshots.sh pl` for Polish). It needs Google Chrome and touches none of your own data. Without it, `docs/index.html?demo&city=3` shows the same made-up weather in any browser: cities 0–6 are Gliwice (rain), Singapore (storm), Reykjavík (snow), Dubai (sandstorm), Tokyo (clear night), Cape Town (sun) and San Francisco (fog), with the clock stopped at 20 January 2026, 13:00 UTC. Add `&screen=parts`, `menu`, `lang`, `agree`, `notif` or `locs` to open a sheet, and `&at=.tips` to scroll to a card.
 
-│  └─ emblem.png
+**Data:** weather, air quality and pollen from [Open-Meteo](https://open-meteo.com) (CC-BY 4.0), city search from the Open-Meteo Geocoding API, and GPS → town name from [BigDataCloud](https://www.bigdatacloud.com). Please keep the Open-Meteo attribution if you reuse the app.
 
-├─ .github/workflows/build.yml        ← cloud APK build
-
-├─ build.gradle · settings.gradle · gradle.properties
-```
-
-## Notes & tech choices
-
-- **minSdk 24 / targetSdk 34**, Java 17, AGP 8.5.2, Gradle 8.7 — a stable, proven combo.
-- No third-party libraries: pure framework `WebView` + `Activity`, so builds are fast and rarely break.
-- The chart, all weather icons, sun/moon calculations (a trimmed SunCalc), and the animated weather effects (a small canvas particle engine) are all hand-rolled — no external chart library, animation library, or CDN — so the UI renders even offline. The effects respect the system reduced-motion setting and pause when the app is hidden.
-- Condition coverage includes clear, partly cloudy, cloudy, overcast, fog, rain (incl. heavy rain & showers), drizzle, sleet/freezing rain, snow (incl. showers), thunderstorms, hail, and sandstorm/dust, each with its own icon and sky.
-- Live data & city search require internet; the bundled Gliwice snapshot covers the no-connection case.
-
-## Data sources & attribution
-
-- Weather, air quality & pollen: [Open-Meteo](https://open-meteo.com) — free, keyless, and licensed under CC-BY 4.0. Forecasts are a live average of ECMWF, DWD ICON, NOAA GFS, MET Norway, Météo-France, JMA and ECCC GEM.
-
-- Reverse geocoding (GPS → city name): [BigDataCloud](https://www.bigdatacloud.com).
-
-- City search: the Open-Meteo Geocoding API.
-
-Weather data by Open-Meteo.com (CC-BY 4.0). Please keep this attribution if you reuse the app.
+</details>
 
 ## License
 
-Released under the [MIT License](https://github.com/Szebastian31/Consensus_Weather/blob/main/LICENSE).
-
-<p align="center">
-  <img src="docs/logo.png" alt="Consensus Weather" width="560">
-</p>
+Released under the [MIT License](LICENSE).

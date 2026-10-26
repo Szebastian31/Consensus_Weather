@@ -76,7 +76,7 @@
   .drawer.open{visibility:visible}
   .drawer-scrim{position:absolute;inset:0;background:rgba(8,10,25,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .28s ease}
   .drawer.open .drawer-scrim{opacity:1}
-  .drawer-panel{position:absolute;top:0;left:0;bottom:0;width:80%;max-width:322px;background:rgba(22,26,48,.72);backdrop-filter:blur(26px) saturate(1.4);-webkit-backdrop-filter:blur(26px) saturate(1.4);border-right:1px solid rgba(255,255,255,.14);box-shadow:8px 0 40px -10px rgba(0,0,0,.6);padding:max(22px,env(safe-area-inset-top)) 20px 22px;transform:translateX(-102%);transition:transform .3s cubic-bezier(.22,.7,.25,1);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column}
+  .drawer-panel{position:absolute;top:0;left:0;bottom:0;width:80%;max-width:322px;background:rgba(22,26,48,.72);backdrop-filter:blur(26px) saturate(1.4);-webkit-backdrop-filter:blur(26px) saturate(1.4);border-right:1px solid rgba(255,255,255,.14);box-shadow:8px 0 40px -10px rgba(0,0,0,.6);padding:max(22px,var(--sat,env(safe-area-inset-top))) 20px calc(22px + var(--sab,env(safe-area-inset-bottom)));transform:translateX(-102%);transition:transform .3s cubic-bezier(.22,.7,.25,1);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column}
   .drawer.open .drawer-panel{transform:translateX(0)}
   .drawer .closex{position:absolute;top:16px;right:16px;z-index:2}
   .menu-foot{margin-top:auto;padding-top:22px;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -125,7 +125,7 @@
   .hero{position:relative;z-index:1;border-radius:0 0 66px 66px;padding:max(16px,var(--sat,env(safe-area-inset-top))) 18px 18px;color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
   .src-wrap{position:relative;margin:40px -14px -90px}
   .src-wrap::before{content:'';position:absolute;left:20px;right:20px;top:-12px;bottom:26px;border-radius:52px;background:linear-gradient(0deg,rgba(8,10,26,.10) 0%,rgba(8,10,26,.42) 100%);filter:blur(1px);z-index:0}
-  .src-hero{position:relative;z-index:1;border-radius:66px 66px 0 0;padding:30px 18px calc(34px + env(safe-area-inset-bottom));color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+  .src-hero{position:relative;z-index:1;border-radius:66px 66px 0 0;padding:30px 18px calc(34px + var(--sab,env(safe-area-inset-bottom)));color:#fff;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
   .src-hero .src-table,.src-hero .note{background:transparent;box-shadow:none;border:none;backdrop-filter:none;-webkit-backdrop-filter:none}
   .src-hero .note{padding:0;margin-top:12px}
   .foot-in{text-align:center;font-size:11px;font-weight:700;color:var(--ink-mute);margin-top:16px}
@@ -381,6 +381,26 @@
   <radialGradient id="gNavy" cx="36%" cy="28%" r="88%"><stop offset="0%" stop-color="#CFE0FF"/><stop offset="55%" stop-color="#6E8FD6"/><stop offset="100%" stop-color="#33508F"/></radialGradient>
   <filter id="softsh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="3.2" flood-color="#0b1026" flood-opacity="0.30"/></filter>
 </defs></svg>
+<script>
+/* ============ DEMO MODE (README screenshots) ============
+   index.html?demo shows made-up weather for seven cities instead of live data, with the clock stopped at
+   20 Jan 2026 13:00 UTC so every city shows its own time of day. Nothing is fetched and nothing is saved.
+   tools/screenshots.sh uses it. Options: &city=0…6  &lang=pl  &screen=parts|menu|lang|agree|notif|locs  &at=.css-selector */
+(function(){
+  var q=new URLSearchParams(location.search); if(!q.has('demo')) return;
+  window.CW_DEMO=q;
+  var RealDate=Date, start=RealDate.now(), base=RealDate.UTC(2026,0,20,13,0,0);
+  class DemoDate extends RealDate{
+    constructor(...a){super(...(a.length?a:[base+(RealDate.now()-start)]));}
+    static now(){return base+(RealDate.now()-start);}
+  }
+  window.Date=DemoDate;
+  // room for a phone's status bar, and the phone's own font rather than a desktop's rounded fallback
+  var r=document.documentElement.style;
+  r.setProperty('--sat',(q.get('sat')||'44')+'px');
+  r.setProperty('--rounded','ui-rounded,"SF Pro Rounded",system-ui,-apple-system,Roboto,sans-serif');
+})();
+</script>
 <canvas id="skyfx" aria-hidden="true"></canvas>
 <div class="wrap">
   <div id="stage"><div id="app"><div class="loading"><span class="spin"></span>Loading forecast…</div></div></div>
@@ -1946,7 +1966,7 @@ const TIPX={
 (function(){for(var _l in TIPX){if(I18N[_l])for(var _k in TIPX[_l])I18N[_l][_k]=TIPX[_l][_k];}})();
 /* Late-added strings (temperature-unit label, sandstorm label, 3-level biometeo tip), all 33 languages */
 const L10N_EXTRA={
-  en:{tempUnit:"Temperature units",cond_sand:"Sandstorm",creditData:"Weather & air data by Open-Meteo · Location by BigDataCloud",liveAvgN:"LIVE · {n}-model avg",tip_biomet_good:"Body-friendly weather — settled conditions today",tip_biomet_ok:"Fair for well-being — only mild weather stress",tip_biomet_bad:"Hard on well-being — abrupt weather swings today"},
+  en:{tempUnit:"Temperature units",cond_sand:"Sandstorm",creditData:"Weather & air data by Open-Meteo · Location by BigDataCloud",liveAvgN:"LIVE · {n}-model avg",tip_biomet_good:"Body-friendly weather — settled conditions today",tip_biomet_ok:"Fair for well-being — only mild weather stress",tip_biomet_bad:"Hard on well-being — abrupt weather swings today",iosApp:"Get the iOS app"},
   pl:{tempUnit:"Jednostka temperatury",cond_sand:"Burza piaskowa",tip_biomet_good:"Pogoda sprzyja — spokojne warunki dziś",tip_biomet_ok:"Umiarkowany wpływ — lekkie obciążenie pogodą",tip_biomet_bad:"Trudny dzień biometeo — gwałtowne zmiany pogody mogą pogarszać samopoczucie"},
   de:{tempUnit:"Temperatureinheit",cond_sand:"Sandsturm",tip_biomet_good:"Angenehm für den Körper — heute ruhiges Wetter",tip_biomet_ok:"Mäßiger Wettereinfluss — leichte Belastung",tip_biomet_bad:"Belastendes Biowetter — heute abrupte Wetterwechsel"},
   uk:{tempUnit:"Одиниця температури",cond_sand:"Піщана буря",tip_biomet_good:"Погода сприятлива — сьогодні спокійні умови",tip_biomet_ok:"Помірний вплив — легке навантаження погодою",tip_biomet_bad:"Складна біопогода — сьогодні різкі зміни погоди"},
@@ -2076,7 +2096,7 @@ const L10N_EXTRA4={
   bg:{windUnit:"Скорост на вятъра",pressUnit:"Налягане"}
 };
 (function(){for(var _l in L10N_EXTRA4){if(I18N[_l])for(var _k in L10N_EXTRA4[_l])I18N[_l][_k]=L10N_EXTRA4[_l][_k];}})();
-let LANG=(function(){try{var s=localStorage.getItem('cw_lang');if(s&&LANG_NAMES[s])return s;}catch(e){}var n=(navigator.language||'en').slice(0,2).toLowerCase();return LANG_NAMES[n]?n:'en';})();
+let LANG=(function(){try{var u=new URLSearchParams(location.search).get('lang');if(u&&LANG_NAMES[u])return u;}catch(e){}try{var s=localStorage.getItem('cw_lang');if(s&&LANG_NAMES[s])return s;}catch(e){}var n=(navigator.language||'en').slice(0,2).toLowerCase();return LANG_NAMES[n]?n:'en';})();
 function t(k){var d=I18N[LANG]||I18N.en;var v=(d&&d[k]!=null)?d[k]:(I18N.en[k]!=null?I18N.en[k]:k);return v;}
 function tf(k,vars){var s=t(k);if(vars)for(var p in vars)s=s.split('{'+p+'}').join(vars[p]);return s;}
 function setLang(l){if(!LANG_NAMES[l])return;LANG=l;try{localStorage.setItem('cw_lang',l);}catch(e){}WD=(I18N[LANG]||I18N.en).days;document.documentElement.lang=l;document.documentElement.dir=RTL_LANGS.indexOf(l)>=0?'rtl':'ltr';applyStaticI18n();pushNotifStrings();closeLangSheet();if(typeof LAST_DATA!=='undefined'&&LAST_DATA)render(LAST_DATA);}
@@ -2806,14 +2826,123 @@ function drawChart(items, box, keep){
 window.addEventListener('resize',()=>{if(LAST_HOURLY)drawChart(LAST_HOURLY);});
 
 /* ============ LOCATIONS (list, up to 10; current-location = GPS, default on open) ============ */
+/* ============ DEMO DATA (only with ?demo) ============
+   Seven cities, each in different weather. At the stopped clock (13:00 UTC) it's afternoon rain in Gliwice,
+   a night storm in Singapore, midday snow in Reykjavík, a sandstorm before sunset in Dubai, a clear night
+   in Tokyo, a windy sunny afternoon in Cape Town and pre-dawn fog in San Francisco.
+   The answers are shaped like Open-Meteo's, so the real fetchWeather() averages them like live data. */
+const DEMO_CITIES=[
+  {name:'Gliwice',country:'Poland',lat:50.2976,lon:18.6766,tz:1,kind:'rain',t:5,amp:2,sr:'07:31',ss:'16:19',hum:93,pr:1005,ptr:-3,uv:1,aqi:24,dust:2,pol:{alder:4,birch:0,grass:0,mugwort:0,olive:0,ragweed:0}},
+  {name:'Singapore',country:'Singapore',lat:1.2897,lon:103.8501,tz:8,kind:'storm',t:27,amp:3,sr:'07:13',ss:'19:18',hum:89,pr:1008,ptr:-2,uv:0,aqi:41,dust:9,pol:null},
+  {name:'Reykjavík',country:'Iceland',lat:64.1466,lon:-21.9426,tz:0,kind:'snow',t:-2,amp:1.5,sr:'10:49',ss:'16:31',hum:86,pr:994,ptr:-2,uv:0,aqi:12,dust:0,pol:{alder:0,birch:0,grass:0,mugwort:0,olive:0,ragweed:0}},
+  {name:'Dubai',country:'UAE',lat:25.2048,lon:55.2708,tz:4,kind:'sand',t:25,amp:5,sr:'07:05',ss:'17:56',hum:28,pr:1012,ptr:-1,uv:4,aqi:168,dust:430,pol:null},
+  {name:'Tokyo',country:'Japan',lat:35.6762,lon:139.6503,tz:9,kind:'clear',t:4,amp:5,sr:'06:48',ss:'16:58',hum:44,pr:1024,ptr:2,uv:0,aqi:31,dust:4,pol:{alder:1,birch:0,grass:0,mugwort:0,olive:0,ragweed:0}},
+  {name:'Cape Town',country:'South Africa',lat:-33.9249,lon:18.4241,tz:2,kind:'sunny',t:23,amp:6,sr:'05:54',ss:'19:59',hum:52,pr:1014,ptr:1,uv:9,aqi:18,dust:3,pol:{alder:0,birch:0,grass:38,mugwort:2,olive:6,ragweed:0}},
+  {name:'San Francisco',country:'USA',lat:37.7749,lon:-122.4194,tz:-8,kind:'fog',t:9,amp:4,sr:'07:22',ss:'17:24',hum:97,pr:1019,ptr:1,uv:0,aqi:27,dust:1,pol:{alder:3,birch:0,grass:0,mugwort:0,olive:0,ragweed:0}}
+];
+// weather code by hours from now (the next two days), then one code per day for the rest of the week
+const DEMO_PLAN={
+  rain:{now:h=>h<4?63:h<8?61:h<15?3:h<22?2:h<30?80:h<36?3:2, days:[3,63,80,3,2,61,1,2], dt:[0,0,-1,-2,0,1,2,1]},
+  storm:{now:h=>h<3?95:h<6?81:h<14?3:h<16?2:h<21?95:h<26?80:2, days:[80,95,95,81,2,95,80,3], dt:[0,0,0,1,0,-1,0,1]},
+  snow:{now:h=>h<5?73:h<10?71:h<19?3:h<26?2:h<34?75:3, days:[3,73,75,71,3,2,71,3], dt:[0,0,-2,-1,1,2,0,-1]},
+  sand:{now:h=>h<5?2:h<14?1:h<36?0:1, days:[1,2,1,0,0,1,0,0], dt:[0,0,1,2,2,1,0,1]},
+  clear:{now:h=>h<9?0:h<16?1:h<24?0:h<34?2:3, days:[1,0,1,3,61,2,0,1], dt:[0,0,1,0,-2,-1,1,2]},
+  sunny:{now:h=>h<5?0:h<14?0:h<20?1:h<30?0:2, days:[0,0,1,2,3,80,1,0], dt:[0,0,2,3,1,-3,-1,1]},
+  fog:{now:h=>h<5?45:h<8?3:h<14?1:h<22?0:h<29?45:2, days:[2,45,1,0,2,3,61,1], dt:[0,0,1,2,1,0,-1,0]}
+};
+const DEMO_RAIN={95:[6,92],81:[3.2,80],80:[1.1,62],63:[2.4,86],61:[0.6,72],75:[2.6,90],73:[1.4,84],71:[0.5,70],45:[0,6],3:[0,16],2:[0,9],1:[0,4],0:[0,1]};
+const DEMO_CLOUD={95:100,81:96,80:85,63:100,61:98,75:100,73:100,71:98,45:100,3:95,2:55,1:22,0:4};
+function demoJit(m,i,s){const x=Math.sin((m+1)*12.9898+(i+1)*78.233+s*37.719)*43758.5453;return (x-Math.floor(x))*2-1;}
+function demoClock(c){const t=new Date(Date.now()+c.tz*3600000);return {y:t.getUTCFullYear(),mo:t.getUTCMonth(),d:t.getUTCDate(),h:t.getUTCHours()};}
+function demoStamp(y,mo,d,h){const t=new Date(Date.UTC(y,mo,d,h||0));return t.getUTCFullYear()+'-'+pad(t.getUTCMonth()+1)+'-'+pad(t.getUTCDate())+(h==null?'':'T'+pad(t.getUTCHours())+':00');}
+function demoForecast(c){
+  const P=DEMO_PLAN[c.kind], k=demoClock(c), ni=24+k.h; // hour 0 = midnight yesterday (past_days=1)
+  const toM=s=>{const a=s.split(':');return +a[0]+ +a[1]/60;}, sr=toM(c.sr), ss=toM(c.ss);
+  const hourly={time:[]}, daily={time:[]};
+  const set=(o,v,m,i,x)=>{const key=v+'_'+MODELS[m].id;(o[key]||(o[key]=[]))[i]=x;};
+  for(let i=0;i<192;i++){
+    const day=Math.floor(i/24), lh=i%24, rel=i-ni, isDay=lh>=sr&&lh<ss;
+    let code=(rel>=-24&&rel<48)?P.now(Math.max(rel,0)):(isDay?P.days[day]:(P.days[day]>=61?3:2));
+    if(c.kind==='storm'&&rel>=48&&P.days[day]===95&&!(lh>=13&&lh<18))code=3; // storms here are afternoon or night ones
+    hourly.time.push(demoStamp(k.y,k.mo,k.d-1,lh+day*24));
+    MODELS.forEach((mm,m)=>{
+      // two of the thirteen models see the weather a notch differently, like real ones do
+      let cm=code; if(m===3||m===9){cm=code===63?61:code===95?81:code===73?71:code===45?3:code===0?1:code===1?2:code;}
+      const rr=DEMO_RAIN[cm]||[0,10], wet=rr[0]>0;
+      const temp=c.t+P.dt[day]+c.amp*Math.cos((lh-15)/24*2*Math.PI)-(wet?1:0)+demoJit(m,i,1)*1.1+(m%3-1)*0.4;
+      const wind=Math.max(2,({rain:17,storm:13,snow:27,sand:rel<6&&rel>=0?41:24,clear:8,sunny:29,fog:6})[c.kind]+demoJit(m,i,2)*4+(lh>=12&&lh<18?4:0));
+      const vis=cm===45?220+Math.abs(demoJit(m,i,3))*250:(c.kind==='sand'&&rel<8?1300:c.kind==='snow'&&wet?2200:wet?6500:24000);
+      set(hourly,'temperature_2m',m,i,Math.round(temp*10)/10);
+      set(hourly,'apparent_temperature',m,i,Math.round((temp<12?temp-wind/9:temp+(c.hum>80?3:0))*10)/10);
+      set(hourly,'precipitation_probability',m,i,Math.max(0,Math.min(100,Math.round(rr[1]+demoJit(m,i,4)*10))));
+      set(hourly,'precipitation',m,i,Math.max(0,Math.round((rr[0]*(1+demoJit(m,i,5)*0.3))*10)/10));
+      set(hourly,'weather_code',m,i,cm);
+      set(hourly,'is_day',m,i,isDay?1:0);
+      set(hourly,'wind_speed_10m',m,i,Math.round(wind*10)/10);
+      set(hourly,'wind_gusts_10m',m,i,Math.round(wind*(cm>=95?2.6:1.6)));
+      set(hourly,'visibility',m,i,Math.round(vis));
+      set(hourly,'cape',m,i,cm>=95?1900+Math.round(demoJit(m,i,6)*300):c.kind==='storm'?600:40);
+      set(hourly,'dew_point_2m',m,i,Math.round((temp-(100-c.hum)/5)*10)/10);
+      set(hourly,'cloud_cover',m,i,DEMO_CLOUD[cm]!=null?DEMO_CLOUD[cm]:60);
+    });
+  }
+  for(let day=0;day<8;day++){
+    daily.time.push(demoStamp(k.y,k.mo,k.d-1+day));
+    MODELS.forEach((mm,m)=>{
+      const ts=hourly['temperature_2m_'+mm.id].slice(day*24,day*24+24), ps=hourly['precipitation_probability_'+mm.id].slice(day*24,day*24+24), ws=hourly['wind_speed_10m_'+mm.id].slice(day*24,day*24+24);
+      set(daily,'weather_code',m,day,(m===3||m===9)&&P.days[day]===63?61:P.days[day]);
+      set(daily,'temperature_2m_max',m,day,Math.max(...ts));
+      set(daily,'temperature_2m_min',m,day,Math.min(...ts));
+      set(daily,'precipitation_probability_max',m,day,Math.max(...ps));
+      set(daily,'wind_speed_10m_max',m,day,Math.max(...ws));
+    });
+  }
+  return {utc_offset_seconds:c.tz*3600,hourly,daily};
+}
+function demoCurrent(c){
+  const F=demoForecast(c), k=demoClock(c), ni=24+k.h, id=MODELS[0].id, H=F.hourly;
+  const today=demoStamp(k.y,k.mo,k.d);
+  return {current:{time:demoStamp(k.y,k.mo,k.d,k.h),temperature_2m:H['temperature_2m_'+id][ni],apparent_temperature:H['apparent_temperature_'+id][ni],
+      relative_humidity_2m:c.hum,weather_code:H['weather_code_'+id][ni],wind_speed_10m:H['wind_speed_10m_'+id][ni],is_day:H['is_day_'+id][ni],surface_pressure:c.pr},
+    hourly:{surface_pressure:[c.pr-c.ptr,c.pr-c.ptr*0.6,c.pr-c.ptr*0.3,c.pr]},
+    daily:{uv_index_max:[c.uv],sunrise:[today+'T'+c.sr],sunset:[today+'T'+c.ss]}};
+}
+function demoAQ(c){
+  const o={european_aqi:c.aqi,us_aqi:Math.round(c.aqi*1.4),uv_index:c.uv,dust:c.dust};
+  ['alder','birch','grass','mugwort','olive','ragweed'].forEach(p=>{o[p+'_pollen']=c.pol?c.pol[p]:null;});
+  return {current:o};
+}
+if(window.CW_DEMO){
+  window.fetch=function(url){
+    url=String(url);
+    const lat=+((url.match(/latitude=([-\d.]+)/)||[])[1]), lon=+((url.match(/longitude=([-\d.]+)/)||[])[1]);
+    const c=DEMO_CITIES.find(x=>Math.abs(x.lat-lat)<0.01&&Math.abs(x.lon-lon)<0.01)||DEMO_CITIES[0];
+    const body=url.indexOf('air-quality-api')>=0?demoAQ(c):url.indexOf('models=')>=0?demoForecast(c):url.indexOf('api.open-meteo.com')>=0?demoCurrent(c):{};
+    return Promise.resolve({ok:true,status:200,json:()=>Promise.resolve(body)});
+  };
+}
+/* once the demo city is drawn: scroll to &at= and open the &screen= sheet */
+function demoScreen(){
+  const q=window.CW_DEMO, s=q.get('screen')||'', at=q.get('at'); let n=0;
+  (function wait(){
+    if(!LAST_DATA&&n++<80)return setTimeout(wait,100);
+    setTimeout(function(){
+      if(at){const el=document.querySelector(at);if(el){const box=el.closest('.card,.days,.strip-wrap')||el;window.scrollTo(0,box.getBoundingClientRect().top+window.scrollY-18);}}
+      const open={parts:openParts,menu:openMenu,lang:openLangSheet,agree:openAgree,notif:openNotifSheet,locs:openManage}[s];
+      if(open)open();
+    },450);
+  })();
+}
+
 const LKEY='cw_locs_v3', AKEY='cw_active_v3', MAX_LOC=15;
 let LOC_SILENT=false;
 function loadLocs(){
+  if(window.CW_DEMO)return DEMO_CITIES.map(c=>({name:c.name,country:c.country,lat:c.lat,lon:c.lon}));
   try{const s=JSON.parse(localStorage.getItem(LKEY));if(s&&s.length)return s.slice(0,MAX_LOC);}catch(e){}
   try{const sl=JSON.parse(localStorage.getItem('cw_slots_v2'));if(sl&&sl.center){const a=[sl.center];if(sl.left)a.push(sl.left);if(sl.right)a.push(sl.right);return a;}}catch(e){}
   return [{name:'Gliwice',country:'Poland',lat:50.2976,lon:18.6766}];
 }
-function saveLocs(){try{localStorage.setItem(LKEY,JSON.stringify(LOCS));localStorage.setItem(AKEY,String(ACTIVE));}catch(e){}}
+function saveLocs(){if(window.CW_DEMO)return;try{localStorage.setItem(LKEY,JSON.stringify(LOCS));localStorage.setItem(AKEY,String(ACTIVE));}catch(e){}}
 let LOCS=loadLocs(), ACTIVE=0;
 function gpsIndex(){return LOCS.findIndex(l=>l&&l.gps);}
 
@@ -3117,10 +3246,18 @@ function renderMenu(){
     `<div class="drawer-row" onclick="event.stopPropagation()"><div class="dr-l"><span class="dr-ic">${IC3('pressure',22)}</span><span>${t('pressUnit')}</span></div><div class="unit-toggle"><button class="${PUNIT==='hpa'?'on':''}" onclick="setPress('hpa');renderMenu()">hPa</button><button class="${PUNIT==='inhg'?'on':''}" onclick="setPress('inhg');renderMenu()">inHg</button></div></div>`+
     `<div class="drawer-row" onclick="closeMenu();openLangSheet()"><div class="dr-l"><span class="dr-ic">${icoGlobe()}</span><span>${t('langTitle')}</span></div><div class="dr-l"><span class="dr-val">${LANG_NAMES[LANG]||LANG.toUpperCase()}</span><span class="dr-cev">›</span></div></div>`+
     `<div class="drawer-row" onclick="closeMenu();openNotifSheet()"><div class="dr-l"><span class="dr-ic">${icoBell(NOTIF)}</span><span>${t('notifTitle')}</span></div><div class="dr-l"><span class="dr-val">${NOTIF?t('onLbl'):t('offLbl')}</span><span class="dr-cev">›</span></div></div>`+
+    `<div class="drawer-row" onclick="closeMenu();window.open('https://szebastian31.github.io/Consensus_Weather/ios.html','_blank')"><div class="dr-l"><span class="dr-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2" width="11" height="20" rx="2.6"/><line x1="10.5" y1="18.6" x2="13.5" y2="18.6"/></svg></span><span>${t('iosApp')}</span></div><div class="dr-l"><span class="dr-cev">›</span></div></div>`+
     `<div class="menu-foot"><div class="live-pill"><span class="lp1">${(LAST_DATA&&LAST_DATA.live)?tf('liveAvgN',{n:(LAST_DATA&&LAST_DATA.sources&&LAST_DATA.sources.length)||MODELS.length}):t('offline')}</span><span class="lp2">${(LAST_DATA&&LAST_DATA.updated)||'--:--'}</span></div><div class="mf-credit">${t('creditData')}</div></div>`;
 }
 function openMenu(){renderMenu();document.getElementById('menuDrawer').classList.add('open');setRefresh(false);}
 function closeMenu(){var d=document.getElementById('menuDrawer');if(d)d.classList.remove('open');if(!document.querySelector('.sheet.open'))setRefresh(true);}
+/* Android back: close the top sheet or the menu first; false means nothing was open, so the app can go to the background */
+window.cwBack=function(){
+  var closers={notifSheet:closeNotifSheet,langSheet:closeLangSheet,agreeSheet:closeAgree,partSheet:closeParts,sheet:closeSheet};
+  for(var id in closers){var el=document.getElementById(id);if(el&&el.classList.contains('open')){closers[id]();return true;}}
+  var d=document.getElementById('menuDrawer');if(d&&d.classList.contains('open')){closeMenu();return true;}
+  return false;
+};
 
 function tickLocClock(){var el=document.getElementById('locClock');if(!el||!LAST_DATA)return;var d=new Date(Date.now()+((LAST_DATA.tzOffset||0)*1000));el.textContent=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes());}
 
@@ -3130,6 +3267,12 @@ document.documentElement.dir=RTL_LANGS.indexOf(LANG)>=0?'rtl':'ltr';
 applyStaticI18n();
 renderTiles();
 (function(){
+  if(window.CW_DEMO){
+    const ci=parseInt(CW_DEMO.get('city')||'0',10);
+    ACTIVE=Math.min(Math.max(ci||0,0),LOCS.length-1);
+    renderTiles(); loadActive(); demoScreen();
+    return;
+  }
   const gi=gpsIndex();
   if(gi>=0)ACTIVE=gi; else {let a=0;try{a=parseInt(localStorage.getItem(AKEY)||'0',10);}catch(e){}ACTIVE=Math.min(Math.max(a||0,0),LOCS.length-1);}
   renderTiles(); loadActive();

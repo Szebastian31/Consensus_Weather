@@ -3,6 +3,12 @@ name: Build APK
 on:
   push:
     branches: [ main, master ]
+    paths-ignore:
+      - 'ios/**'
+      - '.github/workflows/ios.yml'
+      - 'screenshots/**'
+      - 'tools/**'
+      - 'README.md'
   workflow_dispatch:
 
 permissions:
@@ -29,30 +35,36 @@ jobs:
       - name: Install SDK packages
         run: |
           yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.7'
+          gradle-version: '8.13'
+
+      # the version, release name and APK file name all come from versionName in app/build.gradle
+      - name: Read version
+        id: ver
+        run: echo "name=$(grep -m1 'versionName' app/build.gradle | sed -E 's/.*"([^"]+)".*/\1/')" >> "$GITHUB_OUTPUT"
 
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk "app/build/outputs/apk/debug/Consensus_Weather_v1.2.${{ github.run_number }}.apk"
+        run: cp app/build/outputs/apk/debug/app-debug.apk "Consensus_Weather_v${{ steps.ver.outputs.name }}.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ConsensusWeather-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Consensus_Weather-v${{ steps.ver.outputs.name }}-apk
+          path: Consensus_Weather_v${{ steps.ver.outputs.name }}.apk
 
       - name: Publish release with APK
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Consensus Weather v1.0.${{ github.run_number }}
-          files: app/build/outputs/apk/debug/app-debug.apk
+          tag_name: v${{ steps.ver.outputs.name }}
+          name: Consensus Weather v${{ steps.ver.outputs.name }}
+          files: Consensus_Weather_v${{ steps.ver.outputs.name }}.apk
+          make_latest: true
           body: |
-            Auto-built debug APK. Download **app-debug.apk** below and install it on your phone.
+            Download **Consensus_Weather_v${{ steps.ver.outputs.name }}.apk** below and open it on your phone to install.

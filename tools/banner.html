@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Consensus Weather banner</title>
+<!-- The README banner: five real screens in phone frames (part-by-part, tips, the Singapore storm in the middle,
+     the week ahead and the Tokyo night). tools/screenshots.sh turns this page into screenshots/banner.png. -->
+<style>
+  /* the app's clear-sky dusk (skyGrad: clear, dusk), with a low setting-sun glow behind the middle phone */
+  :root{--top:#1a1f5e;--mid:#9c4b8f;--bot:#ff8a3d;--b1:rgba(255,214,140,.55);--b2:rgba(255,150,120,.30);--b3:rgba(120,110,220,.30);--ink:#fff;--muted:rgba(255,255,255,.82)}
+  *{box-sizing:border-box;margin:0}
+  html,body{width:1280px;height:720px;overflow:hidden}
+  body{font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;
+    background:radial-gradient(38% 34% at 50% 100%,var(--b1),transparent 72%),radial-gradient(60% 45% at 50% 108%,var(--b2),transparent 75%),
+      radial-gradient(45% 50% at 12% 4%,var(--b3),transparent 70%),linear-gradient(180deg,var(--top) 0%,var(--mid) 50%,var(--bot) 100%)}
+  header p{text-shadow:0 2px 12px rgba(20,14,60,.45)}
+  header{position:absolute;left:0;right:0;top:44px;text-align:center}
+  header .row{display:inline-flex;align-items:center;gap:16px}
+  header .ico{width:58px;height:58px;border-radius:16px;display:block;box-shadow:0 10px 24px -10px rgba(0,0,0,.6)}
+  h1{font-family:"SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-weight:700;font-size:58px;letter-spacing:-2px;line-height:1}
+  h1 .a{background:linear-gradient(90deg,#FFB020,#E4657F);-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1 .b{background:linear-gradient(90deg,#8FD0FF,#4E7FC7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{margin-top:12px;font-size:19px;font-weight:500;color:var(--muted)}
+  .phones{position:absolute;left:0;right:0;top:200px;height:640px}
+  .phone{position:absolute;top:0;width:250px;aspect-ratio:390/844;border-radius:42px;padding:9px;background:#0a0d18;
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.18) inset,0 40px 70px -30px rgba(0,0,0,.75),0 0 0 1px rgba(0,0,0,.4)}
+  .phone img{display:block;width:100%;height:100%;border-radius:34px;object-fit:cover;object-position:top}
+  .phone::before{content:"";position:absolute;top:18px;left:50%;width:74px;height:22px;margin-left:-37px;border-radius:12px;background:#0a0d18;z-index:2}
+  .phone span{position:absolute;left:0;right:0;bottom:-34px;text-align:center;font-size:14px;font-weight:600;color:var(--muted)}
+  .p1{left:110px;transform:translateY(70px) rotate(-6deg)}
+  .p2{left:330px;transform:translateY(26px) rotate(-2.5deg)}
+  .p3{left:515px;z-index:3}
+  .p4{left:700px;transform:translateY(26px) rotate(2.5deg)}
+  .p5{left:920px;transform:translateY(70px) rotate(6deg)}
+  .p2,.p4{z-index:2}
+</style>
+</head>
+<body>
+<header>
+  <div class="row"><img class="ico" src="../docs/emblem.png" alt=""><h1><span class="a">Consensus</span> <span class="b">Weather</span></h1></div>
+  <p>Thirteen weather models, and where they agree.</p>
+</header>
+<div class="phones">
+  <div class="phone p1"><img src="../screenshots/parts.png" alt=""></div>
+  <div class="phone p2"><img src="../screenshots/tips.png" alt=""></div>
+  <div class="phone p3"><img src="../screenshots/storm.png" alt=""></div>
+  <div class="phone p4"><img src="../screenshots/week.png" alt=""></div>
+  <div class="phone p5"><img src="../screenshots/night.png" alt=""></div>
+</div>
+</body>
+</html>
